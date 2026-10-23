@@ -127,3 +127,20 @@ test('a current backend shows no warning', async () => {
     await ctx.close();
   }
 });
+
+test('Hindi panel shows Hindi server text too (the extension asks for ?hl=hi)', async () => {
+  const { ctx, page } = await launch('light');
+  try {
+    await page.evaluate((apiBase) => chrome.storage.local.set({ settings: { apiBase, lang: 'hi' } }), API);
+    await page.reload();
+    await page.locator('input').first().fill('in.example.shopkart');
+    await page.locator('form button, button[type=submit]').first().click();
+    await expect(page.locator('body')).toContainText('इस संस्करण में जाँच नहीं की गई', { timeout: 30_000 });
+    const text = await page.locator('body').innerText();
+    // server-written sentences (card notes, answers) arrive in Hindi, not just the labels the extension translates itself
+    expect(text).not.toContain('Not checked in this version');
+    expect(text).not.toContain('The app can access your precise location');
+  } finally {
+    await ctx.close();
+  }
+});

@@ -232,5 +232,14 @@
   "menu.analyse": "Analyse this privacy policy",
   "notify.title": "SahamatiCheck",
   "notify.done": "The report for {package} is ready.",
-  "app.staleBackend": "The backend is older than this extension, so some parts of the report may be missing. Update or restart the backend."
+  "app.staleBackend": "The backend is older than this extension, so some parts of the report may be missing. Update or restart the backend.",
+  "limitation.not_mentioned_only": "This is a gap in what the policy and the safety section mention. Silence is not a denial.",
+  "limitation.conditional_denial": "The statement depends on a condition, which we cannot check from the app alone.",
+  "limitation.broad_affirmation": "One source is broader than the other, so they may not describe the same thing.",
+  "limitation.low_claim_confidence": "We read one of these statements with low confidence.",
+  "limitation.tier_not_strong": "This difference rests on the app's code, not on two written statements.",
+  "limitation.evidence_strength_insufficient": "The evidence on one side is too weak to confirm a difference.",
+  "limitation.excluded_affirm_actor_is_exempt": "The recipient may be a service provider, which the policy treats differently.",
+  "limitation.no_registry_rule": "No check in this version covers this kind of difference, so it is shown for review only.",
+  "limitation.below_class_threshold": "Our confidence is below the level we show publicly. Only you can see this."
 }

@@ -52,6 +52,18 @@ test.describe("narrow screen", () => {
   });
 });
 
+for (const locale of ["en", "hi"] as const) {
+  test(`${locale} report hydrates without console errors`, async ({ page }) => {
+    const errors: string[] = [];
+    page.on("pageerror", (e) => errors.push(String(e)));
+    page.on("console", (m) => m.type() === "error" && errors.push(m.text()));
+    await page.goto(`/${locale}/r/r_demo_shopkart`);
+    await page.waitForLoadState("networkidle");
+    await page.waitForTimeout(1000);
+    expect(errors).toEqual([]);
+  });
+}
+
 test("Hindi report keeps the card and shows no raw i18n keys", async ({ page }) => {
   await page.goto("/hi/r/r_demo_shopkart");
   await page.waitForLoadState("networkidle");

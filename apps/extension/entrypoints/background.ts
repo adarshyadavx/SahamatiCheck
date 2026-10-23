@@ -61,7 +61,8 @@ async function loadReport(
   pkg: string,
   opts: { force?: boolean; startCheck?: boolean; tabId?: number },
 ): Promise<ReportResult> {
-  const result = await getReport(pkg, { api: await api(), cache: local }, opts);
+  const lang = resolveLang((await getSettings()).lang);
+  const result = await getReport(pkg, { api: await api(), cache: local }, { ...opts, lang });
   await session.set(LAST_PACKAGE_KEY, pkg);
   if (result.kind === 'report' && !result.demo) {
     await setBadge(opts.tabId, result.report.app.package === pkg ? result.report : null);

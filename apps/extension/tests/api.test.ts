@@ -104,3 +104,36 @@ describe('report service and demo fallback', () => {
     expect(await getReport('p.q', { api, cache: memoryKV() })).toEqual({ kind: 'not_found' });
   });
 });
+
+describe('report language (?hl=)', () => {
+  it('asks the backend for Hindi when the panel is in Hindi', async () => {
+    const fetchImpl = vi.fn<FetchLike>(async () => jsonResponse(realReport, 200, { ETag: '"hi1"' }));
+    const api = createApiClient('http://x', fetchImpl);
+    await api.getReport('in.example.dosanotes', null, 'hi');
+    expect(fetchImpl.mock.calls[0][0]).toBe('http://x/v1/apps/in.example.dosanotes/report?hl=hi');
+    await api.getReport('in.example.dosanotes');
+    expect(fetchImpl.mock.calls[1][0]).toBe('http://x/v1/apps/in.example.dosanotes/report');
+  });
+
+  it('does not show a fresh English copy to a Hindi panel: it refetches without the English ETag', async () => {
+    const cache = memoryKV();
+    await cache.set(reportKey('in.example.dosanotes'), { report: realReport, etag: '"en1"', fetchedAt: 1000, lang: 'en' });
+    const fetchImpl = vi.fn<FetchLike>(async () => jsonResponse(realReport, 200, { ETag: '"hi1"' }));
+    const res = await getReport('in.example.dosanotes', { api: createApiClient('http://x', fetchImpl), cache, now: () => 2000 }, { lang: 'hi' });
+    expect(res).toMatchObject({ kind: 'report', source: 'network' });
+    expect(fetchImpl).toHaveBeenCalledTimes(1);
+    const [url, init] = fetchImpl.mock.calls[0];
+    expect(url).toContain('?hl=hi');
+    expect((init?.headers as Record<string, string>)['If-None-Match']).toBeUndefined();
+    expect(await cache.get(reportKey('in.example.dosanotes'))).toMatchObject({ lang: 'hi', etag: '"hi1"' });
+  });
+
+  it('keeps using the cached copy when the language matches', async () => {
+    const cache = memoryKV();
+    await cache.set(reportKey('in.example.dosanotes'), { report: realReport, etag: null, fetchedAt: 1000, lang: 'hi' });
+    const fetchImpl = vi.fn<FetchLike>();
+    const res = await getReport('in.example.dosanotes', { api: createApiClient('http://x', fetchImpl), cache, now: () => 2000 }, { lang: 'hi' });
+    expect(res).toMatchObject({ source: 'cache' });
+    expect(fetchImpl).not.toHaveBeenCalled();
+  });
+});

@@ -9,6 +9,8 @@ export interface CachedReport {
   report: Report;
   etag: string | null;
   fetchedAt: number;
+  /** Language the server rendered this report in; entries from before this field are English. */
+  lang?: 'en' | 'hi';
 }
 
 export interface InFlightJob {
@@ -45,6 +47,8 @@ export interface ReportDeps {
 
 export interface ReportOptions {
   force?: boolean;
+  /** Language of the panel. A cached report in another language is refetched, never shown as is. */
+  lang?: 'en' | 'hi';
   /** When there is no report yet, start a check (POST /v1/checks). */
   startCheck?: boolean;
 }
@@ -67,14 +71,17 @@ export async function storeReport(pkg: string, cache: KV, entry: CachedReport): 
  */
 export async function getReport(pkg: string, deps: ReportDeps, opts: ReportOptions = {}): Promise<ReportResult> {
   const now = deps.now ?? Date.now;
-  const cached = await readCachedReport(pkg, deps.cache);
+  const lang = opts.lang ?? 'en';
+  const anyCached = await readCachedReport(pkg, deps.cache);
+  // Server-written sentences are rendered in one language, so a copy in another language is not reused.
+  const cached = anyCached && (anyCached.lang ?? 'en') === lang ? anyCached : undefined;
 
   if (cached && !opts.force && now() - cached.fetchedAt < REPORT_TTL_MS) {
     return { kind: 'report', report: cached.report, demo: false, source: 'cache', fetchedAt: cached.fetchedAt };
   }
 
   try {
-    let res = await deps.api.getReport(pkg, cached?.etag);
+    let res = await deps.api.getReport(pkg, cached?.etag, lang);
     if (res.status === 304) {
       if (cached) {
         const refreshed = { ...cached, fetchedAt: now() };
@@ -82,10 +89,10 @@ export async function getReport(pkg: string, deps: ReportDeps, opts: ReportOptio
         return { kind: 'report', report: cached.report, demo: false, source: 'network', fetchedAt: refreshed.fetchedAt };
       }
       // 304 without a cached copy should not happen; refetch without the ETag.
-      res = await deps.api.getReport(pkg, null);
+      res = await deps.api.getReport(pkg, null, lang);
     }
     if (res.status === 304) throw new HttpError(304, 'Unexpected 304');
-    const entry: CachedReport = { report: res.report, etag: res.etag, fetchedAt: now() };
+    const entry: CachedReport = { report: res.report, etag: res.etag, fetchedAt: now(), lang };
     await storeReport(pkg, deps.cache, entry);
     return { kind: 'report', report: res.report, demo: false, source: 'network', fetchedAt: entry.fetchedAt };
   } catch (err) {
@@ -93,7 +100,7 @@ export async function getReport(pkg: string, deps: ReportDeps, opts: ReportOptio
       if (!opts.startCheck) return { kind: 'not_found' };
       return startCheck(pkg, deps);
     }
-    return fallback(err, cached);
+    return fallback(err, anyCached); // offline: an old-language copy beats nothing
   }
 }
 

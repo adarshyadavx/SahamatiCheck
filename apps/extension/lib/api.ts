@@ -45,7 +45,8 @@ export interface ApiClient {
   resolve(path: string): string;
   check(req: CheckRequest): Promise<CheckResponse>;
   getJob(jobId: string): Promise<Job>;
-  getReport(pkg: string, etag?: string | null): Promise<ReportFetch>;
+  /** `lang: 'hi'` asks the backend to render every sentence in Hindi (?hl=hi); the ETag is per language. */
+  getReport(pkg: string, etag?: string | null, lang?: 'en' | 'hi'): Promise<ReportFetch>;
   policySegments(req: PolicySegmentsRequest): Promise<PolicySegmentsResponse>;
   feedback(findingId: string, body: FeedbackBody): Promise<void>;
   ontology(): Promise<Ontology>;
@@ -109,10 +110,11 @@ export function createApiClient(baseUrl: string, fetchImpl?: FetchLike): ApiClie
       return json<Job>(await request(`/v1/jobs/${encodeURIComponent(jobId)}`));
     },
 
-    async getReport(pkg, etag) {
+    async getReport(pkg, etag, lang = 'en') {
       const headers: Record<string, string> = {};
       if (etag) headers['If-None-Match'] = etag;
-      const res = await request(`/v1/apps/${encodeURIComponent(pkg)}/report`, { headers });
+      const hl = lang === 'hi' ? '?hl=hi' : '';
+      const res = await request(`/v1/apps/${encodeURIComponent(pkg)}/report${hl}`, { headers });
       if (res.status === 304) return { status: 304 };
       const report = await json<Report>(res);
       return { status: 200, report, etag: res.headers.get('ETag') };

@@ -689,7 +689,16 @@
     "sdk_presence_only": "Based on a library found in the app. Its presence does not show how the app uses it.",
     "runtime_not_observed": "We did not watch the app run, so we cannot say what it actually sends.",
     "confidence_below_confirm_threshold": "Our confidence is below the level we need to call this a confirmed difference.",
-    "generic": "This result has a limit on what the evidence can show."
+    "generic": "This result has a limit on what the evidence can show.",
+    "not_mentioned_only": "This is a gap in what the policy and the safety section mention. Silence is not a denial.",
+    "conditional_denial": "The statement depends on a condition, which we cannot check from the app alone.",
+    "broad_affirmation": "One source is broader than the other, so they may not describe the same thing.",
+    "low_claim_confidence": "We read one of these statements with low confidence.",
+    "tier_not_strong": "This difference rests on the app's code, not on two written statements.",
+    "evidence_strength_insufficient": "The evidence on one side is too weak to confirm a difference.",
+    "excluded_affirm_actor_is_exempt": "The recipient may be a service provider, which the policy treats differently.",
+    "no_registry_rule": "No check in this version covers this kind of difference, so it is shown for review only.",
+    "below_class_threshold": "Our confidence is below the level we show publicly. Only you can see this."
   },
   "reason": {
     "runtime_evidence_unavailable": "Needs watching the app while it runs. This version only analyses the app statically.",

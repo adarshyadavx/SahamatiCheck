@@ -83,10 +83,18 @@ export function actorLabel(t: Translator, id: string): string {
   return t.has(`actor.${bare}`) ? t(`actor.${bare}`) : humanize(bare);
 }
 
+// Month names are fixed tables, not Intl: Node and the browser ship different ICU/CLDR data, and a different spelling
+// of the same Hindi month ("अक्तू॰" vs "अक्टू॰") makes the server HTML and the client render disagree (hydration error).
+const MONTHS: Record<Locale, readonly string[]> = {
+  en: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+  hi: ["जन॰", "फ़र॰", "मार्च", "अप्रैल", "मई", "जून", "जुला॰", "अग॰", "सित॰", "अक्टू॰", "नव॰", "दिस॰"],
+};
+
+/** "24 Oct 2026" / "24 अक्टू॰ 2026", in UTC, identical on the server and in the browser. */
 export function formatDate(locale: Locale, iso: string): string {
   const d = new Date(iso.length === 10 ? `${iso}T00:00:00Z` : iso);
   if (Number.isNaN(d.getTime())) return iso;
-  return new Intl.DateTimeFormat(intlTag(locale), { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" }).format(d);
+  return `${d.getUTCDate()} ${MONTHS[locale][d.getUTCMonth()]} ${d.getUTCFullYear()}`;
 }
 
 export function formatPercent(locale: Locale, value: number, digits = 0): string {
