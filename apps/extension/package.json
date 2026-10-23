@@ -11,7 +11,8 @@
     "prepare:types": "wxt prepare",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "test:e2e": "vitest run --config vitest.e2e.config.ts"
+    "test:e2e": "vitest run --config vitest.e2e.config.ts",
+    "test:panel": "playwright test"
   },
   "dependencies": {
     "@sahamati/contracts": "workspace:*",
@@ -20,6 +21,7 @@
     "react-dom": "18.3.1"
   },
   "devDependencies": {
+    "@playwright/test": "1.51.1",
     "@types/chrome": "0.0.326",
     "@types/react": "18.3.23",
     "@types/react-dom": "18.3.7",

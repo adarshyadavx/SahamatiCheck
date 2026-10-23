@@ -126,6 +126,7 @@ code {
 /* tabs */
 .tabs {
   display: flex;
+  flex-wrap: wrap; /* three tabs must not push the panel sideways at 200% zoom */
   gap: 4px;
   border-bottom: 1px solid var(--border);
   margin-bottom: 12px;

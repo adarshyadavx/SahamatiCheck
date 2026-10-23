@@ -10,7 +10,8 @@
     "check:wording": "node ../../packages/i18n/check-wording.mjs",
     "test": "vitest run",
     "lint": "tsc --noEmit && node ../../packages/i18n/check-wording.mjs",
-    "test:e2e": "vitest run --config vitest.e2e.config.mts"
+    "test:e2e": "vitest run --config vitest.e2e.config.mts",
+    "test:visual": "playwright test"
   },
   "dependencies": {
     "@sahamati/contracts": "workspace:*",
@@ -21,6 +22,8 @@
     "react-dom": "19.2.8"
   },
   "devDependencies": {
+    "@axe-core/playwright": "4.10.1",
+    "@playwright/test": "1.51.1",
     "@types/node": "22.15.30",
     "@types/react": "19.2.16",
     "@types/react-dom": "19.2.6",
