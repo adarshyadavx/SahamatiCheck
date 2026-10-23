@@ -6,6 +6,7 @@ import type {
   PolicySegmentsRequest,
   PolicySegmentsResponse,
   Report,
+  VersionInfo,
 } from '@sahamati/contracts';
 
 /** The server could not be reached at all (DNS, refused, CORS, timeout). */
@@ -48,6 +49,8 @@ export interface ApiClient {
   policySegments(req: PolicySegmentsRequest): Promise<PolicySegmentsResponse>;
   feedback(findingId: string, body: FeedbackBody): Promise<void>;
   ontology(): Promise<Ontology>;
+  /** GET /version; `null` when the backend predates the endpoint (404). */
+  version(): Promise<VersionInfo | null>;
   policyHistory(pkg: string): Promise<unknown>;
 }
 
@@ -122,6 +125,12 @@ export function createApiClient(baseUrl: string, fetchImpl?: FetchLike): ApiClie
     async feedback(findingId, body) {
       const res = await postJson(`/v1/findings/${encodeURIComponent(findingId)}/feedback`, body);
       if (!res.ok) throw new HttpError(res.status, `HTTP ${res.status}`);
+    },
+
+    async version() {
+      const res = await request('/version');
+      if (res.status === 404) return null;
+      return json<VersionInfo>(res);
     },
 
     async ontology() {

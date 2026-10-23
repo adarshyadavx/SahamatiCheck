@@ -9,7 +9,8 @@
     "typecheck": "tsc --noEmit",
     "check:wording": "node ../../packages/i18n/check-wording.mjs",
     "test": "vitest run",
-    "lint": "tsc --noEmit && node ../../packages/i18n/check-wording.mjs"
+    "lint": "tsc --noEmit && node ../../packages/i18n/check-wording.mjs",
+    "test:e2e": "vitest run --config vitest.e2e.config.mts"
   },
   "dependencies": {
     "@sahamati/contracts": "workspace:*",

@@ -84,6 +84,39 @@ jobs:
       - name: Tests
         run: pnpm -r --if-present test
 
+  e2e-live:
+    # The web and extension clients against a real backend built from this commit (no fixtures).
+    runs-on: ubuntu-latest
+    needs: [backend, js]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile=false
+      - name: Start the backend
+        working-directory: backend
+        run: |
+          python -m venv .venv
+          .venv/bin/pip install -e "./core[dev]" -e ./api -e ./worker
+          SAHAMATI_GIT_SHA=$(git rev-parse --short HEAD) nohup .venv/bin/uvicorn sahamati_api.main:app --port 8000 > api.log 2>&1 &
+          for i in $(seq 1 30); do curl -sf localhost:8000/version && break; sleep 1; done
+      - name: Web e2e
+        run: pnpm --filter @sahamati/web run test:e2e
+        env:
+          SAHAMATI_API_URL: http://localhost:8000
+      - name: Extension e2e
+        run: pnpm --filter @sahamati/extension run test:e2e
+        env:
+          SAHAMATI_API_URL: http://localhost:8000
+
   wording:
     runs-on: ubuntu-latest
     steps:

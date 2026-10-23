@@ -31,6 +31,7 @@ export function App() {
   const [manualPkg, setManualPkg] = useState<string | null>(null);
   const [focus, setFocus] = useState<FocusTarget | null>(null);
   const [ontology, setOntology] = useState<Ontology | null>(null);
+  const [stale, setStale] = useState(false);
 
   useEffect(() => {
     void getSettings().then((s) => {
@@ -51,6 +52,12 @@ export function App() {
   useEffect(() => {
     void sendToBackground({ type: 'ontology:get' })
       .then((r) => setOntology(r?.ontology ?? null))
+      .catch(() => undefined);
+  }, [apiBase]);
+
+  useEffect(() => {
+    void sendToBackground({ type: 'version:get' })
+      .then((r) => setStale(r?.state === 'stale'))
       .catch(() => undefined);
   }, [apiBase]);
 
@@ -107,6 +114,11 @@ export function App() {
             <h1 className="brand">{t('app.name')}</h1>
             <p className="muted small">{t('app.tagline')}</p>
           </header>
+          {stale && (
+            <p className="notice" role="alert" data-testid="stale-backend">
+              {t('app.staleBackend')}
+            </p>
+          )}
           <div role="tablist" aria-label={t('tabs.label')} className="tabs" onKeyDown={onKeyTabs}>
             {TABS.map((id) => (
               <button

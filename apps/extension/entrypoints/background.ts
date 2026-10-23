@@ -2,6 +2,7 @@ import type { Ontology, PolicySegmentsResponse, Report } from '@sahamati/contrac
 import { defineBackground } from 'wxt/utils/define-background';
 import { findingStatus } from '../lib/card';
 import { createApiClient, type ApiClient } from '../lib/api';
+import { isStaleBackend } from '../lib/version';
 import { sha256Hex } from '../lib/hash';
 import { resolveLang, translate } from '../lib/i18n';
 import { listJobs, pollJobsOnce, POLL_ALARM, POLL_PERIOD_MIN, putJob, removeJob } from '../lib/jobs';
@@ -308,6 +309,14 @@ const handlers: { [T in BgRequest['type']]: Handler<T> } = {
   },
 
   'ontology:get': async () => ({ ontology: await getOntology() }),
+
+  'version:get': async () => {
+    try {
+      return { state: isStaleBackend(await (await api()).version()) ? ('stale' as const) : ('ok' as const) };
+    } catch {
+      return { state: 'unknown' as const };
+    }
+  },
 
   'api:base': async () => ({ base: (await getSettings()).apiBase }),
 };

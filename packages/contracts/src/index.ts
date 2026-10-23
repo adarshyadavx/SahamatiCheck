@@ -246,6 +246,18 @@ export interface RuleInfo {
   plain_language_hi: string;
 }
 
+// GET /version (also /v1/version). Clients compare api_schema with API_SCHEMA_EXPECTED and show a "backend out of date" warning on a mismatch.
+export interface VersionInfo {
+  git_sha: string;           // short SHA of the running backend build, or "unknown"
+  api_schema: string;
+  engine: string;
+  ontology: string;
+  extractor: string;
+  registry_digest: string;   // changes when any rule changes
+  rule_count: number;
+}
+export const API_SCHEMA_EXPECTED = "1";
+
 // Confidence bands shown to users. Must equal status.confirm_threshold and status.min_claim_confidence in
 // backend/core/sahamati_core/engine/thresholds.yaml (a backend test enforces this). Clients import these instead of hardcoding.
 export const CONFIDENCE_BANDS = { strong_min: 0.85, moderate_min: 0.7 } as const;

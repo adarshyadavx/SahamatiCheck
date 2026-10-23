@@ -10,7 +10,8 @@
     "zip": "wxt zip",
     "prepare:types": "wxt prepare",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:e2e": "vitest run --config vitest.e2e.config.ts"
   },
   "dependencies": {
     "@sahamati/contracts": "workspace:*",

@@ -6,6 +6,8 @@ import {
   type Job,
   type Ontology,
   type Report,
+  type VersionInfo,
+  API_SCHEMA_EXPECTED,
 } from "@sahamati/contracts";
 
 /** Base URL the browser uses. */
@@ -239,4 +241,27 @@ export async function fetchReportClient(id: string): Promise<Report> {
   const { data } = await apiFetch<unknown>(`${PUBLIC_API_BASE}/v1/reports/${encodeURIComponent(id)}`);
   if (!isReport(data)) throw new ApiError("Malformed report", 502, data);
   return data;
+}
+
+
+/**
+ * True when the backend is demonstrably older than this build: no /version endpoint (404), a different
+ * api_schema, or (when NEXT_PUBLIC_GIT_SHA is set at build time) a different git_sha. An unreachable API
+ * is not "stale"; the offline banner covers that.
+ */
+export function isStaleBackend(version: VersionInfo | null, clientSha: string | undefined = process.env.NEXT_PUBLIC_GIT_SHA): boolean {
+  if (version === null) return true;
+  if (version.api_schema !== API_SCHEMA_EXPECTED) return true;
+  return Boolean(clientSha) && version.git_sha !== "unknown" && version.git_sha !== clientSha;
+}
+
+/** GET /version. `null` = the endpoint does not exist (old backend). Throws ApiUnreachable if the API is down. */
+export async function fetchVersion(): Promise<VersionInfo | null> {
+  try {
+    const { data } = await apiFetch<VersionInfo>(`${serverApiBase()}/version`, { cache: "no-store", timeoutMs: 3000 });
+    return data;
+  } catch (err) {
+    if (err instanceof ApiError && err.status === 404) return null;
+    throw err;
+  }
 }

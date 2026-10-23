@@ -5,11 +5,9 @@
   "tabs.policy": "नीति",
   "tabs.receipts": "रसीदें",
   "tabs.label": "साइड पैनल के भाग",
-
   "demo.label": "डेमो डेटा",
   "demo.banner": "डेमो डेटा। SahamatiCheck सर्वर से संपर्क नहीं हो सका, इसलिए यह पैनल डेमो ऐप Chai Wallet की एक काल्पनिक नमूना रिपोर्ट दिखा रहा है। यह किसी असली ऐप के बारे में कुछ नहीं कहती।",
   "demo.otherApp": "यह नमूना इस टैब में खुले ऐप ({package}) के बारे में नहीं है।",
-
   "panel.noPackage": "Google Play पर किसी ऐप का पेज खोलें, या नीचे पैकेज का नाम लिखें।",
   "panel.packageLabel": "पैकेज का नाम",
   "panel.packagePlaceholder": "जैसे in.example.chaiwallet",
@@ -22,13 +20,11 @@
   "panel.staleCopy": "सर्वर से संपर्क नहीं हो सका। {date} की सहेजी गई प्रति दिखाई जा रही है।",
   "panel.savedCopy": "{date} की सहेजी गई प्रति",
   "panel.currentApp": "ऐप",
-
   "job.title": "विश्लेषण चल रहा है",
   "job.stage": "चरण: {stage}",
   "job.progress": "{pct}% पूरा",
   "job.error": "विश्लेषण रुक गया: {error}",
   "job.background": "आप यह पैनल बंद कर सकते हैं। जाँच चलती रहेगी और रिपोर्ट सहेज ली जाएगी।",
-
   "coverage.title": "जाँचे गए स्रोत",
   "coverage.source.policy": "गोपनीयता नीति",
   "coverage.source.data_safety": "डेटा-सुरक्षा अनुभाग",
@@ -39,7 +35,6 @@
   "coverage.status.obfuscated": "आंशिक रूप से पढ़ा गया (अस्पष्ट कोड)",
   "coverage.status.unparseable": "पढ़ा नहीं जा सका",
   "coverage.partial": "कवरेज आंशिक है, इसलिए कुछ जाँचें छोड़ दी गईं।",
-
   "counts.title": "क्या मिला",
   "counts.strong": "प्रबल",
   "counts.indicative": "संकेतात्मक",
@@ -47,21 +42,17 @@
   "counts.agree": "डेटा के प्रकार जिन पर सभी स्रोत सहमत हैं",
   "counts.vague": "नीति में अस्पष्ट कथन: {pct}%",
   "counts.noScore": "SahamatiCheck ऐप्स को कोई अंक या ग्रेड नहीं देता।",
-
   "class.internal_contradiction": "आंतरिक विरोधाभास",
   "class.declaration_mismatch": "घोषणा से असंगति",
   "class.behavioural_mismatch": "व्यवहार से असंगति",
   "class.disclosure_gap": "उल्लेख नहीं",
-
   "tier.strong": "प्रबल साक्ष्य",
   "tier.indicative": "संकेतात्मक साक्ष्य",
   "tier.not_mentioned": "उल्लेख नहीं",
-
   "source.policy": "नीति में लिखा है",
   "source.data_safety": "डेटा-सुरक्षा अनुभाग घोषित करता है",
   "source.apk_permission": "ऐप पैकेज यह अनुमति माँगता है",
   "source.apk_sdk": "ऐप पैकेज में यह SDK शामिल है",
-
   "finding.inconsistent": "ये आपस में असंगत प्रतीत होते हैं।",
   "finding.path": "ऑन्टोलॉजी पथ",
   "finding.confidence": "विश्वास स्तर",
@@ -73,7 +64,6 @@
   "finding.rule": "नियम {rule}",
   "finding.captured": "{date} को लिया गया",
   "finding.tuple": "दावा",
-
   "action.collect": "एकत्र करना",
   "action.share": "साझा करना",
   "action.sell": "बेचना",
@@ -82,20 +72,16 @@
   "polarity.affirm": "स्वीकार किया",
   "polarity.deny": "इनकार किया",
   "polarity.vague": "अस्पष्ट",
-
-
   "findings.title": "निष्कर्ष",
   "findings.none": "इस संस्करण के लिए कोई प्रबल या संकेतात्मक निष्कर्ष नहीं।",
   "gaps.title": "कहीं उल्लेख नहीं",
   "gaps.intro": "ऐप पैकेज में इन डेटा प्रकारों के साक्ष्य मिले, लेकिन न नीति में और न डेटा-सुरक्षा अनुभाग में इनका उल्लेख है। चुप रहना इनकार नहीं है, इसलिए इन्हें विरोधाभास नहीं गिना जाता।",
   "gaps.none": "इस समूह में कुछ नहीं।",
   "gaps.evidence": "साक्ष्य",
-
   "disclaimer.title": "इस रिपोर्ट के बारे में",
   "disclaimer.text": "स्वचालित स्थैतिक विश्लेषण। यह गलत भी हो सकता है। यह दिखाई गई तारीख पर ऐप के एक संस्करण की झलक है। यह कानूनी सलाह नहीं है और Google से संबद्ध नहीं है।",
   "report.generated": "{date} को बनाई गई",
   "report.versions": "इंजन {engine} · ऑन्टोलॉजी {ontology} · एक्सट्रैक्टर {extractor}",
-
   "policy.title": "नीति हाइलाइटर",
   "policy.intro": "इस टैब में खुली गोपनीयता नीति के वाक्यों को हाइलाइट करता है। पहले डिवाइस पर बने हाइलाइट दिखते हैं। जब तक आप पेज पर पुष्टि न करें, सर्वर को कुछ नहीं भेजा जाता।",
   "policy.analyse": "इस पेज का विश्लेषण करें",
@@ -120,7 +106,6 @@
   "prelim.sharing": "साझा करने का उल्लेख",
   "prelim.denial": "इनकार का कथन",
   "prelim.vague": "अस्पष्ट शब्द",
-
   "receipts.title": "सहमति रसीदें",
   "receipts.intro": "जिस दिन आपने देखा, उस दिन ऐप ने क्या दावा किया था, उसकी एक स्थानीय प्रति। रसीदें इसी डिवाइस पर रहती हैं और कभी अपलोड नहीं होतीं।",
   "receipts.save": "अभी रसीद सहेजें",
@@ -139,7 +124,6 @@
   "receipts.noReport": "रसीद सहेजने के लिए पहले कोई रिपोर्ट लोड करें।",
   "receipts.forApp": "{package} की रसीदें",
   "receipts.all": "सभी रसीदें",
-
   "stance.collects": "एकत्र करता है",
   "stance.shares": "साझा करता है",
   "stance.denies": "इनकार करता है",
@@ -147,10 +131,8 @@
   "stance.silent": "उल्लेख नहीं",
   "stance.evidence": "साक्ष्य मिला",
   "stance.unknown": "अज्ञात",
-
   "marker.label": "SahamatiCheck: {term} के बारे में {n} निष्कर्ष ({status})। साइड पैनल में विवरण खोलें।",
   "marker.short": "SahamatiCheck",
-
   "hl.title": "SahamatiCheck",
   "hl.prelim": "डिवाइस पर बने प्रारंभिक हाइलाइट दिखाए गए हैं।",
   "hl.ask": "पूरे विश्लेषण के लिए इस पेज का दिखने वाला टेक्स्ट ({n} अक्षर) {host} को भेजें?",
@@ -164,7 +146,6 @@
   "hl.noText": "इस पेज पर पढ़ने योग्य टेक्स्ट नहीं मिला।",
   "hl.tooltipPrelim": "प्रारंभिक, डिवाइस पर",
   "hl.tooltipFinding": "किसी निष्कर्ष में उद्धृत",
-
   "options.title": "SahamatiCheck सेटिंग्स",
   "options.apiBase": "सर्वर का पता",
   "options.apiBaseHelp": "SahamatiCheck API। डिफ़ॉल्ट http://localhost:8000 है।",
@@ -183,7 +164,6 @@
   "options.permissionDenied": "Chrome ने अनुमति नहीं दी, इसलिए यह सेटिंग बंद रहेगी।",
   "options.privacyTitle": "यह एक्सटेंशन क्या भेजता है",
   "options.privacy": "SahamatiCheck केवल उस ऐप का पैकेज नाम भेजता है जिसे आप जाँचते हैं, और आपकी पुष्टि के बाद ही किसी नीति पेज का टेक्स्ट। यह ब्राउज़िंग इतिहास, कुकीज़ या खाते का विवरण नहीं भेजता, और इसमें कोई एनालिटिक्स नहीं है।",
-
   "card.answers": "पाँच त्वरित उत्तर",
   "card.categories": "हमने क्या जाँचा",
   "card.intro": "हर पंक्ति की जाँच अलग से होती है। SahamatiCheck ऐप को कोई कुल रंग, अंक या ग्रेड नहीं देता।",
@@ -249,8 +229,8 @@
   "reason.unknown": "यह जाँच चल नहीं सकी (कारण कोड: {code})।",
   "reason.missing": "यह जाँच चल नहीं सकी।",
   "findings.other": "अन्य निष्कर्ष",
-
   "menu.analyse": "इस गोपनीयता नीति का विश्लेषण करें",
   "notify.title": "SahamatiCheck",
-  "notify.done": "{package} की रिपोर्ट तैयार है।"
+  "notify.done": "{package} की रिपोर्ट तैयार है।",
+  "app.staleBackend": "बैकएंड इस एक्सटेंशन से पुराना है, इसलिए रिपोर्ट के कुछ हिस्से दिखाई न दें। बैकएंड को अपडेट या रीस्टार्ट करें।"
 }

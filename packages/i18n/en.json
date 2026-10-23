@@ -262,7 +262,8 @@
     "unreachableTitle": "We could not load this report",
     "unreachableBody": "The SahamatiCheck API could not be reached just now, and this is not one of the built-in demo reports. Please try again shortly.",
     "tryDemo": "Open the demo report",
-    "fallbackNote": "The built-in demo report is shown because the requested demo ({id}) could not be loaded."
+    "fallbackNote": "The built-in demo report is shown because the requested demo ({id}) could not be loaded.",
+    "staleBackend": "This page was built for a newer version of the SahamatiCheck API than the one it is talking to, so some parts of the report may be missing. Update or restart the backend."
   },
   "home": {
     "eyebrow": "Mudra · the seal of verification",

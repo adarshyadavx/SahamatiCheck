@@ -2,20 +2,45 @@
 
 from __future__ import annotations
 
+import hashlib
+import json
 import logging
+import os
+import subprocess
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
+from pathlib import Path
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from sahamati_core import ENGINE_VERSION, EXTRACTOR_VERSION
 from sahamati_core.db import get_engine, repo, session_scope
 from sahamati_core.ontology import load_ontology
+from sahamati_core.rules import load_registry
+from sahamati_core.rules.registry import current_lock
 
 from .routes.v1 import router as v1_router
 from .settings import get_settings
 
 log = logging.getLogger("sahamati.api")
+
+API_SCHEMA = "1"  # bump when the report JSON changes shape incompatibly; clients warn on a mismatch
+
+
+def _git_sha() -> str:
+    """Build identity: SAHAMATI_GIT_SHA (set at image build) or the checkout's HEAD, else "unknown"."""
+    sha = os.environ.get("SAHAMATI_GIT_SHA", "").strip()
+    if sha:
+        return sha
+    try:
+        out = subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=Path(__file__).resolve().parent,
+                             capture_output=True, text=True, timeout=3, check=False)
+        return out.stdout.strip() or "unknown"
+    except (OSError, subprocess.SubprocessError):
+        return "unknown"
+
+
+GIT_SHA = _git_sha()
 
 DESCRIPTION = """
 SahamatiCheck compares an Android app's privacy policy, its Play data-safety
@@ -58,6 +83,14 @@ def create_app() -> FastAPI:
     def healthz() -> dict[str, object]:
         return {"status": "ok", "versions": {"engine": ENGINE_VERSION, "ontology": load_ontology().version,
                                              "extractor": EXTRACTOR_VERSION}}
+
+    @app.get("/version", tags=["meta"], summary="Which build is this? Clients warn when it is stale")
+    @app.get("/v1/version", tags=["meta"], include_in_schema=False)
+    def version() -> dict[str, object]:
+        reg = load_registry()
+        return {"git_sha": GIT_SHA, "api_schema": API_SCHEMA, "engine": ENGINE_VERSION,
+                "ontology": load_ontology().version, "extractor": EXTRACTOR_VERSION,
+                "registry_digest": hashlib.sha256(json.dumps(current_lock(reg), sort_keys=True).encode()).hexdigest()[:12], "rule_count": len(reg.rules)}
 
     return app
 

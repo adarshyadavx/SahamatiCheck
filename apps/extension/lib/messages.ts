@@ -37,6 +37,7 @@ export type BgRequest =
   | { type: 'policy:segments'; url: string; title: string; text: string; lang: string }
   | { type: 'feedback'; findingId: string }
   | { type: 'ontology:get' }
+  | { type: 'version:get' }
   | { type: 'api:base' };
 
 export interface BgResponses {
@@ -50,6 +51,8 @@ export interface BgResponses {
   'policy:segments': { ok: true; result: PolicyTabResult; quotes: FindingQuote[] } | { ok: false; error: string };
   feedback: { ok: boolean };
   'ontology:get': { ontology: Ontology | null };
+  /** `unknown` = the backend could not be reached; it is not reported as stale. */
+  'version:get': { state: 'ok' | 'stale' | 'unknown' };
   'api:base': { base: string };
 }
 

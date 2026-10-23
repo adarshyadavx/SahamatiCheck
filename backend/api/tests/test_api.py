@@ -278,10 +278,11 @@ def test_rules_listing_matches_ts_contract(client: TestClient) -> None:
 
 def test_ts_confidence_bands_match_engine_thresholds() -> None:
     import re
-    from sahamati_core.engine import load_config  # noqa: F401  (config import proves the package is installed)
-    import yaml
     from pathlib import Path
+
     import sahamati_core.engine as eng
+    import yaml
+    from sahamati_core.engine import load_config  # noqa: F401  (config import proves the package is installed)
 
     cfg = yaml.safe_load((Path(eng.__file__).parent / "thresholds.yaml").read_text(encoding="utf-8"))["status"]
     src = (Path(__file__).resolve().parents[3] / "packages" / "contracts" / "src" / "index.ts").read_text(encoding="utf-8")
@@ -289,3 +290,10 @@ def test_ts_confidence_bands_match_engine_thresholds() -> None:
     assert m
     assert float(m.group(1)) == cfg["confirm_threshold"]
     assert float(m.group(2)) == cfg["min_claim_confidence"]
+
+
+def test_version_endpoint_matches_ts_contract(client: TestClient) -> None:
+    body = client.get("/version").json()
+    assert CONTRACT.check("VersionInfo", body) == []
+    assert body["api_schema"] == "1" and body["rule_count"] >= 15 and len(body["registry_digest"]) == 12
+    assert client.get("/v1/version").json() == body
