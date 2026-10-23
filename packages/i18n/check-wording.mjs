@@ -7,6 +7,7 @@
 //   packages/i18n/{en,hi}.json
 //   apps/*/locales/**/*.json
 //   backend/core/**/templates*.{py,yaml,yml}   (if present)
+//   backend/core/rules/registry/*.yaml          (plain_language is served by GET /v1/rules)
 //
 // Usage: node packages/i18n/check-wording.mjs [--verbose]
 
@@ -108,7 +109,7 @@ if (existsSync(appsDir)) {
 // 3. Backend summary templates.
 const backendCore = join(root, "backend", "core");
 walk(backendCore)
-  .filter((f) => /^templates.*\.(py|ya?ml)$/i.test(basename(f)))
+  .filter((f) => /^templates.*\.(py|ya?ml)$/i.test(basename(f)) || /[\\/]rules[\\/]registry[\\/][^\\/]+\.ya?ml$/i.test(f))
   .forEach(scanText);
 
 // 4. Key parity between en and hi.
