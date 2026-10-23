@@ -1,0 +1,625 @@
+{
+  "report_id": "r_demo_chaiwallet",
+  "app": {
+    "package": "in.example.chaiwallet",
+    "version_code": 412,
+    "title": "Chai Wallet (demo)",
+    "developer": "Example Labs",
+    "is_demo": true
+  },
+  "generated_at": "2026-10-19T10:00:00Z",
+  "coverage": {
+    "policy": "ok",
+    "data_safety": "ok",
+    "apk": "ok"
+  },
+  "summary": {
+    "strong": 2,
+    "indicative": 1,
+    "not_mentioned": 1,
+    "agree_types": 6,
+    "vague_claim_ratio": 0.27
+  },
+  "findings": [
+    {
+      "id": "f_dm_01",
+      "class": "declaration_mismatch",
+      "tier": "strong",
+      "confidence": 0.91,
+      "rule_id": "DM-01",
+      "summary": "The policy and the data-safety section appear inconsistent about Advertising ID.",
+      "ontology_path": [
+        "personal_info",
+        "identifiers",
+        "device_id",
+        "advertising_id"
+      ],
+      "sides": [
+        {
+          "source": "policy",
+          "tuple": {
+            "actor": "third_party",
+            "action": "share",
+            "polarity": "deny",
+            "data_type": "personal_info",
+            "condition": null
+          },
+          "evidence": {
+            "quote": "We never share your personal information with third parties.",
+            "url": "https://chaiwallet.example/privacy",
+            "char_start": 1204,
+            "char_end": 1262,
+            "text_fragment": "#:~:text=We%20never%20share%20your%20personal%20information",
+            "captured_at": "2026-10-19"
+          }
+        },
+        {
+          "source": "data_safety",
+          "tuple": {
+            "actor": "third_party",
+            "action": "share",
+            "polarity": "affirm",
+            "data_type": "advertising_id",
+            "condition": "advertising"
+          },
+          "evidence": {
+            "label": "Device or other IDs — Shared — Advertising or marketing",
+            "captured_at": "2026-10-19"
+          }
+        }
+      ],
+      "benign_explanations": [
+        "An exception clause elsewhere in the policy may permit this sharing.",
+        "The declaration may describe a newer app version than the policy."
+      ],
+      "status": "confirmed_conflict",
+      "evidence_strength": "declaration",
+      "limitations": [],
+      "user_category": "ads_tracking",
+      "group_id": "g_ads"
+    },
+    {
+      "id": "f_ic_01",
+      "class": "internal_contradiction",
+      "tier": "strong",
+      "confidence": 0.84,
+      "rule_id": "IC-01",
+      "summary": "Two statements in the policy appear inconsistent about precise location.",
+      "ontology_path": [
+        "personal_info",
+        "location",
+        "precise_location"
+      ],
+      "sides": [
+        {
+          "source": "policy",
+          "tuple": {
+            "actor": "first_party",
+            "action": "collect",
+            "polarity": "deny",
+            "data_type": "location",
+            "condition": null
+          },
+          "evidence": {
+            "quote": "We do not collect your location.",
+            "url": "https://chaiwallet.example/privacy",
+            "char_start": 410,
+            "char_end": 443,
+            "text_fragment": "#:~:text=We%20do%20not%20collect%20your%20location",
+            "captured_at": "2026-10-19"
+          }
+        },
+        {
+          "source": "policy",
+          "tuple": {
+            "actor": "first_party",
+            "action": "collect",
+            "polarity": "affirm",
+            "data_type": "precise_location",
+            "condition": "fraud_prevention"
+          },
+          "evidence": {
+            "quote": "We collect your precise GPS location to help prevent fraud.",
+            "url": "https://chaiwallet.example/privacy",
+            "char_start": 2210,
+            "char_end": 2269,
+            "text_fragment": "#:~:text=We%20collect%20your%20precise%20GPS%20location",
+            "captured_at": "2026-10-19"
+          }
+        }
+      ],
+      "benign_explanations": [
+        "The two statements may refer to different features of the app."
+      ],
+      "status": "potential_conflict",
+      "evidence_strength": "declaration",
+      "limitations": [
+        "confidence_below_confirm_threshold"
+      ],
+      "user_category": "location",
+      "group_id": "g_loc"
+    },
+    {
+      "id": "f_bm_01",
+      "class": "behavioural_mismatch",
+      "tier": "indicative",
+      "confidence": 0.62,
+      "rule_id": "BM-01",
+      "summary": "The data-safety section declares contacts are not collected, while the app requests a contacts permission.",
+      "ontology_path": [
+        "personal_info",
+        "contacts"
+      ],
+      "sides": [
+        {
+          "source": "data_safety",
+          "tuple": {
+            "actor": "first_party",
+            "action": "collect",
+            "polarity": "deny",
+            "data_type": "contacts",
+            "condition": null
+          },
+          "evidence": {
+            "label": "Contacts — Not collected",
+            "captured_at": "2026-10-19"
+          }
+        },
+        {
+          "source": "apk_permission",
+          "tuple": {
+            "actor": "first_party",
+            "action": "collect",
+            "polarity": "affirm",
+            "data_type": "contacts",
+            "condition": null
+          },
+          "evidence": {
+            "permission": "android.permission.READ_CONTACTS",
+            "captured_at": "2026-10-19"
+          }
+        }
+      ],
+      "benign_explanations": [
+        "A permission may be requested but never used.",
+        "Data processed only on the device does not need to be declared as collected."
+      ],
+      "status": "potential_conflict",
+      "evidence_strength": "capability",
+      "limitations": [
+        "permission_only",
+        "runtime_not_observed"
+      ],
+      "user_category": "contacts",
+      "group_id": "g_contacts"
+    }
+  ],
+  "disclosure_gaps": [
+    {
+      "id": "g_01",
+      "data_type": "camera_media",
+      "ontology_path": [
+        "personal_info",
+        "photos_media",
+        "camera_media"
+      ],
+      "source": "apk_permission",
+      "evidence": {
+        "permission": "android.permission.CAMERA",
+        "captured_at": "2026-10-19"
+      }
+    }
+  ],
+  "matrix": [
+    {
+      "data_type": "advertising_id",
+      "ontology_path": [
+        "personal_info",
+        "identifiers",
+        "device_id",
+        "advertising_id"
+      ],
+      "policy": "denies",
+      "data_safety": "shares",
+      "apk": "evidence",
+      "conflict_class": "declaration_mismatch"
+    },
+    {
+      "data_type": "precise_location",
+      "ontology_path": [
+        "personal_info",
+        "location",
+        "precise_location"
+      ],
+      "policy": "collects",
+      "data_safety": "collects",
+      "apk": "evidence",
+      "conflict_class": "internal_contradiction"
+    },
+    {
+      "data_type": "contacts",
+      "ontology_path": [
+        "personal_info",
+        "contacts"
+      ],
+      "policy": "silent",
+      "data_safety": "denies",
+      "apk": "evidence",
+      "conflict_class": "behavioural_mismatch"
+    },
+    {
+      "data_type": "camera_media",
+      "ontology_path": [
+        "personal_info",
+        "photos_media",
+        "camera_media"
+      ],
+      "policy": "silent",
+      "data_safety": "silent",
+      "apk": "evidence",
+      "conflict_class": "disclosure_gap"
+    },
+    {
+      "data_type": "email",
+      "ontology_path": [
+        "personal_info",
+        "contact_info",
+        "email"
+      ],
+      "policy": "collects",
+      "data_safety": "collects",
+      "apk": "silent"
+    },
+    {
+      "data_type": "phone_number",
+      "ontology_path": [
+        "personal_info",
+        "contact_info",
+        "phone_number"
+      ],
+      "policy": "collects",
+      "data_safety": "collects",
+      "apk": "silent"
+    },
+    {
+      "data_type": "financial_info",
+      "ontology_path": [
+        "personal_info",
+        "financial_info"
+      ],
+      "policy": "collects",
+      "data_safety": "collects",
+      "apk": "silent"
+    },
+    {
+      "data_type": "crash_logs",
+      "ontology_path": [
+        "app_activity",
+        "diagnostics",
+        "crash_logs"
+      ],
+      "policy": "collects",
+      "data_safety": "collects",
+      "apk": "evidence"
+    },
+    {
+      "data_type": "name",
+      "ontology_path": [
+        "personal_info",
+        "contact_info",
+        "name"
+      ],
+      "policy": "collects",
+      "data_safety": "collects",
+      "apk": "silent"
+    },
+    {
+      "data_type": "health_info",
+      "ontology_path": [
+        "personal_info",
+        "health_info"
+      ],
+      "policy": "denies",
+      "data_safety": "denies",
+      "apk": "silent"
+    }
+  ],
+  "versions": {
+    "engine": "0.1.0",
+    "ontology": "2026.10.1",
+    "extractor": "rules@0.1.0"
+  },
+  "indicators": [
+    {
+      "id": "i_d01",
+      "rule_id": "D01",
+      "status": "needs_review",
+      "user_category": "location",
+      "data_type": "precise_location",
+      "ontology_path": [
+        "personal_info",
+        "location",
+        "precise_location"
+      ],
+      "summary": "The app can access precise location. Whether it does depends on how the app uses the permission.",
+      "source": "apk_permission",
+      "evidence": {
+        "permission": "android.permission.ACCESS_FINE_LOCATION",
+        "captured_at": "2026-10-19"
+      },
+      "group_id": "g_loc"
+    },
+    {
+      "id": "i_t08",
+      "rule_id": "T08",
+      "status": "needs_review",
+      "user_category": "ads_tracking",
+      "data_type": "advertising_id",
+      "ontology_path": [
+        "personal_info",
+        "identifiers",
+        "device_id",
+        "advertising_id"
+      ],
+      "summary": "The app can read the advertising ID. You can reset or delete it in Android settings.",
+      "source": "apk_permission",
+      "evidence": {
+        "permission": "com.google.android.gms.permission.AD_ID",
+        "captured_at": "2026-10-19"
+      },
+      "group_id": "g_ads"
+    },
+    {
+      "id": "i_d03",
+      "rule_id": "D03",
+      "status": "needs_review",
+      "user_category": "camera_mic",
+      "data_type": "camera_media",
+      "ontology_path": [
+        "personal_info",
+        "photos_media",
+        "camera_media"
+      ],
+      "summary": "The app can use the camera. The policy does not say why.",
+      "source": "apk_permission",
+      "evidence": {
+        "permission": "android.permission.CAMERA",
+        "captured_at": "2026-10-19"
+      }
+    }
+  ],
+  "rule_runs": [
+    {
+      "rule_id": "P05",
+      "name": "Collection contradiction",
+      "family": "P",
+      "phase": 1,
+      "status": "no_issue_detected"
+    },
+    {
+      "rule_id": "P06",
+      "name": "Sharing contradiction",
+      "family": "P",
+      "phase": 1,
+      "status": "confirmed_conflict"
+    },
+    {
+      "rule_id": "P07",
+      "name": "Data Safety mismatch",
+      "family": "P",
+      "phase": 1,
+      "status": "potential_conflict"
+    },
+    {
+      "rule_id": "P12",
+      "name": "Conflicting statements within policy",
+      "family": "P",
+      "phase": 1,
+      "status": "potential_conflict"
+    },
+    {
+      "rule_id": "T01",
+      "name": "Undisclosed analytics SDK",
+      "family": "T",
+      "phase": 1,
+      "status": "no_issue_detected"
+    },
+    {
+      "rule_id": "D01",
+      "name": "Location data indicator",
+      "family": "D",
+      "phase": 1,
+      "status": "needs_review"
+    },
+    {
+      "rule_id": "D03",
+      "name": "Camera access indicator",
+      "family": "D",
+      "phase": 2,
+      "status": "needs_review"
+    },
+    {
+      "rule_id": "T02",
+      "name": "Advertising SDK",
+      "family": "T",
+      "phase": 1,
+      "status": "needs_review"
+    },
+    {
+      "rule_id": "T08",
+      "name": "Advertising ID access",
+      "family": "T",
+      "phase": 1,
+      "status": "needs_review"
+    },
+    {
+      "rule_id": "C03",
+      "name": "Tracking before consent",
+      "family": "C",
+      "phase": 1,
+      "status": "inconclusive",
+      "reason": "runtime_evidence_unavailable"
+    },
+    {
+      "rule_id": "T05",
+      "name": "Third-party endpoint mismatch",
+      "family": "T",
+      "phase": 1,
+      "status": "inconclusive",
+      "reason": "runtime_evidence_unavailable"
+    },
+    {
+      "rule_id": "C07",
+      "name": "Account deletion functionality",
+      "family": "C",
+      "phase": 1,
+      "status": "inconclusive",
+      "reason": "test_account_unavailable"
+    },
+    {
+      "rule_id": "S06",
+      "name": "Sensitive data in logs",
+      "family": "S",
+      "phase": 1,
+      "status": "inconclusive",
+      "reason": "runtime_evidence_unavailable"
+    }
+  ],
+  "status_counts": {
+    "confirmed_conflict": 1,
+    "potential_conflict": 2,
+    "needs_review": 4,
+    "inconclusive": 4,
+    "no_issue_detected": 2
+  },
+  "card": {
+    "checked_at": "2026-10-19T10:00:00Z",
+    "categories": [
+      {
+        "id": "location",
+        "color": "orange",
+        "status": "potential_conflict",
+        "note": "The policy says one thing about location in two places, and the app can access precise location.",
+        "finding_ids": [
+          "f_ic_01"
+        ],
+        "indicator_ids": [
+          "i_d01"
+        ]
+      },
+      {
+        "id": "contacts",
+        "color": "orange",
+        "status": "potential_conflict",
+        "note": "The safety section says no contacts are collected, but the app has permission to read them. This shows capability, not behaviour.",
+        "finding_ids": [
+          "f_bm_01"
+        ],
+        "indicator_ids": []
+      },
+      {
+        "id": "photos_files",
+        "color": "grey",
+        "status": "inconclusive",
+        "note": "Not checked in this version.",
+        "finding_ids": [],
+        "indicator_ids": []
+      },
+      {
+        "id": "camera_mic",
+        "color": "yellow",
+        "status": "needs_review",
+        "note": "The app can use the camera. The policy does not say why.",
+        "finding_ids": [],
+        "indicator_ids": [
+          "i_d03"
+        ]
+      },
+      {
+        "id": "messages_calls",
+        "color": "grey",
+        "status": "inconclusive",
+        "note": "Not checked in this version.",
+        "finding_ids": [],
+        "indicator_ids": []
+      },
+      {
+        "id": "money_payments",
+        "color": "grey",
+        "status": "inconclusive",
+        "note": "Not checked in this version.",
+        "finding_ids": [],
+        "indicator_ids": []
+      },
+      {
+        "id": "identity",
+        "color": "grey",
+        "status": "inconclusive",
+        "note": "Not checked in this version.",
+        "finding_ids": [],
+        "indicator_ids": []
+      },
+      {
+        "id": "health",
+        "color": "grey",
+        "status": "inconclusive",
+        "note": "Not checked in this version.",
+        "finding_ids": [],
+        "indicator_ids": []
+      },
+      {
+        "id": "ads_tracking",
+        "color": "red",
+        "status": "confirmed_conflict",
+        "note": "The policy says personal information is not shared with third parties, but the safety section says the advertising ID is shared.",
+        "finding_ids": [
+          "f_dm_01"
+        ],
+        "indicator_ids": [
+          "i_t08"
+        ]
+      },
+      {
+        "id": "account_profile",
+        "color": "grey",
+        "status": "inconclusive",
+        "note": "We could not check whether account deletion works.",
+        "finding_ids": [],
+        "indicator_ids": []
+      }
+    ],
+    "answers": [
+      {
+        "id": "location",
+        "text": "The app can access your precise location.",
+        "finding_ids": [
+          "f_ic_01"
+        ]
+      },
+      {
+        "id": "sharing",
+        "text": "The safety section says the advertising ID is shared with third parties.",
+        "finding_ids": [
+          "f_dm_01"
+        ]
+      },
+      {
+        "id": "ads",
+        "text": "The safety section lists advertising as a purpose.",
+        "finding_ids": [
+          "f_dm_01"
+        ]
+      },
+      {
+        "id": "deletion",
+        "text": "The policy describes how to ask for deletion. We could not check that it works.",
+        "finding_ids": []
+      },
+      {
+        "id": "grievance",
+        "text": "Not found in the privacy policy.",
+        "finding_ids": []
+      }
+    ]
+  }
+}

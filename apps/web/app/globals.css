@@ -1,0 +1,125 @@
+@import "@sahamati/ui/tokens.css";
+@import "@sahamati/ui/components.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* next/font gives hashed family names; point the Mudra font tokens at them. */
+:root {
+  --font-display: var(--font-anek-latin), var(--font-anek-deva), system-ui, sans-serif;
+  --font-body: var(--font-noto), var(--font-noto-deva), system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+:root:lang(hi) {
+  --font-display: var(--font-anek-deva), var(--font-anek-latin), system-ui, sans-serif;
+  --font-body: var(--font-noto-deva), var(--font-noto), system-ui, sans-serif;
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-padding-top: 5.5rem;
+  }
+  body {
+    margin: 0;
+    min-height: 100dvh;
+    background-color: var(--surface);
+    /* khadi: a faint hand-woven cross weave */
+    background-image:
+      repeating-linear-gradient(0deg, var(--weave) 0 1px, transparent 1px 4px),
+      repeating-linear-gradient(90deg, var(--weave) 0 1px, transparent 1px 5px);
+    color: var(--ink);
+    font-family: var(--font-body);
+    line-height: 1.6;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    color: var(--ink);
+    letter-spacing: -0.012em;
+  }
+  :lang(hi) h1, :lang(hi) h2, :lang(hi) h3 { letter-spacing: 0; }
+  a { color: var(--neel); text-underline-offset: 3px; }
+  ::selection { background: var(--neel); color: var(--on-neel); }
+  :focus-visible { outline: 2.5px solid var(--focus); outline-offset: 2px; border-radius: 4px; }
+  code, kbd, pre { font-family: var(--font-mono); }
+}
+
+@layer components {
+  .page { @apply mx-auto w-full max-w-page px-4 sm:px-6 lg:px-8; }
+
+  .eyebrow {
+    @apply inline-flex items-center gap-2 font-mono text-[0.72rem] font-medium uppercase tracking-[0.16em] text-ink-muted;
+  }
+  .eyebrow::before {
+    content: "";
+    width: 0.55rem;
+    height: 0.55rem;
+    border-radius: 999px;
+    background: var(--neel);
+    box-shadow: 0 0 0 3px var(--neel-soft);
+  }
+
+  .display {
+    font-family: var(--font-display);
+    font-weight: 650;
+    line-height: 1.04;
+    letter-spacing: -0.025em;
+  }
+  :lang(hi) .display { line-height: 1.25; letter-spacing: 0; }
+
+  .lede { @apply max-w-[62ch] text-lg leading-relaxed text-ink-muted; }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-[0.95rem] font-semibold no-underline transition-colors;
+  }
+  .btn-primary { background: var(--neel); color: var(--on-neel); border: 1px solid var(--neel); }
+  .btn-primary:hover { background: color-mix(in srgb, var(--neel) 86%, var(--ink)); }
+  .btn-secondary { background: var(--surface-raised); color: var(--ink); border: 1px solid var(--border-strong); }
+  .btn-secondary:hover { border-color: var(--neel); color: var(--neel); }
+  .btn-ghost { color: var(--neel); border: 1px dashed color-mix(in srgb, var(--neel) 50%, transparent); }
+  .btn-ghost:hover { background: var(--neel-soft); }
+  .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+  .panel { @apply rounded-mudra border border-line bg-surface-raised shadow-1; }
+
+  .field-label { @apply mb-1.5 block text-sm font-semibold text-ink; }
+  .field-hint { @apply mt-1 text-xs text-ink-muted; }
+  .input {
+    @apply w-full rounded-[10px] border border-line-strong bg-surface-raised px-3.5 py-2.5 text-[0.95rem] text-ink placeholder:text-ink-faint;
+  }
+  .input:focus-visible { outline: 2.5px solid var(--focus); outline-offset: 1px; border-color: var(--neel); }
+
+  .prose-mudra p { @apply my-3 leading-relaxed text-ink; }
+  .prose-mudra h2 { @apply mb-2 mt-10 text-2xl font-semibold; }
+
+  /* section number stamp */
+  .stamp {
+    @apply inline-grid h-9 w-9 shrink-0 place-items-center rounded-full font-mono text-xs font-semibold;
+    color: var(--neel);
+    border: 1.5px dashed var(--neel);
+    transform: rotate(-8deg);
+  }
+
+  .sr-only-focusable:not(:focus) { @apply sr-only; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+}
+
+/* Chart series palette (validated with the dataviz validator, light + dark):
+   strong, indicative, not mentioned. Chart-only; tier badges keep their tokens. */
+:root {
+  --chart-1: #4456c0;
+  --chart-2: #c0870f;
+  --chart-3: #b8366e;
+  --chart-grid: color-mix(in srgb, var(--ink) 10%, transparent);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --chart-1: #7584e0; --chart-2: #b98320; --chart-3: #d5578c; }
+}
+:root[data-theme="dark"] { --chart-1: #7584e0; --chart-2: #b98320; --chart-3: #d5578c; }

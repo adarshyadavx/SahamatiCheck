@@ -1,0 +1,221 @@
+# Policy-consistency rules. They read the conflict engine's findings (engine/rules.py) and decide the
+# status of each one. Never branch on a rule id in code: change the data here (and bump `version`).
+family: P
+rules:
+  - id: P05
+    version: 1
+    name: Collection contradiction
+    name_hi: एकत्रण से जुड़ा विरोधाभास
+    family: P
+    phase: 1
+    enabled: true
+    severity: high
+    score_track: privacy
+    evidence_sources: {required: [policy], any_of: [data_safety, apk]}
+    engine_rules: [DM-01, BM-03, BM-04]
+    conditions:
+      - {predicate: action_in, args: {actions: [collect]}}
+    result_on_match: confirmed_conflict
+    inconclusive_reasons: [policy_unavailable, data_safety_unavailable, apk_unavailable, apk_unparseable, apk_partial_coverage]
+    categories: []
+    applies_to_all: true
+    plain_language: The policy says a kind of data is not collected, while the data-safety section or the app points to it being collected.
+    plain_language_hi: नीति कहती है कि किसी प्रकार का डेटा एकत्र नहीं किया जाता, जबकि डेटा-सुरक्षा अनुभाग या ऐप इसके एकत्र होने की ओर इशारा करता है।
+    tests:
+      - case: positive
+        name: policy denies collecting precise location, the app requests the fine-location permission
+        claims:
+          - {src: policy, actor: first_party, action: collect, pol: deny, dt: precise_location, s: 1}
+          - {src: apk_permission, actor: first_party, action: collect, pol: affirm, dt: precise_location, text: android.permission.ACCESS_FINE_LOCATION}
+        expect: {status: potential_conflict, findings: [potential_conflict]}
+      - case: positive
+        name: the policy denies collecting contacts and the declaration says they are collected (read with certainty)
+        claims:
+          - {src: policy, actor: first_party, action: collect, pol: deny, dt: contacts, s: 1, neg: adjacent, conf: 0.98}
+          - {src: data_safety, actor: first_party, action: collect, pol: affirm, dt: contacts}
+        expect: {status: confirmed_conflict, findings: [confirmed_conflict]}
+      - case: negative
+        name: the policy denies location and the app asks only for the camera
+        claims:
+          - {src: policy, actor: first_party, action: collect, pol: deny, dt: precise_location, s: 1}
+          - {src: apk_permission, actor: first_party, action: collect, pol: affirm, dt: camera_media, text: android.permission.CAMERA}
+        expect: {status: no_issue_detected}
+      - case: negative
+        name: a sharing denial is not a collection rule
+        claims:
+          - {src: policy, actor: third_party, action: share, pol: deny, dt: device_id, s: 1}
+          - {src: data_safety, actor: third_party, action: share, pol: affirm, dt: device_id}
+        expect: {status: no_issue_detected}
+      - case: inconclusive
+        name: the policy could not be read
+        claims:
+          - {src: apk_permission, actor: first_party, action: collect, pol: affirm, dt: precise_location, text: android.permission.ACCESS_FINE_LOCATION}
+        coverage: {policy: unreachable}
+        expect: {status: inconclusive, reason: policy_unavailable}
+      - case: inconclusive
+        name: neither the declaration nor the APK is available
+        coverage: {data_safety: unavailable, apk: unavailable}
+        expect: {status: inconclusive, reason: data_safety_unavailable}
+
+  - id: P06
+    version: 1
+    name: Sharing contradiction
+    name_hi: साझा करने से जुड़ा विरोधाभास
+    family: P
+    phase: 1
+    enabled: true
+    severity: high
+    score_track: privacy
+    evidence_sources: {required: [policy], any_of: [data_safety, apk]}
+    engine_rules: [DM-01, BM-03, BM-04]
+    conditions:
+      - {predicate: action_in, args: {actions: [share, sell]}}
+    exclude_if:
+      - {predicate: affirm_actor_is_exempt}
+    result_on_match: confirmed_conflict
+    inconclusive_reasons: [policy_unavailable, data_safety_unavailable, apk_unavailable, apk_unparseable, apk_partial_coverage]
+    categories: []
+    applies_to_all: true
+    plain_language: The policy says a kind of data is not shared with third parties, while the data-safety section or an SDK in the app points to it being shared.
+    plain_language_hi: नीति कहती है कि किसी प्रकार का डेटा तृतीय पक्षों के साथ साझा नहीं किया जाता, जबकि डेटा-सुरक्षा अनुभाग या ऐप का कोई SDK इसके साझा होने की ओर इशारा करता है।
+    tests:
+      - case: positive
+        name: the policy denies sharing device IDs, the declaration says they are shared, read with certainty
+        claims:
+          - {src: policy, actor: third_party, action: share, pol: deny, dt: device_id, s: 1, neg: adjacent, conf: 0.98}
+          - {src: data_safety, actor: third_party, action: share, pol: affirm, dt: device_id, cond: advertising}
+        expect: {status: confirmed_conflict, findings: [confirmed_conflict]}
+      - case: positive
+        name: the same pair with a loosely resolved negation stays below the confirm threshold
+        claims:
+          - {src: policy, actor: third_party, action: share, pol: deny, dt: device_id, s: 1}
+          - {src: data_safety, actor: third_party, action: share, pol: affirm, dt: device_id}
+        expect: {status: potential_conflict, findings: [potential_conflict]}
+      - case: positive
+        name: the policy denies sharing, an advertising SDK in the app shares the advertising ID (presence only)
+        claims:
+          - {src: policy, actor: third_party, action: share, pol: deny, dt: advertising_id, s: 1, neg: adjacent, conf: 0.98}
+          - {src: apk_sdk, actor: ad_network, action: share, pol: affirm, dt: advertising_id, text: com.google.android.gms.ads}
+        expect: {status: potential_conflict, findings: [potential_conflict]}
+      - case: negative
+        name: a denied type and a declared sibling type never overlap
+        claims:
+          - {src: policy, actor: third_party, action: share, pol: deny, dt: android_id, s: 1}
+          - {src: data_safety, actor: third_party, action: share, pol: affirm, dt: advertising_id}
+        expect: {status: no_issue_detected}
+      - case: negative
+        name: sharing is declared and the policy never denies it
+        claims:
+          - {src: policy, actor: first_party, action: collect, pol: affirm, dt: email, s: 1}
+          - {src: data_safety, actor: third_party, action: share, pol: affirm, dt: device_id}
+        expect: {status: no_issue_detected}
+      - case: inconclusive
+        name: the policy is empty
+        coverage: {policy: unparseable}
+        expect: {status: inconclusive, reason: policy_unavailable}
+      - case: inconclusive
+        name: no declaration and no APK to compare the policy with
+        coverage: {data_safety: unavailable, apk: obfuscated}
+        expect: {status: inconclusive, reason: data_safety_unavailable}
+
+  - id: P07
+    version: 1
+    name: Data Safety mismatch
+    name_hi: डेटा-सुरक्षा घोषणा में असंगति
+    family: P
+    phase: 1
+    enabled: true
+    severity: high
+    score_track: privacy
+    evidence_sources: {required: [data_safety], any_of: [policy, apk]}
+    engine_rules: [DM-02, DM-03, BM-01, BM-02]
+    exclude_if:
+      - {predicate: affirm_actor_is_exempt}
+    result_on_match: confirmed_conflict
+    inconclusive_reasons: [policy_unavailable, data_safety_unavailable, apk_unavailable, apk_unparseable, apk_partial_coverage]
+    categories: []
+    applies_to_all: true
+    plain_language: The data-safety section says a kind of data is not collected or not shared, while the policy or the app points the other way.
+    plain_language_hi: डेटा-सुरक्षा अनुभाग कहता है कि किसी प्रकार का डेटा एकत्र या साझा नहीं किया जाता, जबकि नीति या ऐप इसके उलट संकेत देता है।
+    tests:
+      - case: positive
+        name: the declaration says contacts are not collected, the app requests the contacts permission
+        claims:
+          - {src: data_safety, actor: first_party, action: collect, pol: deny, dt: contacts}
+          - {src: apk_permission, actor: first_party, action: collect, pol: affirm, dt: contacts, text: android.permission.READ_CONTACTS}
+        expect: {status: potential_conflict, findings: [potential_conflict]}
+      - case: positive
+        name: the declaration says nothing is shared, the policy says data is shared (both read with certainty)
+        claims:
+          - {src: data_safety, actor: third_party, action: share, pol: deny, dt: personal_info, synthetic: true, locator: no_data_shared}
+          - {src: policy, actor: third_party, action: share, pol: affirm, dt: personal_info, s: 1, conf: 0.98}
+        expect: {status: confirmed_conflict, findings: [confirmed_conflict]}
+      - case: negative
+        name: contacts are declared collected and the app requests the permission
+        claims:
+          - {src: data_safety, actor: first_party, action: collect, pol: affirm, dt: contacts}
+          - {src: apk_permission, actor: first_party, action: collect, pol: affirm, dt: contacts, text: android.permission.READ_CONTACTS}
+        expect: {status: no_issue_detected}
+      - case: negative
+        name: the declaration denies contacts and the app asks for location only
+        claims:
+          - {src: data_safety, actor: first_party, action: collect, pol: deny, dt: contacts}
+          - {src: apk_permission, actor: first_party, action: collect, pol: affirm, dt: precise_location, text: android.permission.ACCESS_FINE_LOCATION}
+        expect: {status: no_issue_detected}
+      - case: inconclusive
+        name: the declaration is not available
+        claims:
+          - {src: apk_permission, actor: first_party, action: collect, pol: affirm, dt: contacts, text: android.permission.READ_CONTACTS}
+        coverage: {data_safety: unavailable}
+        expect: {status: inconclusive, reason: data_safety_unavailable}
+      - case: inconclusive
+        name: neither the policy nor the APK is available
+        coverage: {policy: unreachable, apk: unavailable}
+        expect: {status: inconclusive, reason: policy_unavailable}
+
+  - id: P12
+    version: 1
+    name: Conflicting statements within policy
+    name_hi: नीति के भीतर परस्पर विरोधी कथन
+    family: P
+    phase: 1
+    enabled: true
+    severity: medium
+    score_track: privacy
+    evidence_sources: {required: [policy]}
+    engine_rules: [IC-01]
+    result_on_match: confirmed_conflict
+    inconclusive_reasons: [policy_unavailable]
+    categories: []
+    applies_to_all: true
+    plain_language: Two statements in the same policy say opposite things about one kind of data.
+    plain_language_hi: एक ही नीति के दो कथन किसी एक प्रकार के डेटा के बारे में उलटी बातें कहते हैं।
+    tests:
+      - case: positive
+        name: the policy denies collecting location and elsewhere collects precise location
+        claims:
+          - {src: policy, actor: first_party, action: collect, pol: deny, dt: location, s: 1}
+          - {src: policy, actor: first_party, action: collect, pol: affirm, dt: precise_location, s: 2}
+        expect: {status: potential_conflict, findings: [potential_conflict]}
+      - case: positive
+        name: a precise denial read with certainty against a matching statement
+        claims:
+          - {src: policy, actor: first_party, action: collect, pol: deny, dt: contacts, s: 1, neg: adjacent, conf: 0.98}
+          - {src: policy, actor: first_party, action: collect, pol: affirm, dt: contacts, s: 2, conf: 0.98}
+        expect: {status: confirmed_conflict, findings: [confirmed_conflict]}
+      - case: negative
+        name: an exception clause reconciles the two statements
+        claims:
+          - {src: policy, actor: third_party, action: share, pol: deny, dt: personal_info, exc: [service_provider], s: 1}
+          - {src: policy, actor: service_provider, action: share, pol: affirm, dt: email, s: 2}
+        expect: {status: no_issue_detected}
+      - case: negative
+        name: siblings never overlap
+        claims:
+          - {src: policy, actor: first_party, action: collect, pol: deny, dt: precise_location, s: 1}
+          - {src: policy, actor: first_party, action: collect, pol: affirm, dt: approximate_location, s: 2}
+        expect: {status: no_issue_detected}
+      - case: inconclusive
+        name: the policy could not be fetched
+        coverage: {policy: unreachable}
+        expect: {status: inconclusive, reason: policy_unavailable}

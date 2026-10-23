@@ -1,0 +1,17 @@
+# Plain facts the report card's five answers need, read from the policy text with word patterns
+# (case-insensitive regular expressions). English and Hindi. Detection is a presence test only:
+# it says the policy mentions the topic, never that the mechanism works.
+deletion:
+  - '\bdelet(e|es|ed|ing|ion)\b'
+  - '\berase\b|\berasure\b'
+  - 'right to be forgotten'
+  - 'हटाने|हटाएँ|हटाएं|मिटाने'
+grievance:
+  - 'grievance'
+  - 'data protection officer'
+  - '\bdpo\b'
+  - 'nodal officer'
+  - '(file|lodge|make) a complaint'
+  - 'शिकायत'
+# Purpose ids (purposes.yaml) that count as "advertising" for the third answer.
+advertising_purposes: [advertising]

@@ -1,0 +1,38 @@
+[project]
+name = "sahamati-core"
+version = "0.1.0"
+description = "SahamatiCheck core: ontology, extractors, conflict engine, report builder (pure library)"
+requires-python = ">=3.11"
+dependencies = [
+  "pydantic>=2.12",
+  "networkx>=3.2",
+  "pyyaml>=6.0",
+  "beautifulsoup4>=4.12",
+  "httpx>=0.27",
+  "tenacity>=8.2",
+  "sqlalchemy>=2.0",
+]
+
+[project.optional-dependencies]
+# Heavy or network-facing integrations are optional; every one has a fallback.
+html = ["trafilatura>=1.8"]
+nlp = ["spacy>=3.7"]
+ml = ["torch>=2.2", "transformers>=4.40"]
+apk = ["androguard>=4.1"]
+play = ["google-play-scraper>=1.2"]
+llm = ["anthropic>=0.40"]
+pdf = ["pypdf>=4.0"]
+redis = ["redis>=5.0"]
+postgres = ["psycopg[binary]>=3.1"]
+dev = ["pytest>=8.0", "hypothesis>=6.100", "ruff>=0.5"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["sahamati_core"]
+
+[tool.hatch.build.targets.wheel.force-include]
+"ontology" = "sahamati_core/_ontology_data"
+"rules/registry" = "sahamati_core/_registry_data"

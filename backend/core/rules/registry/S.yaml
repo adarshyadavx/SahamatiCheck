@@ -1,0 +1,21 @@
+family: S
+rules:
+  - id: S06
+    version: 1
+    name: Sensitive data in logs
+    name_hi: लॉग में संवेदनशील डेटा
+    family: S
+    phase: 1
+    enabled: true
+    severity: medium
+    score_track: security
+    evidence_sources: {required: [runtime]}
+    result_on_match: potential_conflict
+    inconclusive_reasons: [runtime_evidence_unavailable]
+    categories: []
+    plain_language: Checks whether sensitive values appear in the app's logs. A static proxy with no leads stays inconclusive; real logs need runtime evidence.
+    plain_language_hi: जाँचता है कि ऐप के लॉग में संवेदनशील मान दिखते हैं या नहीं। बिना सुराग वाला स्थिर अनुमान अनिर्णायक रहता है; असली लॉग के लिए रनटाइम प्रमाण चाहिए।
+    tests:
+      - case: inconclusive
+        name: a static proxy with no leads is not a pass
+        expect: {status: inconclusive, reason: runtime_evidence_unavailable}

@@ -1,0 +1,29 @@
+# Coverage state of a source -> the inconclusive reason code a rule reports (AI09).
+# `ok` is always usable. `not_attempted` covers a source the pipeline never tried to read.
+# runtime and test_account are never available to the static pipeline in this version.
+version: 1
+sources:
+  policy:
+    unavailable: policy_unavailable
+    unreachable: policy_unavailable
+    unparseable: policy_unavailable
+    obfuscated: policy_unavailable
+    not_attempted: policy_unavailable
+  data_safety:
+    unavailable: data_safety_unavailable
+    unreachable: data_safety_unavailable
+    unparseable: data_safety_unavailable
+    obfuscated: data_safety_unavailable
+    not_attempted: data_safety_unavailable
+  apk:
+    unavailable: apk_unavailable
+    unreachable: apk_unavailable
+    unparseable: apk_unparseable
+    obfuscated: apk_partial_coverage
+    not_attempted: apk_unavailable
+  runtime:
+    unavailable: runtime_evidence_unavailable
+    not_attempted: runtime_evidence_unavailable
+  test_account:
+    unavailable: test_account_unavailable
+    not_attempted: test_account_unavailable

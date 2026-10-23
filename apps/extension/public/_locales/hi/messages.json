@@ -1,0 +1,6 @@
+{
+  "extName": { "message": "SahamatiCheck" },
+  "extDescription": { "message": "जाँचें कि किसी ऐप के गोपनीयता दावे आपस में मेल खाते हैं या नहीं।" },
+  "actionTitle": { "message": "SahamatiCheck खोलें" },
+  "cmdAnalysePolicy": { "message": "मौजूदा पेज का गोपनीयता नीति के रूप में विश्लेषण करें" }
+}

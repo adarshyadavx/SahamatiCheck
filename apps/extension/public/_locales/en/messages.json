@@ -1,0 +1,6 @@
+{
+  "extName": { "message": "SahamatiCheck" },
+  "extDescription": { "message": "Check whether an app's privacy claims agree with each other." },
+  "actionTitle": { "message": "Open SahamatiCheck" },
+  "cmdAnalysePolicy": { "message": "Analyse the current page as a privacy policy" }
+}

@@ -1,0 +1,50 @@
+# Purpose ontology (aligned with the Play data-safety purposes).
+version: "2026.10.1"
+kind: purpose
+roots: [any_purpose]
+nodes:
+  - id: any_purpose
+    parents: []
+    label_en: Any purpose
+    label_hi: कोई भी उद्देश्य
+    aliases: [any purpose]
+  - id: app_functionality
+    parents: [any_purpose]
+    label_en: App functionality
+    label_hi: ऐप की कार्यक्षमता
+    aliases: [app functionality, to provide the service, to provide our services, to operate the app, to process transactions, to process payments, so that they can sync, to sync]
+  - id: analytics
+    parents: [any_purpose]
+    label_en: Analytics
+    label_hi: एनालिटिक्स
+    aliases: [analytics, to improve the app, to improve our services, to improve app stability, to fix bugs, to understand how the app is used]
+  - id: developer_communications
+    parents: [any_purpose]
+    label_en: Developer communications
+    label_hi: डेवलपर की ओर से संचार
+    aliases: [developer communications, to send you updates, to send you receipts, to send you transaction receipts, to contact you, to communicate with you]
+  - id: advertising
+    parents: [any_purpose]
+    label_en: Advertising or marketing
+    label_hi: विज्ञापन या मार्केटिंग
+    aliases: [advertising, marketing, advertising or marketing, targeted advertising, personalised ads, personalized ads, to show you ads]
+  - id: fraud_prevention
+    parents: [any_purpose]
+    label_en: Fraud prevention, security and compliance
+    label_hi: सुरक्षा, अनुपालन और दुरुपयोग की रोकथाम
+    aliases: [fraud prevention, to prevent fraud, prevent fraud, security, compliance, to keep your account secure]
+  - id: personalization
+    parents: [any_purpose]
+    label_en: Personalization
+    label_hi: निजीकरण
+    aliases: [personalization, personalisation, to personalise, to personalize, recommendations]
+  - id: account_management
+    parents: [any_purpose]
+    label_en: Account management
+    label_hi: खाता प्रबंधन
+    aliases: [account management, create an account, create your account, create and sync your account, manage your account, sign in, log in]
+  - id: legal_compliance
+    parents: [fraud_prevention]
+    label_en: Legal obligations
+    label_hi: क़ानूनी दायित्व
+    aliases: [legal obligations, to comply with the law, required by law, legal requests]

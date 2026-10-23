@@ -1,0 +1,324 @@
+# Data-type ontology (source of truth). Edges are child -> parent.
+# Two hierarchies: personal_info (data about a person) and app_activity
+# (data about app use and performance). Removing or re-parenting a node is a
+# MAJOR version bump.
+#
+# Fields: id, parents, label_en, label_hi, aliases (lower-case phrases matched
+# in policy text, longest match wins), dpdp_sensitive, report_category (optional: which of the
+# ten report-card categories the node belongs to; a node without one inherits from its nearest
+# ancestor that has one; PLAN.md §4.9).
+version: "2026.10.1"
+kind: data_type
+roots: [personal_info, app_activity]
+report_categories: [location, contacts, photos_files, camera_mic, messages_calls, money_payments, identity, health, ads_tracking, account_profile]
+nodes:
+  # ---------------------------------------------------------------- personal_info
+  - id: personal_info
+    parents: []
+    label_en: Personal information
+    label_hi: व्यक्तिगत जानकारी
+    aliases: [personal information, personal data, personal details, personally identifiable information, your information, your data, user data, information about you, data about you]
+    dpdp_sensitive: false
+
+  - id: identifiers
+    parents: [personal_info]
+    label_en: Identifiers
+    label_hi: पहचानकर्ता
+    aliases: [identifiers, unique identifiers]
+    dpdp_sensitive: false
+  - id: device_id
+    parents: [identifiers]
+    label_en: Device or other IDs
+    label_hi: डिवाइस या अन्य आईडी
+    aliases: [device id, device ids, device identifier, device identifiers, device or other ids, device information]
+    dpdp_sensitive: false
+    report_category: ads_tracking
+  - id: advertising_id
+    parents: [device_id]
+    label_en: Advertising ID
+    label_hi: विज्ञापन आईडी
+    aliases: [advertising id, advertising identifier, advertising identifiers, ad id, gaid, google advertising id]
+    dpdp_sensitive: false
+  - id: android_id
+    parents: [device_id]
+    label_en: Android ID
+    label_hi: एंड्रॉइड आईडी
+    aliases: [android id, ssaid]
+    dpdp_sensitive: false
+  - id: imei
+    parents: [device_id]
+    label_en: IMEI number
+    label_hi: आईएमईआई नंबर
+    aliases: [imei, imei number, hardware identifier, hardware identifiers]
+    dpdp_sensitive: false
+  - id: user_id
+    parents: [identifiers]
+    label_en: User IDs
+    label_hi: उपयोगकर्ता आईडी
+    aliases: [user id, user ids, account id, username, user name]
+    dpdp_sensitive: false
+    report_category: account_profile
+  - id: government_id
+    parents: [identifiers]
+    label_en: Government ID
+    label_hi: सरकारी पहचान पत्र
+    aliases: [government id, government identifier, aadhaar, aadhaar number, pan, pan number, pan card, passport number, voter id, driving licence number]
+    dpdp_sensitive: true
+    report_category: identity
+
+  - id: contact_info
+    parents: [personal_info]
+    label_en: Contact information
+    label_hi: संपर्क जानकारी
+    aliases: [contact information, contact info, contact details]
+    dpdp_sensitive: false
+    report_category: account_profile
+  - id: name
+    parents: [contact_info]
+    label_en: Name
+    label_hi: नाम
+    aliases: [your name, full name, first name, last name, legal name]
+    dpdp_sensitive: false
+  - id: email
+    parents: [contact_info]
+    label_en: Email address
+    label_hi: ईमेल पता
+    aliases: [email address, email addresses, e-mail address, email id, your email, email]
+    dpdp_sensitive: false
+  - id: phone_number
+    parents: [contact_info]
+    label_en: Phone number
+    label_hi: फ़ोन नंबर
+    aliases: [phone number, phone numbers, mobile number, mobile numbers, telephone number]
+    dpdp_sensitive: false
+  - id: address
+    parents: [contact_info]
+    label_en: Postal address
+    label_hi: डाक पता
+    aliases: [postal address, mailing address, home address, billing address, shipping address]
+    dpdp_sensitive: false
+
+  - id: location
+    parents: [personal_info]
+    label_en: Location
+    label_hi: स्थान
+    aliases: [location, your location, location data, location information, geolocation]
+    dpdp_sensitive: false
+    report_category: location
+  - id: precise_location
+    parents: [location]
+    label_en: Precise location
+    label_hi: सटीक स्थान
+    aliases: [precise location, precise gps location, gps location, gps data, exact location, fine location]
+    dpdp_sensitive: false
+  - id: approximate_location
+    parents: [location]
+    label_en: Approximate location
+    label_hi: अनुमानित स्थान
+    aliases: [approximate location, coarse location, general location, city-level location]
+    dpdp_sensitive: false
+
+  - id: financial_info
+    parents: [personal_info]
+    label_en: Financial information
+    label_hi: वित्तीय जानकारी
+    aliases: [financial information, financial info, financial data, bank account details, bank account information, bank details, payment and bank account details]
+    dpdp_sensitive: true
+    report_category: money_payments
+  - id: payment_info
+    parents: [financial_info]
+    label_en: Payment information
+    label_hi: भुगतान जानकारी
+    aliases: [payment information, payment details, card details, card number, credit card number, debit card number, upi id, user payment info]
+    dpdp_sensitive: true
+  - id: purchase_history
+    parents: [financial_info]
+    label_en: Purchase history
+    label_hi: ख़रीद इतिहास
+    aliases: [purchase history, transaction history, order history]
+    dpdp_sensitive: false
+  - id: credit_info
+    parents: [financial_info]
+    label_en: Credit score
+    label_hi: क्रेडिट स्कोर
+    aliases: [credit score, credit history, credit report, credit information]
+    dpdp_sensitive: true
+
+  - id: health_info
+    parents: [personal_info]
+    label_en: Health information
+    label_hi: स्वास्थ्य जानकारी
+    aliases: [health information, health info, health data, medical information, medical records]
+    dpdp_sensitive: true
+    report_category: health
+  - id: fitness_info
+    parents: [health_info]
+    label_en: Fitness information
+    label_hi: फ़िटनेस जानकारी
+    aliases: [fitness information, fitness data, step count, physical activity data]
+    dpdp_sensitive: true
+
+  - id: contacts
+    parents: [personal_info]
+    label_en: Contacts
+    label_hi: संपर्क सूची
+    aliases: [contacts, contact list, address book, phone contacts, your contacts]
+    dpdp_sensitive: false
+    report_category: contacts
+
+  - id: messages
+    parents: [personal_info]
+    label_en: Messages
+    label_hi: संदेश
+    aliases: [messages, your messages, message content]
+    dpdp_sensitive: false
+    report_category: messages_calls
+  - id: sms
+    parents: [messages]
+    label_en: SMS or MMS
+    label_hi: एसएमएस या एमएमएस
+    aliases: [sms, sms messages, text messages, mms]
+    dpdp_sensitive: false
+  - id: email_messages
+    parents: [messages]
+    label_en: Emails
+    label_hi: ईमेल संदेश
+    aliases: [emails, email messages, email content, contents of your emails]
+    dpdp_sensitive: false
+  - id: in_app_messages
+    parents: [messages]
+    label_en: Other in-app messages
+    label_hi: ऐप के अंदर के अन्य संदेश
+    aliases: [in-app messages, chat messages, chats]
+    dpdp_sensitive: false
+
+  - id: photos_media
+    parents: [personal_info]
+    label_en: Photos, videos and audio
+    label_hi: फ़ोटो, वीडियो और ऑडियो
+    aliases: [media files, photos and videos, media]
+    dpdp_sensitive: false
+    report_category: photos_files
+  - id: photos
+    parents: [photos_media]
+    label_en: Photos
+    label_hi: फ़ोटो
+    aliases: [photos, photographs, pictures, images, your photos]
+    dpdp_sensitive: false
+  - id: videos
+    parents: [photos_media]
+    label_en: Videos
+    label_hi: वीडियो
+    aliases: [videos, video files, video recordings]
+    dpdp_sensitive: false
+  - id: camera_media
+    parents: [photos_media]
+    label_en: Camera images
+    label_hi: कैमरा से ली गई तस्वीरें
+    aliases: [camera, camera images, camera access, photos taken with the camera, camera feed]
+    dpdp_sensitive: false
+    report_category: camera_mic
+  - id: audio
+    parents: [photos_media]
+    label_en: Audio files
+    label_hi: ऑडियो फ़ाइलें
+    aliases: [audio, audio files, music files, sound recordings]
+    dpdp_sensitive: false
+  - id: voice_recordings
+    parents: [audio]
+    label_en: Voice or sound recordings
+    label_hi: आवाज़ या ध्वनि रिकॉर्डिंग
+    aliases: [voice recordings, voice data, microphone, microphone recordings, audio recordings, your voice]
+    dpdp_sensitive: false
+    report_category: camera_mic
+
+  - id: files_docs
+    parents: [personal_info]
+    label_en: Files and docs
+    label_hi: फ़ाइलें और दस्तावेज़
+    aliases: [files, documents, files and documents, files and docs, stored files]
+    dpdp_sensitive: false
+    report_category: photos_files
+  - id: calendar
+    parents: [personal_info]
+    label_en: Calendar events
+    label_hi: कैलेंडर इवेंट
+    aliases: [calendar, calendar events, calendar data]
+    dpdp_sensitive: false
+    report_category: account_profile
+  - id: demographic_info
+    parents: [personal_info]
+    label_en: Other personal info
+    label_hi: अन्य व्यक्तिगत जानकारी
+    aliases: [date of birth, age, gender, race, ethnicity, religious beliefs, political opinions, sexual orientation, demographic information]
+    dpdp_sensitive: true
+    report_category: identity
+  - id: biometric_info
+    parents: [personal_info]
+    label_en: Biometric information
+    label_hi: बायोमेट्रिक जानकारी
+    aliases: [biometric information, biometric data, fingerprints, fingerprint data, face data, facial recognition data]
+    dpdp_sensitive: true
+    report_category: identity
+
+  # ---------------------------------------------------------------- app_activity
+  - id: app_activity
+    parents: []
+    label_en: App activity and performance
+    label_hi: ऐप गतिविधि और प्रदर्शन
+    aliases: [app activity, usage data, usage information, app usage]
+    dpdp_sensitive: false
+  - id: app_interactions
+    parents: [app_activity]
+    label_en: App interactions
+    label_hi: ऐप में इंटरैक्शन
+    aliases: [app interactions, interactions with the app, pages you visit in the app, features you use]
+    dpdp_sensitive: false
+    report_category: ads_tracking
+  - id: search_history
+    parents: [app_activity]
+    label_en: In-app search history
+    label_hi: ऐप में खोज इतिहास
+    aliases: [search history, in-app search history, search queries]
+    dpdp_sensitive: false
+    report_category: ads_tracking
+  - id: installed_apps
+    parents: [app_activity]
+    label_en: Installed apps
+    label_hi: इंस्टॉल किए गए ऐप
+    aliases: [installed apps, installed applications, list of apps, apps installed on your device]
+    dpdp_sensitive: false
+    report_category: ads_tracking
+  - id: web_browsing
+    parents: [app_activity]
+    label_en: Web browsing history
+    label_hi: वेब ब्राउज़िंग इतिहास
+    aliases: [browsing history, web browsing history, websites you visit]
+    dpdp_sensitive: false
+    report_category: ads_tracking
+  - id: user_content
+    parents: [app_activity]
+    label_en: Other user-generated content
+    label_hi: उपयोगकर्ता द्वारा बनाई गई अन्य सामग्री
+    aliases: [user-generated content, user generated content, notes you write, content you create]
+    dpdp_sensitive: false
+    report_category: account_profile
+  - id: diagnostics
+    parents: [app_activity]
+    label_en: App info and performance
+    label_hi: ऐप जानकारी और प्रदर्शन
+    aliases: [diagnostics, diagnostic information, diagnostic data, app performance data, performance information]
+    dpdp_sensitive: false
+    report_category: ads_tracking
+  - id: crash_logs
+    parents: [diagnostics]
+    label_en: Crash logs
+    label_hi: क्रैश लॉग
+    aliases: [crash logs, crash reports, crash data, error logs]
+    dpdp_sensitive: false
+  - id: performance_data
+    parents: [diagnostics]
+    label_en: Other app performance data
+    label_hi: ऐप प्रदर्शन का अन्य डेटा
+    aliases: [performance data, battery usage, load times, app performance metrics]
+    dpdp_sensitive: false

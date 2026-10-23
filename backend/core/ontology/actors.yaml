@@ -1,0 +1,45 @@
+# Actor ontology. Edges are child -> parent.
+version: "2026.10.1"
+kind: actor
+roots: [any_party]
+nodes:
+  - id: any_party
+    parents: []
+    label_en: Anyone
+    label_hi: कोई भी पक्ष
+    aliases: [anyone, any party, anybody]
+  - id: first_party
+    parents: [any_party]
+    label_en: The app developer
+    label_hi: ऐप डेवलपर
+    aliases: [we, us, our company, the developer]
+  - id: third_party
+    parents: [any_party]
+    label_en: Third parties
+    label_hi: तृतीय पक्ष
+    aliases: [third party, third parties, third-party, third-party companies, other companies, outside parties, external parties, partners, our partners, business partners]
+  - id: ad_network
+    parents: [third_party]
+    label_en: Advertising networks
+    label_hi: विज्ञापन नेटवर्क
+    aliases: [advertisers, advertising partners, advertising networks, ad networks, ad partners, marketing partners]
+  - id: analytics_provider
+    parents: [third_party]
+    label_en: Analytics providers
+    label_hi: एनालिटिक्स प्रदाता
+    aliases: [analytics providers, analytics partners, analytics services, analytics companies]
+  - id: service_provider
+    parents: [third_party]
+    label_en: Service providers
+    label_hi: सेवा प्रदाता
+    aliases: [service providers, service provider, vendors, processors, payment processors, hosting providers, contractors]
+  - id: government
+    parents: [third_party]
+    label_en: Government and law enforcement
+    label_hi: सरकार और क़ानून प्रवर्तन
+    aliases: [government, government authorities, law enforcement, regulators, authorities, courts]
+  - id: affiliate
+    parents: [third_party]
+    label_en: Affiliates
+    label_hi: सहयोगी कंपनियाँ
+    aliases: [affiliates, affiliated companies, group companies, subsidiaries, parent company]

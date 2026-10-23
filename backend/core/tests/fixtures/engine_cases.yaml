@@ -1,0 +1,191 @@
+# Mini-app engine fixtures. Each case lists claim tuples and the expected
+# public findings / gaps. Defaults: policy conf 0.9 with heuristic negation;
+# data_safety and apk conf 0.98 (sdk 0.85); `s` = sentence index for policy claims.
+# Claims: {src, actor, action, pol, dt, cond?, exc?, conf?, s?, synthetic?, locator?}
+# expect.findings: [{class, rule, overlap}]; expect.suppressed: same shape; expect.gaps: [dt]
+
+- name: canonical personal_info DENY vs advertising_id share
+  claims:
+    - {src: policy, actor: third_party, action: share, pol: deny, dt: personal_info, s: 1}
+    - {src: data_safety, actor: third_party, action: share, pol: affirm, dt: advertising_id}
+  expect:
+    findings: [{class: declaration_mismatch, rule: DM-01, overlap: advertising_id}]
+
+- name: exception carve-out for service providers (actor)
+  claims:
+    - {src: policy, actor: third_party, action: share, pol: deny, dt: personal_info, exc: [service_provider], s: 1}
+    - {src: policy, actor: service_provider, action: share, pol: affirm, dt: email, s: 2}
+  expect:
+    findings: []
+
+- name: exception carve-out (data type)
+  claims:
+    - {src: policy, actor: first_party, action: collect, pol: deny, dt: location, exc: [approximate_location], s: 1}
+    - {src: policy, actor: first_party, action: collect, pol: affirm, dt: approximate_location, s: 2}
+  expect:
+    findings: []
+
+- name: exception does not cover a sibling
+  claims:
+    - {src: policy, actor: first_party, action: collect, pol: deny, dt: location, exc: [approximate_location], s: 1}
+    - {src: policy, actor: first_party, action: collect, pol: affirm, dt: precise_location, s: 2}
+  expect:
+    findings: [{class: internal_contradiction, rule: IC-01, overlap: precise_location}]
+
+- name: siblings never overlap
+  claims:
+    - {src: policy, actor: first_party, action: collect, pol: deny, dt: precise_location, s: 1}
+    - {src: policy, actor: first_party, action: collect, pol: affirm, dt: approximate_location, s: 2}
+    - {src: data_safety, actor: first_party, action: collect, pol: affirm, dt: approximate_location}
+  expect:
+    findings: []
+
+- name: a vague claim does not hide a gap
+  claims:
+    - {src: policy, actor: first_party, action: collect, pol: vague, dt: personal_info, s: 1}
+    - {src: apk_permission, actor: first_party, action: collect, pol: affirm, dt: camera_media}
+  expect:
+    findings: []
+    gaps: [camera_media]
+
+- name: a vague claim on a specific type does not hide a gap either
+  claims:
+    - {src: policy, actor: first_party, action: collect, pol: vague, dt: location, s: 1}
+    - {src: apk_permission, actor: first_party, action: collect, pol: affirm, dt: precise_location}
+  expect:
+    gaps: [precise_location]
+
+- name: a root-level claim does not count as mentioning a specific type
+  claims:
+    - {src: policy, actor: first_party, action: collect, pol: affirm, dt: personal_info, s: 1}
+    - {src: apk_permission, actor: first_party, action: collect, pol: affirm, dt: camera_media}
+  expect:
+    gaps: [camera_media]
+
+- name: a specific declaration mentions the type (no gap)
+  claims:
+    - {src: data_safety, actor: first_party, action: collect, pol: affirm, dt: photos}
+    - {src: apk_permission, actor: first_party, action: collect, pol: affirm, dt: photos}
+  expect:
+    findings: []
+    gaps: []
+
+- name: a broad AFFIRM does not contradict a narrow DENY
+  claims:
+    - {src: policy, actor: first_party, action: collect, pol: affirm, dt: personal_info, s: 1}
+    - {src: policy, actor: first_party, action: collect, pol: deny, dt: location, s: 2}
+  expect:
+    findings: []
+
+- name: internal contradiction, deny ancestor vs affirm descendant
+  claims:
+    - {src: policy, actor: first_party, action: collect, pol: deny, dt: location, s: 1}
+    - {src: policy, actor: first_party, action: collect, pol: affirm, dt: precise_location, cond: fraud_prevention, s: 2}
+  expect:
+    findings: [{class: internal_contradiction, rule: IC-01, overlap: precise_location}]
+
+- name: tuples from the same sentence never form an internal contradiction
+  claims:
+    - {src: policy, actor: first_party, action: collect, pol: deny, dt: contacts, s: 1}
+    - {src: policy, actor: first_party, action: collect, pol: affirm, dt: contacts, s: 1}
+  expect:
+    findings: []
+
+- name: a purpose-limited denial is reconciled by a different purpose
+  claims:
+    - {src: policy, actor: third_party, action: share, pol: deny, dt: location, cond: advertising, s: 1}
+    - {src: policy, actor: third_party, action: share, pol: affirm, dt: location, cond: fraud_prevention, s: 2}
+  expect:
+    findings: []
+
+- name: same purpose conflicts
+  claims:
+    - {src: policy, actor: third_party, action: share, pol: deny, dt: location, cond: advertising, s: 1}
+    - {src: policy, actor: ad_network, action: share, pol: affirm, dt: location, cond: advertising, s: 2}
+  expect:
+    findings: [{class: internal_contradiction, rule: IC-01, overlap: location}]
+
+- name: share implies collect (deny collect vs affirm share)
+  claims:
+    - {src: policy, actor: first_party, action: collect, pol: deny, dt: contacts, s: 1}
+    - {src: data_safety, actor: first_party, action: share, pol: affirm, dt: contacts}
+  expect:
+    findings: [{class: declaration_mismatch, rule: DM-01, overlap: contacts}]
+
+- name: collect does not imply share
+  claims:
+    - {src: policy, actor: third_party, action: share, pol: deny, dt: contacts, s: 1}
+    - {src: data_safety, actor: first_party, action: collect, pol: affirm, dt: contacts}
+  expect:
+    findings: []
+
+- name: a narrow actor denial does not cover a broad actor
+  claims:
+    - {src: policy, actor: ad_network, action: share, pol: deny, dt: email, s: 1}
+    - {src: data_safety, actor: third_party, action: share, pol: affirm, dt: email}
+  expect:
+    findings: []
+
+- name: DS declares not collected, policy says collected (DM-02)
+  claims:
+    - {src: data_safety, actor: first_party, action: collect, pol: deny, dt: contacts}
+    - {src: policy, actor: first_party, action: collect, pol: affirm, dt: contacts, s: 3}
+  expect:
+    findings: [{class: declaration_mismatch, rule: DM-02, overlap: contacts}]
+
+- name: policy affirms sharing vs DS "No data shared" (DM-03)
+  claims:
+    - {src: data_safety, actor: third_party, action: share, pol: deny, dt: personal_info, exc: [service_provider, government], synthetic: true, locator: no_data_shared}
+    - {src: policy, actor: ad_network, action: share, pol: affirm, dt: device_id, cond: advertising, s: 2}
+  expect:
+    findings: [{class: declaration_mismatch, rule: DM-03, overlap: device_id}]
+
+- name: '"No data shared" exempts service providers'
+  claims:
+    - {src: data_safety, actor: third_party, action: share, pol: deny, dt: personal_info, exc: [service_provider, government], synthetic: true, locator: no_data_shared}
+    - {src: policy, actor: service_provider, action: share, pol: affirm, dt: email, s: 2}
+  expect:
+    findings: []
+
+- name: DS denial vs permission (BM-01), not also a gap
+  claims:
+    - {src: data_safety, actor: first_party, action: collect, pol: deny, dt: contacts}
+    - {src: apk_permission, actor: first_party, action: collect, pol: affirm, dt: contacts}
+  expect:
+    findings: [{class: behavioural_mismatch, rule: BM-01, overlap: contacts}]
+    gaps: []
+
+- name: policy denial vs SDK share (BM-04)
+  claims:
+    - {src: policy, actor: third_party, action: share, pol: deny, dt: device_id, s: 1}
+    - {src: apk_sdk, actor: ad_network, action: share, pol: affirm, dt: advertising_id}
+  expect:
+    findings: [{class: behavioural_mismatch, rule: BM-04, overlap: advertising_id}]
+
+- name: cross-source conflicts fold into the internal contradiction
+  claims:
+    - {src: policy, actor: first_party, action: collect, pol: deny, dt: location, s: 1}
+    - {src: policy, actor: first_party, action: collect, pol: affirm, dt: precise_location, s: 2}
+    - {src: data_safety, actor: first_party, action: collect, pol: affirm, dt: precise_location}
+    - {src: apk_permission, actor: first_party, action: collect, pol: affirm, dt: precise_location}
+  expect:
+    findings: [{class: internal_contradiction, rule: IC-01, overlap: precise_location}]
+    gaps: []
+
+- name: APK coverage not ok skips C3 and C4
+  apk_ok: false
+  claims:
+    - {src: data_safety, actor: first_party, action: collect, pol: deny, dt: contacts}
+    - {src: apk_permission, actor: first_party, action: collect, pol: affirm, dt: contacts}
+    - {src: apk_permission, actor: first_party, action: collect, pol: affirm, dt: camera_media}
+  expect:
+    findings: []
+    gaps: []
+
+- name: low-confidence extraction is stored but suppressed
+  claims:
+    - {src: policy, actor: third_party, action: share, pol: deny, dt: personal_info, conf: 0.6, s: 1}
+    - {src: data_safety, actor: third_party, action: share, pol: affirm, dt: advertising_id}
+  expect:
+    findings: []
+    suppressed: [{class: declaration_mismatch, rule: DM-01, overlap: advertising_id}]

@@ -1,0 +1,29 @@
+# Android permissions -> ontology ids. Dangerous (runtime) permissions, plus a
+# few normal permissions that are direct data signals (AD_ID, QUERY_ALL_PACKAGES).
+# Permissions that grant no data to the app (e.g. USE_BIOMETRIC) are omitted
+# on purpose: precision over recall.
+# confidence defaults to 0.98 (deterministic mapping).
+version: "2026.10.1"
+permissions:
+  - {permission: android.permission.READ_CONTACTS, data_types: [contacts]}
+  - {permission: android.permission.WRITE_CONTACTS, data_types: [contacts], confidence: 0.85}
+  - {permission: android.permission.GET_ACCOUNTS, data_types: [email], confidence: 0.8}
+  - {permission: android.permission.ACCESS_FINE_LOCATION, data_types: [precise_location]}
+  - {permission: android.permission.ACCESS_COARSE_LOCATION, data_types: [approximate_location]}
+  - {permission: android.permission.ACCESS_BACKGROUND_LOCATION, data_types: [location]}
+  - {permission: android.permission.CAMERA, data_types: [camera_media]}
+  - {permission: android.permission.RECORD_AUDIO, data_types: [voice_recordings]}
+  - {permission: android.permission.READ_SMS, data_types: [sms]}
+  - {permission: android.permission.RECEIVE_SMS, data_types: [sms]}
+  - {permission: android.permission.RECEIVE_MMS, data_types: [sms]}
+  - {permission: android.permission.READ_PHONE_NUMBERS, data_types: [phone_number]}
+  - {permission: android.permission.READ_PHONE_STATE, data_types: [imei], confidence: 0.8}
+  - {permission: android.permission.READ_CALENDAR, data_types: [calendar]}
+  - {permission: android.permission.READ_EXTERNAL_STORAGE, data_types: [files_docs], confidence: 0.85}
+  - {permission: android.permission.READ_MEDIA_IMAGES, data_types: [photos]}
+  - {permission: android.permission.READ_MEDIA_VIDEO, data_types: [videos]}
+  - {permission: android.permission.READ_MEDIA_AUDIO, data_types: [audio]}
+  - {permission: android.permission.BODY_SENSORS, data_types: [health_info]}
+  - {permission: android.permission.ACTIVITY_RECOGNITION, data_types: [fitness_info]}
+  - {permission: com.google.android.gms.permission.AD_ID, data_types: [advertising_id]}
+  - {permission: android.permission.QUERY_ALL_PACKAGES, data_types: [installed_apps], confidence: 0.9}

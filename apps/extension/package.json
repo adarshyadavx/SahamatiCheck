@@ -1,0 +1,32 @@
+{
+  "name": "@sahamati/extension",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "SahamatiCheck Chrome extension (WXT + React, Manifest V3)",
+  "scripts": {
+    "dev": "wxt",
+    "build": "wxt build",
+    "zip": "wxt zip",
+    "prepare:types": "wxt prepare",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@sahamati/contracts": "workspace:*",
+    "idb": "8.0.3",
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
+  },
+  "devDependencies": {
+    "@types/chrome": "0.0.326",
+    "@types/react": "18.3.23",
+    "@types/react-dom": "18.3.7",
+    "@wxt-dev/module-react": "1.1.3",
+    "fake-indexeddb": "6.0.1",
+    "jsdom": "26.1.0",
+    "typescript": "5.8.3",
+    "vitest": "3.2.4",
+    "wxt": "0.20.11"
+  }
+}

@@ -1,0 +1,165 @@
+# Neutral summary templates (CLAUDE.md rule 4). Scanned by packages/i18n/check-wording.mjs.
+# Placeholders: {label} data-type label, {is_are}, {action_past}, {sdk}.
+version: "0.1.0"
+en:
+  summary:
+    IC-01: "Two statements in the policy appear inconsistent about {label}."
+    DM-01: "The policy and the data-safety section appear inconsistent about {label}."
+    DM-02: "The policy and the data-safety section appear inconsistent about {label}."
+    DM-03: "The policy states {label} {is_are} shared, while the data-safety section declares that no data is shared. These appear inconsistent."
+    BM-01: "The data-safety section declares {label} {is_are} not {action_past}, while the app requests a related permission."
+    BM-02: "The data-safety section declares {label} {is_are} not {action_past}, while the app includes an SDK ({sdk}) associated with this data."
+    BM-03: "The policy states {label} {is_are} not {action_past}, while the app requests a related permission."
+    BM-04: "The policy states {label} {is_are} not {action_past}, while the app includes an SDK ({sdk}) associated with this data."
+  benign:
+    IC: ["The two statements may refer to different features of the app."]
+    DM: ["An exception clause elsewhere in the policy may permit this sharing.", "The declaration may describe a newer app version than the policy."]
+    BM_permission: ["A permission may be requested but never used.", "Data processed only on the device does not need to be declared as collected."]
+    BM_sdk: ["The SDK may be included but configured not to collect this data.", "Data processed only on the device does not need to be declared as collected."]
+  indicator:
+    D01: "The app can access {label}. Whether it does depends on how the app uses the permission."
+    D03: "The app can use the camera. Whether it does depends on how the app uses the permission."
+    T02: "The app includes an advertising SDK ({sdk})."
+    T08: "The app can read the advertising ID. You can reset or delete it in Android settings."
+    A01: "The app requests a permission for {label}, and neither the policy nor the safety section states a purpose for it."
+  card:
+    not_checked: "Not checked in this version."
+    no_issue: "No issue found in what we could check."
+    finding:
+      IC-01: "The policy says one thing about {label} in two places."
+      DM-01: "The policy says {deny_label} {deny_is_are} not {deny_action_past}, but the safety section says {aff_label} {aff_is_are} {aff_action_past}."
+      DM-02: "The safety section says {deny_label} {deny_is_are} not {deny_action_past}, but the policy says {aff_label} {aff_is_are} {aff_action_past}."
+      DM-03: "The safety section says no data is shared, but the policy says {aff_label} {aff_is_are} {aff_action_past}."
+      BM-01: "The safety section says {deny_label} {deny_is_are} not {deny_action_past}, but the app has a related permission. This shows capability, not behaviour."
+      BM-02: "The safety section says {deny_label} {deny_is_are} not {deny_action_past}, but the app includes an SDK ({sdk}) linked to this data. This shows presence, not behaviour."
+      BM-03: "The policy says {deny_label} {deny_is_are} not {deny_action_past}, but the app has a related permission. This shows capability, not behaviour."
+      BM-04: "The policy says {deny_label} {deny_is_are} not {deny_action_past}, but the app includes an SDK ({sdk}) linked to this data. This shows presence, not behaviour."
+    inconclusive:
+      C03: "We could not check tracking before consent."
+      T05: "We could not check where the app sends data while it runs."
+      C07: "We could not check whether account deletion works."
+    reason:
+      policy_unavailable: "We could not read the privacy policy."
+      data_safety_unavailable: "We could not read the data-safety section."
+      apk_unavailable: "The app file was not available to check."
+      apk_unparseable: "We could not read the app file."
+      apk_partial_coverage: "We could only read part of the app file."
+      runtime_evidence_unavailable: "We could not check this while the app runs."
+      test_account_unavailable: "We could not check this with a test account."
+      missing_source_false_pass_prevented: "Some evidence was missing, so no result is given."
+  answers:
+    location:
+      precise: "The app can access your precise location."
+      approximate: "The app can access your approximate location."
+      general: "The app can access your location."
+      none: "We found no location permission in the app."
+      unknown: "We could not check whether the app can access your location."
+    sharing:
+      shared: "The safety section says {labels} {is_are} shared with third parties."
+      none_declared: "The safety section does not list any data as shared with third parties."
+      no_data_shared: "The safety section says no data is shared with third parties."
+      unknown: "We could not read the safety section."
+    ads:
+      ds_purpose: "The safety section lists advertising as a purpose."
+      ds_purpose_sdk: "The safety section lists advertising as a purpose. The app includes an advertising SDK ({sdks})."
+      sdk: "The app includes an advertising SDK ({sdks})."
+      none: "The safety section does not list advertising as a purpose."
+      unknown: "We could not read the safety section."
+    deletion:
+      policy: "The policy describes how to ask for deletion. We could not check that it works."
+      ds: "The safety section says you can ask for your data to be deleted. We could not check that it works."
+      none: "Not found in the privacy policy."
+      unknown: "We could not read the privacy policy."
+    grievance:
+      found: "The policy names a contact for complaints."
+      none: "Not found in the privacy policy."
+      unknown: "We could not read the privacy policy."
+    and_more: "and {n} more"
+    and_word: "and"
+  action_past:
+    collect: collected
+    share: shared
+    sell: sold
+    use: used
+    retain: retained
+hi:
+  summary:
+    IC-01: "नीति के दो कथन {label} के बारे में असंगत प्रतीत होते हैं।"
+    DM-01: "नीति और डेटा-सुरक्षा अनुभाग {label} के बारे में असंगत प्रतीत होते हैं।"
+    DM-02: "नीति और डेटा-सुरक्षा अनुभाग {label} के बारे में असंगत प्रतीत होते हैं।"
+    DM-03: "नीति के अनुसार {label} साझा किया जाता है, जबकि डेटा-सुरक्षा अनुभाग घोषित करता है कि कोई डेटा साझा नहीं किया जाता। ये असंगत प्रतीत होते हैं।"
+    BM-01: "डेटा-सुरक्षा अनुभाग घोषित करता है कि {label} {action_past} नहीं किया जाता, जबकि ऐप एक संबंधित अनुमति माँगता है।"
+    BM-02: "डेटा-सुरक्षा अनुभाग घोषित करता है कि {label} {action_past} नहीं किया जाता, जबकि ऐप में इस डेटा से जुड़ा एक SDK ({sdk}) शामिल है।"
+    BM-03: "नीति के अनुसार {label} {action_past} नहीं किया जाता, जबकि ऐप एक संबंधित अनुमति माँगता है।"
+    BM-04: "नीति के अनुसार {label} {action_past} नहीं किया जाता, जबकि ऐप में इस डेटा से जुड़ा एक SDK ({sdk}) शामिल है।"
+  benign:
+    IC: ["हो सकता है कि दोनों कथन ऐप की अलग-अलग सुविधाओं के बारे में हों।"]
+    DM: ["नीति में कहीं और दिया गया कोई अपवाद इस साझाकरण की अनुमति दे सकता है।", "हो सकता है कि घोषणा नीति से नए ऐप संस्करण के बारे में हो।"]
+    BM_permission: ["हो सकता है कि अनुमति माँगी गई हो पर कभी उपयोग न हुई हो।", "जो डेटा केवल डिवाइस पर ही संसाधित होता है, उसे एकत्र किया गया घोषित करना ज़रूरी नहीं है।"]
+    BM_sdk: ["हो सकता है कि SDK शामिल हो पर इस डेटा को एकत्र न करने के लिए कॉन्फ़िगर किया गया हो।", "जो डेटा केवल डिवाइस पर ही संसाधित होता है, उसे एकत्र किया गया घोषित करना ज़रूरी नहीं है।"]
+  indicator:
+    D01: "ऐप {label} तक पहुँच सकता है। वह पहुँचता है या नहीं, यह इस पर निर्भर है कि ऐप अनुमति का उपयोग कैसे करता है।"
+    D03: "ऐप कैमरे का उपयोग कर सकता है। वह करता है या नहीं, यह इस पर निर्भर है कि ऐप अनुमति का उपयोग कैसे करता है।"
+    T02: "ऐप में एक विज्ञापन SDK ({sdk}) शामिल है।"
+    T08: "ऐप विज्ञापन आईडी पढ़ सकता है। आप इसे Android सेटिंग में रीसेट या हटा सकते हैं।"
+    A01: "ऐप {label} के लिए अनुमति माँगता है, और न नीति में, न सुरक्षा अनुभाग में उसका कोई उद्देश्य बताया गया है।"
+  card:
+    not_checked: "इस संस्करण में जाँच नहीं की गई।"
+    no_issue: "जितनी जाँच हम कर सके, उसमें कोई समस्या नहीं मिली।"
+    finding:
+      IC-01: "नीति दो जगह {label} के बारे में अलग-अलग बातें कहती है।"
+      DM-01: "नीति के अनुसार {deny_label} {deny_action_past} नहीं किया जाता, पर सुरक्षा अनुभाग के अनुसार {aff_label} {aff_action_past} किया जाता है।"
+      DM-02: "सुरक्षा अनुभाग के अनुसार {deny_label} {deny_action_past} नहीं किया जाता, पर नीति के अनुसार {aff_label} {aff_action_past} किया जाता है।"
+      DM-03: "सुरक्षा अनुभाग के अनुसार कोई डेटा साझा नहीं किया जाता, पर नीति के अनुसार {aff_label} {aff_action_past} किया जाता है।"
+      BM-01: "सुरक्षा अनुभाग के अनुसार {deny_label} {deny_action_past} नहीं किया जाता, पर ऐप के पास एक संबंधित अनुमति है। यह क्षमता दिखाता है, व्यवहार नहीं।"
+      BM-02: "सुरक्षा अनुभाग के अनुसार {deny_label} {deny_action_past} नहीं किया जाता, पर ऐप में इस डेटा से जुड़ा एक SDK ({sdk}) शामिल है। यह उपस्थिति दिखाता है, व्यवहार नहीं।"
+      BM-03: "नीति के अनुसार {deny_label} {deny_action_past} नहीं किया जाता, पर ऐप के पास एक संबंधित अनुमति है। यह क्षमता दिखाता है, व्यवहार नहीं।"
+      BM-04: "नीति के अनुसार {deny_label} {deny_action_past} नहीं किया जाता, पर ऐप में इस डेटा से जुड़ा एक SDK ({sdk}) शामिल है। यह उपस्थिति दिखाता है, व्यवहार नहीं।"
+    inconclusive:
+      C03: "हम सहमति से पहले ट्रैकिंग की जाँच नहीं कर सके।"
+      T05: "हम यह जाँच नहीं कर सके कि ऐप चलते समय डेटा कहाँ भेजता है।"
+      C07: "हम यह जाँच नहीं कर सके कि खाता हटाना काम करता है या नहीं।"
+    reason:
+      policy_unavailable: "हम गोपनीयता नीति नहीं पढ़ सके।"
+      data_safety_unavailable: "हम डेटा-सुरक्षा अनुभाग नहीं पढ़ सके।"
+      apk_unavailable: "जाँच के लिए ऐप फ़ाइल उपलब्ध नहीं थी।"
+      apk_unparseable: "हम ऐप फ़ाइल नहीं पढ़ सके।"
+      apk_partial_coverage: "हम ऐप फ़ाइल का केवल एक भाग पढ़ सके।"
+      runtime_evidence_unavailable: "ऐप चलते समय हम यह जाँच नहीं कर सके।"
+      test_account_unavailable: "हम टेस्ट खाते से यह जाँच नहीं कर सके।"
+      missing_source_false_pass_prevented: "कुछ प्रमाण अनुपलब्ध थे, इसलिए कोई परिणाम नहीं दिया गया।"
+  answers:
+    location:
+      precise: "ऐप आपके सटीक स्थान तक पहुँच सकता है।"
+      approximate: "ऐप आपके अनुमानित स्थान तक पहुँच सकता है।"
+      general: "ऐप आपके स्थान तक पहुँच सकता है।"
+      none: "ऐप में हमें स्थान की कोई अनुमति नहीं मिली।"
+      unknown: "हम यह जाँच नहीं कर सके कि ऐप आपके स्थान तक पहुँच सकता है या नहीं।"
+    sharing:
+      shared: "सुरक्षा अनुभाग के अनुसार {labels} तृतीय पक्षों के साथ साझा किया जाता है।"
+      none_declared: "सुरक्षा अनुभाग किसी भी डेटा को तृतीय पक्षों के साथ साझा होने वाला नहीं बताता।"
+      no_data_shared: "सुरक्षा अनुभाग के अनुसार कोई डेटा तृतीय पक्षों के साथ साझा नहीं किया जाता।"
+      unknown: "हम सुरक्षा अनुभाग नहीं पढ़ सके।"
+    ads:
+      ds_purpose: "सुरक्षा अनुभाग विज्ञापन को एक उद्देश्य के रूप में बताता है।"
+      ds_purpose_sdk: "सुरक्षा अनुभाग विज्ञापन को एक उद्देश्य के रूप में बताता है। ऐप में एक विज्ञापन SDK ({sdks}) शामिल है।"
+      sdk: "ऐप में एक विज्ञापन SDK ({sdks}) शामिल है।"
+      none: "सुरक्षा अनुभाग विज्ञापन को उद्देश्य के रूप में नहीं बताता।"
+      unknown: "हम सुरक्षा अनुभाग नहीं पढ़ सके।"
+    deletion:
+      policy: "नीति बताती है कि डेटा हटाने का अनुरोध कैसे करें। हम यह जाँच नहीं सके कि यह काम करता है या नहीं।"
+      ds: "सुरक्षा अनुभाग के अनुसार आप अपना डेटा हटाने का अनुरोध कर सकते हैं। हम यह जाँच नहीं सके कि यह काम करता है या नहीं।"
+      none: "गोपनीयता नीति में नहीं मिला।"
+      unknown: "हम गोपनीयता नीति नहीं पढ़ सके।"
+    grievance:
+      found: "नीति शिकायतों के लिए एक संपर्क बताती है।"
+      none: "गोपनीयता नीति में नहीं मिला।"
+      unknown: "हम गोपनीयता नीति नहीं पढ़ सके।"
+    and_more: "और {n} अन्य"
+    and_word: "और"
+  action_past:
+    collect: एकत्र
+    share: साझा
+    sell: बेचा
+    use: उपयोग
+    retain: संग्रहित

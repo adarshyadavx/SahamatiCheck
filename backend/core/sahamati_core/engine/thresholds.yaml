@@ -1,0 +1,81 @@
+# Conflict-engine configuration (PLAN.md §4.3).
+# conf = w_class x min(c_a, c_b) x s_spec x s_neg
+#   s_spec = 1 / (1 + alpha * depth_gap)    (penalises a broad DENY vs a deep node)
+#   s_neg  = s_neg_heuristic when the DENY's negation scope was resolved heuristically
+# Findings below tau_class are stored with suppressed=true and never shown publicly.
+# PROVISIONAL: tau values are hand-set until the Month-5 PR curves on the gold set.
+version: "0.2.0"
+weights:
+  internal_contradiction: 1.0
+  declaration_mismatch: 1.0
+  behavioural_mismatch: 0.7
+  disclosure_gap: 0.4
+thresholds:
+  internal_contradiction: 0.45
+  declaration_mismatch: 0.45
+  behavioural_mismatch: 0.35
+  disclosure_gap: 0.25
+s_spec_alpha: 0.15
+s_neg_heuristic: 0.8
+# A claim on a hierarchy root ("personal information") is too broad to count as
+# mentioning a specific type when deciding disclosure gaps.
+gap_ignore_root_claims: true
+# PLAN.md: sell implies share and collect; share implies collect.
+action_implies:
+  sell: [share, collect]
+  share: [collect]
+# A negation cue directly before the verb ("never share", "do not collect") is as certain as a
+# dependency arc, so it carries no penalty. Only a cue found loosely in a window is penalised.
+s_neg_adjacent: 1.0
+
+# ---------------------------------------------------------------------------
+# Rule registry: status ladder, ceilings and the confirm gate (PLAN.md §4.9, CLAUDE.md rule 12).
+# Read by sahamati_core.rules. PROVISIONAL like tau: calibrate on the gold set in Month 5.
+# ---------------------------------------------------------------------------
+status:
+  # confirmed_conflict needs: tier strong, confidence >= confirm_threshold, and an evidence
+  # strength in `confirm_strengths` on the weaker side.
+  confirm_threshold: 0.85
+  # A claim read below this confidence can only ever be needs_review.
+  min_claim_confidence: 0.70
+  confirm_strengths: [declaration, code_path]
+  # Category for a finding whose data type (and both sides) carry no report_category.
+  default_user_category: account_profile
+  # Where a finding lands when the confirm gate fails.
+  gate_fail_cap: potential_conflict
+  # Strength of each kind of evidence, and its weight. A finding's strength is the weaker side.
+  evidence_strength_by_source:
+    policy: declaration
+    data_safety: declaration
+    apk_permission: capability
+    apk_sdk: presence
+  evidence_strength_weights:
+    declaration: 1.0
+    code_path: 0.8
+    presence: 0.5
+    capability: 0.4
+  # Absolute caps, applied in order. `when` is a registered predicate (rules/predicates.py).
+  ceilings:
+    - {when: {predicate: evidence_strength_is, args: {strength: capability}}, cap: potential_conflict, limitation: permission_only}
+    - {when: {predicate: evidence_strength_is, args: {strength: presence}}, cap: potential_conflict, limitation: sdk_presence_only}
+    - {when: {predicate: candidate_kind_is, args: {kind: gap}}, cap: needs_review, limitation: not_mentioned_only}
+    - {when: {predicate: denial_is_conditional}, cap: needs_review, limitation: conditional_denial}
+    - {when: {predicate: affirm_broader_than_denial}, cap: needs_review, limitation: broad_affirmation}
+    - {when: {predicate: claim_confidence_below_min}, cap: needs_review, limitation: low_claim_confidence}
+  # Limitations every finding of a class carries (the app was never run).
+  class_limitations:
+    behavioural_mismatch: [runtime_not_observed]
+  # Dedup/grouping (AI11): when several rules own findings in one group, this is the parent order.
+  group_parent_order: [P12, P06, P05, P07, T01]
+  # Short names for group ids ("g_ads"); one per report category (data_types.yaml: report_categories).
+  group_slugs:
+    location: loc
+    contacts: contacts
+    photos_files: files
+    camera_mic: cam
+    messages_calls: msg
+    money_payments: pay
+    identity: id
+    health: health
+    ads_tracking: ads
+    account_profile: acct

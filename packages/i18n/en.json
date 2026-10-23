@@ -1,0 +1,811 @@
+{
+  "meta": {
+    "title": "SahamatiCheck",
+    "description": "SahamatiCheck compares an Android app's privacy policy, its Play data-safety declaration and its APK, and shows with evidence where they disagree.",
+    "reportTitle": "Report: {title}",
+    "reportDescription": "Unlisted SahamatiCheck report. Automated static analysis; may be wrong."
+  },
+  "nav": {
+    "primary": "Primary",
+    "home": "Home",
+    "check": "Check an app",
+    "selfCheck": "Self-check",
+    "audit": "Audit",
+    "methodology": "Methodology",
+    "ontology": "Ontology",
+    "rights": "Your rights",
+    "about": "About",
+    "api": "API",
+    "menu": "Menu",
+    "closeMenu": "Close menu",
+    "rules": "Rules"
+  },
+  "common": {
+    "skip": "Skip to content",
+    "brand": "SahamatiCheck",
+    "brandGloss": "sahamati = consent",
+    "theme": {
+      "toLight": "Switch to light theme",
+      "toDark": "Switch to dark theme"
+    },
+    "language": {
+      "label": "Language",
+      "en": "English",
+      "hi": "हिन्दी",
+      "switchTo": "हिन्दी"
+    },
+    "demo": {
+      "label": "Demo data",
+      "fabricated": "This report is about a fabricated app and is shown only for demonstration.",
+      "offline": "The SahamatiCheck API could not be reached, so the built-in demo report is shown instead.",
+      "auditDemo": "These aggregates are fabricated demo numbers, not study results.",
+      "ontologyDemo": "The API could not be reached. A bundled subset of the ontology is shown."
+    },
+    "loading": "Loading…",
+    "retry": "Try again",
+    "backHome": "Back to home",
+    "optional": "optional",
+    "notLegalAdvice": "Not legal advice.",
+    "learnMore": "Learn more",
+    "section": "Section {n}"
+  },
+  "footer": {
+    "tagline": "Compares what an app says, declares and contains. Shows evidence, never a score.",
+    "notAffiliated": "Not affiliated with Google or with any app developer.",
+    "builtWith": "An open-source B.Tech project. Reports are unlisted and not indexed.",
+    "explore": "Explore",
+    "project": "Project"
+  },
+  "tier": {
+    "strong": "Strong",
+    "indicative": "Indicative",
+    "not_mentioned": "Not mentioned",
+    "desc": {
+      "strong": "Two written claims point in opposite directions.",
+      "indicative": "A written claim and what the app contains point in different directions.",
+      "not_mentioned": "The app contains it; no source mentions it."
+    }
+  },
+  "class": {
+    "internal_contradiction": "Internal contradiction",
+    "declaration_mismatch": "Declaration mismatch",
+    "behavioural_mismatch": "Behavioural mismatch",
+    "disclosure_gap": "Disclosure gap",
+    "desc": {
+      "internal_contradiction": "Two statements in the same policy",
+      "declaration_mismatch": "Policy compared with the data-safety section",
+      "behavioural_mismatch": "A written claim compared with the APK",
+      "disclosure_gap": "APK evidence that no source mentions"
+    }
+  },
+  "confidence": {
+    "label": "Confidence",
+    "levels": [
+      "Very low",
+      "Low",
+      "Moderate",
+      "High",
+      "Very high"
+    ],
+    "title": "Calibrated confidence {value}"
+  },
+  "source": {
+    "policy": "Privacy policy",
+    "data_safety": "Data-safety section",
+    "apk": "APK",
+    "apk_permission": "APK permission",
+    "apk_sdk": "APK SDK",
+    "short": {
+      "policy": "P",
+      "data_safety": "D",
+      "apk": "A"
+    }
+  },
+  "lead": {
+    "policy": "The policy states",
+    "data_safety": "The data-safety section declares",
+    "apk_permission": "The app requests the permission",
+    "apk_sdk": "The app includes the SDK",
+    "inconsistent": "These appear inconsistent.",
+    "policyAgain": "Elsewhere, the policy states"
+  },
+  "action": {
+    "collect": "collect",
+    "share": "share",
+    "sell": "sell",
+    "use": "use",
+    "retain": "retain"
+  },
+  "polarity": {
+    "affirm": "affirms",
+    "deny": "denies",
+    "vague": "vague"
+  },
+  "actor": {
+    "any_party": "Any party",
+    "first_party": "The app developer",
+    "third_party": "Third parties",
+    "ad_network": "Ad networks",
+    "analytics_provider": "Analytics providers",
+    "service_provider": "Service providers",
+    "government": "Government",
+    "affiliate": "Affiliates"
+  },
+  "tuple": {
+    "label": "Claim tuple",
+    "actor": "Actor",
+    "action": "Action",
+    "polarity": "Polarity",
+    "dataType": "Data type",
+    "condition": "Condition"
+  },
+  "finding": {
+    "why": "Why this might be fine",
+    "looksWrong": "This looks wrong",
+    "sending": "Sending…",
+    "sent": "Thank you. Your note was recorded for review.",
+    "sendFailed": "Could not send right now. Please try again later.",
+    "captured": "Captured {date}",
+    "openSource": "Open in source",
+    "rule": "Rule {rule}",
+    "path": "Ontology path",
+    "id": "Finding {id}",
+    "evidence": "Evidence",
+    "quoteNote": "Quoted verbatim, in the language of the source.",
+    "seeWhy": "See why",
+    "evidenceTitle": "Side-by-side evidence",
+    "reportMistake": "Report a mistake",
+    "related": "Related findings in the same area",
+    "relatedIndicators": "Also worth a closer look",
+    "strengthLabel": "Evidence type",
+    "strength": {
+      "declaration": "Written declaration",
+      "code_path": "Code path",
+      "presence": "Library present",
+      "capability": "Permission only"
+    }
+  },
+  "gap": {
+    "title": "Not mentioned anywhere",
+    "intro": "The app contains evidence of these data types, but neither the policy nor the data-safety section mentions them. Silence is not a denial, so these are not counted as conflicts.",
+    "body": "The app contains {evidence}. Neither the policy nor the data-safety section mentions {dataType}.",
+    "none": "Every data type with APK evidence is mentioned by at least one written source.",
+    "permission": "the permission {name}",
+    "sdk": "the SDK {name}"
+  },
+  "coverage": {
+    "title": "Coverage",
+    "label": "Sources analysed",
+    "ok": "Analysed",
+    "unavailable": "Not available",
+    "unreachable": "Could not be fetched",
+    "obfuscated": "Obfuscated, partly read",
+    "unparseable": "Could not be read",
+    "partial": "Partial coverage: some checks were skipped for missing sources.",
+    "full": "All three sources were analysed."
+  },
+  "summary": {
+    "title": "At a glance",
+    "agree": "Data types where all sources agree",
+    "strong": "Strong findings",
+    "indicative": "Indicative findings",
+    "not_mentioned": "Not mentioned anywhere",
+    "vague": "Vague policy statements",
+    "vagueHint": "Share of policy sentences that name no specific data type.",
+    "noScore": "SahamatiCheck never gives an app a score or a grade."
+  },
+  "triangle": {
+    "title": "Tri-source view",
+    "agree": "agree",
+    "agreeLong": "{count} data types agree across all three sources",
+    "edge": {
+      "pp": "Within the policy",
+      "pd": "Policy and data-safety",
+      "pa": "Policy and APK",
+      "da": "Data-safety and APK",
+      "gap": "Not mentioned anywhere"
+    },
+    "edgeButton": "{label}: {count}. Show these findings.",
+    "summary": "Data types on which all three sources agree: {agree}. Internal contradictions within the policy: {ic}. Declaration mismatches between the policy and the data-safety section: {dm}. Behavioural mismatches between the policy and the APK: {bmP}; between the data-safety section and the APK: {bmD}. Data types not mentioned anywhere: {gaps}.",
+    "filterHint": "Select an edge to filter the findings below.",
+    "showing": "Showing: {label}",
+    "clear": "Show all findings",
+    "legend": "Line style shows the tier: solid is strong, dashed is indicative, dotted is not mentioned. Thickness shows the count."
+  },
+  "matrix": {
+    "title": "Claim matrix",
+    "caption": "What each source says about each data type, grouped by ontology ancestor.",
+    "dataType": "Data type",
+    "policy": "Policy",
+    "dataSafety": "Data safety",
+    "apk": "APK",
+    "note": "Note",
+    "glyph": {
+      "collects": "Collects",
+      "shares": "Shares",
+      "denies": "Denies",
+      "vague": "Vague",
+      "silent": "Silent",
+      "evidence": "Evidence",
+      "unknown": "Unknown"
+    },
+    "legend": "Legend"
+  },
+  "disclaimer": {
+    "title": "Read this first",
+    "body": "This report is automated static analysis and may be wrong. It is a snapshot of one app version on one date, quotes only public sources, and is not legal advice. SahamatiCheck is not affiliated with Google or with the app developer.",
+    "snapshot": "Snapshot of version {version}, generated {date}.",
+    "noVersion": "unknown"
+  },
+  "report": {
+    "eyebrow": "Consistency report",
+    "package": "Package",
+    "developer": "Developer",
+    "generated": "Generated",
+    "findingsTitle": "Findings",
+    "findingsIntro": "Each finding quotes both sides verbatim. Below-threshold findings are never shown publicly.",
+    "noFindings": "No strong or indicative findings for this app. The sources agree wherever they overlap.",
+    "noneForFilter": "No findings on this edge.",
+    "export": "Download JSON",
+    "dispute": "Are you the developer? Dispute this report",
+    "versions": "Engine {engine} · Ontology {ontology} · Extractor {extractor}",
+    "notFound": "This report could not be found. Reports are unlisted and may have expired.",
+    "share": "This link is unlisted. Anyone with it can read the report.",
+    "cardAria": "Report card",
+    "strongTitle": "Strong findings",
+    "strongIntro": "Both sides are written claims: the policy against itself, or the policy against the data-safety section.",
+    "indicativeTitle": "Indicative findings",
+    "indicativeIntro": "One side is what the app contains, such as a permission or a library. Capability is not proof of use.",
+    "noStrong": "No strong findings for this app.",
+    "noIndicative": "No indicative findings for this app.",
+    "coverageTitle": "Coverage and rule outcomes",
+    "unreachableTitle": "We could not load this report",
+    "unreachableBody": "The SahamatiCheck API could not be reached just now, and this is not one of the built-in demo reports. Please try again shortly.",
+    "tryDemo": "Open the demo report",
+    "fallbackNote": "The built-in demo report is shown because the requested demo ({id}) could not be loaded."
+  },
+  "home": {
+    "eyebrow": "Mudra · the seal of verification",
+    "title": "Three sources. One question: do they agree?",
+    "lede": "SahamatiCheck reads an Android app's privacy policy, its Play data-safety declaration and its APK, then shows you, sentence by sentence, where they agree and where they appear inconsistent.",
+    "ctaCheck": "Check an app",
+    "ctaDemo": "See the demo report",
+    "ctaSelf": "Developer self-check",
+    "demoCaption": "Chai Wallet is a fabricated demo app.",
+    "howTitle": "How it works",
+    "how": [
+      {
+        "title": "Read",
+        "body": "The policy is split into sentences and turned into claim tuples: who does what with which data, and when."
+      },
+      {
+        "title": "Map",
+        "body": "Data-safety rows, Android permissions and SDK packages are mapped onto the same ontology of data types."
+      },
+      {
+        "title": "Compare",
+        "body": "Claims are compared only where one data type contains the other. Siblings never count as overlap."
+      },
+      {
+        "title": "Show",
+        "body": "Each finding carries both quotes, a confidence and a tier. Agreement is shown first."
+      }
+    ],
+    "principlesTitle": "What we hold to",
+    "principles": [
+      {
+        "title": "No score, ever",
+        "body": "A grade is a verdict. Reports show tier counts, coverage and vagueness instead."
+      },
+      {
+        "title": "Precision over recall",
+        "body": "Findings below a calibrated threshold stay hidden from public reports."
+      },
+      {
+        "title": "Silence is not denial",
+        "body": "Things no source mentions sit in their own section and are never counted as conflicts."
+      },
+      {
+        "title": "APKs never from Play",
+        "body": "APKs come from the AndroZoo research corpus or from a developer's own upload."
+      }
+    ],
+    "classesTitle": "Four kinds of disagreement",
+    "surfacesTitle": "Where it lives",
+    "surfaces": [
+      {
+        "title": "Chrome extension",
+        "body": "Marks conflicting rows on the Play data-safety page and highlights policy sentences in place."
+      },
+      {
+        "title": "This website",
+        "body": "Full reports, a developer self-check, the aggregate audit and the methodology."
+      }
+    ]
+  },
+  "check": {
+    "title": "Check an app",
+    "lede": "Paste a Google Play link or a package name. The report is unlisted and not indexed.",
+    "label": "Play Store link or package name",
+    "placeholder": "https://play.google.com/store/apps/details?id=in.example.chaiwallet",
+    "hint": "Try the fabricated demo app: in.example.chaiwallet",
+    "submit": "Run check",
+    "running": "Checking…",
+    "invalid": "Enter a Play Store link or a package name such as in.example.chaiwallet.",
+    "progressTitle": "Pipeline progress",
+    "stage": {
+      "queued": "Queued",
+      "ingest_listing": "Reading the Play listing",
+      "fetch_policy": "Fetching the privacy policy",
+      "map_declaration": "Mapping the data-safety section",
+      "analyse_apk": "Analysing the APK",
+      "extract_claims": "Extracting claims",
+      "normalise": "Normalising onto the ontology",
+      "detect_conflicts": "Comparing the sources",
+      "snapshot_diff": "Comparing with earlier snapshots",
+      "done": "Done"
+    },
+    "status": {
+      "pending": "Waiting",
+      "active": "In progress",
+      "done": "Complete"
+    },
+    "redirecting": "Report ready. Opening it…",
+    "apiDown": "The SahamatiCheck API could not be reached at {base}.",
+    "apiDownDemo": "You can still open the demo report for the fabricated app Chai Wallet.",
+    "openDemo": "Open the demo report",
+    "jobError": "The check stopped with an error: {error}",
+    "etiquette": "Play listings are fetched slowly and politely. APKs are never downloaded from Play."
+  },
+  "selfCheck": {
+    "title": "Developer self-check",
+    "lede": "Check your own app before you publish. Upload your APK, point to your policy, and describe your data-safety answers. The result is private and deleted after 30 days.",
+    "apk": "APK file",
+    "apkHint": "Your own build only. It is analysed statically and never shared.",
+    "package": "Package name",
+    "policyUrl": "Privacy policy URL",
+    "policyText": "Or paste the policy text",
+    "dataSafety": "Data-safety answers (JSON)",
+    "dataSafetyHint": "The same answers you give in the Play Console, in the documented JSON form.",
+    "dataSafetyFile": "Or upload a JSON file",
+    "consent": "I confirm this is my own app, or I am authorised to check it.",
+    "submit": "Run private self-check",
+    "running": "Analysing…",
+    "needPolicy": "Provide a policy URL or paste the policy text.",
+    "needApk": "Choose an APK file.",
+    "badJson": "The data-safety answers are not valid JSON.",
+    "private": "Private result. Not listed, not shared, deleted after 30 days. Below-threshold findings are included here for your own review.",
+    "resultTitle": "Your private report",
+    "failed": "The self-check could not be completed: {error}",
+    "cli": "Prefer the terminal? The same check runs as a CLI.",
+    "jobQueued": "Your self-check was queued. Job {id}."
+  },
+  "audit": {
+    "title": "Audit of Indian apps",
+    "lede": "Aggregate results from the fixed research corpus. No app names, icons or rankings. Cells with fewer than five apps are merged.",
+    "corpus": "Apps in corpus",
+    "categories": "Categories",
+    "byCategory": "Finding rates by category",
+    "byCategoryDesc": "Share of apps in each category with at least one finding of each tier.",
+    "vagueTitle": "Vagueness by category",
+    "vagueDesc": "Average share of policy sentences that name no specific data type.",
+    "failuresTitle": "Pipeline failure rates",
+    "failuresDesc": "Reported honestly, because they bound what the study can say.",
+    "policyUnreachable": "Policy could not be fetched",
+    "apkUnparseable": "APK could not be read",
+    "category": "Category",
+    "apps": "Apps",
+    "table": "Table view",
+    "rate": "{value} of apps",
+    "series": {
+      "strong": "Strong",
+      "indicative": "Indicative",
+      "gap": "Not mentioned"
+    },
+    "loadFailed": "Live aggregates are unavailable."
+  },
+  "ontology": {
+    "title": "Ontology explorer",
+    "lede": "Every comparison runs on this ontology. Two claims overlap only when one data type contains the other; siblings never overlap.",
+    "search": "Search nodes",
+    "searchPlaceholder": "location, संपर्क, advertising_id…",
+    "kind": {
+      "all": "All",
+      "data_type": "Data types",
+      "actor": "Actors",
+      "purpose": "Purposes"
+    },
+    "results": "{count} nodes",
+    "path": "Path to root",
+    "children": "Children",
+    "root": "Root node",
+    "none": "No nodes match this search.",
+    "version": "Ontology version {version}"
+  },
+  "methodology": {
+    "title": "Methodology",
+    "lede": "How SahamatiCheck turns three documents into evidence, and why it chooses precision over recall.",
+    "sections": [
+      {
+        "title": "The claim tuple",
+        "body": [
+          "Every source is reduced to claim tuples: an actor, an action, a data type, an optional condition, and a polarity of affirm, deny or vague.",
+          "Policy sentences are read by a rule-based extractor that handles negation scope and exception clauses. A language-model fallback is used only for hard sentences, and every such call is logged for reproducibility."
+        ]
+      },
+      {
+        "title": "One ontology for three sources",
+        "body": [
+          "Policy phrases, Play data-safety categories, Android permissions and SDK packages are all mapped onto one versioned ontology of data types, actors and purposes.",
+          "Two claims are compared only when one data type is an ancestor of the other. Siblings never overlap, so 'email' is never compared with 'phone number'."
+        ]
+      },
+      {
+        "title": "Four classes, three tiers",
+        "body": [
+          "Internal contradictions and declaration mismatches compare two written claims and are tier strong.",
+          "Behavioural mismatches compare a written denial with evidence in the APK and are tier indicative, because a requested permission is not proof of use.",
+          "Disclosure gaps are APK evidence that no written source mentions. They are tier not mentioned and sit in their own section."
+        ]
+      },
+      {
+        "title": "Confidence and thresholds",
+        "body": [
+          "Confidence is the class weight times the weaker side's confidence, times a specificity penalty for broad claims, times a penalty when negation scope was resolved heuristically.",
+          "Each class has a threshold set from precision-recall curves on a hand-annotated gold set. Findings below it are stored but never shown publicly."
+        ]
+      },
+      {
+        "title": "Data sourcing",
+        "body": [
+          "Play listings are fetched only for user-requested apps and the fixed corpus, at one request every two seconds. APKs come only from the AndroZoo research corpus or from a developer's own self-check upload, never from Play.",
+          "The extension reads only the page the user is already viewing, and sends policy text only after the user asks."
+        ]
+      },
+      {
+        "title": "Limits",
+        "body": [
+          "This is static analysis. It cannot see what an app does at run time, and a permission in the manifest may never be used.",
+          "Evaluation figures (inter-annotator agreement, precision-recall curves and failure rates) will be published here once the gold set is frozen."
+        ]
+      }
+    ],
+    "formula": "confidence = w_class × min(c_a, c_b) × s_spec × s_neg",
+    "classTable": {
+      "class": "Class",
+      "compares": "Compares",
+      "tier": "Tier",
+      "weight": "Weight"
+    }
+  },
+  "rights": {
+    "title": "Your rights under the DPDP Act, 2023",
+    "lede": "A plain-language guide to the Digital Personal Data Protection Act, 2023 for people in India. Not legal advice; check the commencement status of the DPDP Rules before relying on any provision.",
+    "rightsTitle": "Your rights as a Data Principal",
+    "items": [
+      {
+        "title": "Consent you can withdraw",
+        "ref": "Section 6",
+        "body": "Consent must be free, specific, informed and unambiguous, and you can withdraw it as easily as you gave it."
+      },
+      {
+        "title": "Access to information",
+        "ref": "Section 11",
+        "body": "You can ask a Data Fiduciary for a summary of your personal data being processed, the processing activities, and the identities of others it has shared your data with."
+      },
+      {
+        "title": "Correction and erasure",
+        "ref": "Section 12",
+        "body": "You can ask for your personal data to be corrected, completed, updated or erased."
+      },
+      {
+        "title": "Grievance redressal",
+        "ref": "Section 13",
+        "body": "You can raise a grievance with the Data Fiduciary, which must respond within the prescribed period. After that, you can approach the Data Protection Board of India."
+      },
+      {
+        "title": "Nominate someone",
+        "ref": "Section 14",
+        "body": "You can nominate another person to exercise your rights in case of death or incapacity."
+      }
+    ],
+    "dutiesTitle": "Your duties",
+    "duties": "Section 15 asks Data Principals not to file false or frivolous grievances and not to impersonate others. Keep requests factual.",
+    "letterTitle": "A template request",
+    "letterIntro": "Send this to the grievance officer or contact named in the app's privacy policy. Keep a copy and the date.",
+    "letter": "To the Grievance Officer,\n\nI am a user of the app {app}. Under Section 11 of the Digital Personal Data Protection Act, 2023, I request a summary of the personal data about me that you process, the processing activities, and the identities of the Data Fiduciaries and Data Processors with whom it has been shared.\n\nI also note that your privacy policy and your Play data-safety section appear to describe the handling of {dataType} differently. Please clarify which description is accurate.\n\nPlease respond within the period prescribed under the Act.\n\nName:\nRegistered email or phone:\nDate:",
+    "letterApp": "[app name]",
+    "letterDataType": "[data type]",
+    "copy": "Copy letter",
+    "copied": "Copied",
+    "disclaimer": "This page is general information, not legal advice. The Act's provisions take effect as notified under the DPDP Rules; check their status."
+  },
+  "about": {
+    "title": "About SahamatiCheck",
+    "lede": "Sahamati means consent. Consent is only meaningful when what an app says, declares and does line up.",
+    "body": [
+      "SahamatiCheck is an open-source B.Tech main project. It compares three sources for an Android app: the privacy policy, the Play data-safety declaration, and the APK's permissions and SDKs.",
+      "It ships as a Chrome extension and this website, both backed by one API. The clients only display results; all analysis lives in the backend.",
+      "Reports are user-initiated, unlisted and not indexed. Demos use fabricated apps only. The public audit shows aggregates only."
+    ],
+    "disputeTitle": "Dispute policy",
+    "dispute": [
+      "Developers can dispute any finding. Verify ownership through your Play contact email domain, or by placing a token on your policy page or under /.well-known/.",
+      "We acknowledge within 72 hours and hide the disputed finding while it is under review.",
+      "We then either fix the ruleset, with the change logged, or attach your response to the finding.",
+      "A public dispute log shows counts only."
+    ],
+    "formTitle": "Open a dispute",
+    "reportId": "Report ID",
+    "findingId": "Finding ID",
+    "email": "Contact email",
+    "emailHint": "Use an address on your Play contact email domain if you can.",
+    "message": "What should we look at?",
+    "submit": "Send dispute",
+    "sending": "Sending…",
+    "sent": "Dispute received. We acknowledge within 72 hours.",
+    "failed": "Could not send the dispute right now. Please try again later.",
+    "citeTitle": "Cite",
+    "citation": "SahamatiCheck: checking Android privacy claims across policy, declaration and APK. B.Tech main project, 2026."
+  },
+  "docs": {
+    "title": "API",
+    "lede": "One public contract serves both the website and the extension. All routes live under /v1.",
+    "base": "Base URL",
+    "method": "Method",
+    "path": "Path",
+    "purpose": "Purpose",
+    "interactive": "Interactive OpenAPI docs",
+    "openapi": "OpenAPI JSON",
+    "exampleTitle": "Example",
+    "limitsTitle": "Limits",
+    "limits": "No accounts. Ten new checks per hour per IP; cached report reads up to 120 per minute.",
+    "endpoints": {
+      "checks": "Start a check. Returns a cached report or a job.",
+      "job": "Job status, with Retry-After.",
+      "events": "Server-sent events for job progress.",
+      "report": "Latest report for a package.",
+      "reportById": "A report by its unlisted ID.",
+      "history": "Policy drift: claim-level history.",
+      "segments": "Sentence spans and tuples for policy text.",
+      "selfCheck": "Private self-check upload.",
+      "ontology": "The versioned ontology.",
+      "feedback": "Mark a finding as looking wrong.",
+      "disputes": "Open a developer dispute.",
+      "aggregates": "Aggregate audit results.",
+      "health": "Health check.",
+      "rules": "The rule registry: id, name, family, phase, enabled, version."
+    }
+  },
+  "notFound": {
+    "title": "Page not found",
+    "body": "This page does not exist, or the link has expired."
+  },
+  "dt": {
+    "personal_info": "Personal info",
+    "app_activity": "App activity",
+    "identifiers": "Identifiers",
+    "device_id": "Device or other IDs",
+    "advertising_id": "Advertising ID",
+    "android_id": "Android ID",
+    "user_id": "User IDs",
+    "location": "Location",
+    "precise_location": "Precise location",
+    "approximate_location": "Approximate location",
+    "contacts": "Contacts",
+    "contact_info": "Contact info",
+    "name": "Name",
+    "email": "Email address",
+    "phone_number": "Phone number",
+    "address": "Address",
+    "financial_info": "Financial info",
+    "payment_info": "Payment info",
+    "purchase_history": "Purchase history",
+    "credit_info": "Credit info",
+    "health_info": "Health and fitness",
+    "fitness_info": "Fitness info",
+    "photos_media": "Photos and videos",
+    "photos": "Photos",
+    "videos": "Videos",
+    "camera_media": "Camera photos",
+    "audio": "Audio",
+    "voice_recordings": "Voice recordings",
+    "microphone_audio": "Microphone audio",
+    "messages": "Messages",
+    "sms": "SMS or MMS",
+    "emails": "Emails",
+    "files_docs": "Files and docs",
+    "calendar": "Calendar events",
+    "app_interactions": "App interactions",
+    "search_history": "In-app search history",
+    "installed_apps": "Installed apps",
+    "web_history": "Web browsing history",
+    "diagnostics": "App info and performance",
+    "crash_logs": "Crash logs",
+    "performance_data": "Diagnostics",
+    "sensitive_info": "Sensitive info",
+    "biometrics": "Biometric data",
+    "government_id": "Government ID"
+  },
+  "status": {
+    "confirmed_conflict": "Difference found",
+    "potential_conflict": "Possible difference",
+    "needs_review": "Unclear, needs a closer look",
+    "inconclusive": "Couldn't check",
+    "no_issue_detected": "No issue found in what we could check",
+    "desc": {
+      "confirmed_conflict": "Two sources state opposite things, with strong evidence on both sides.",
+      "potential_conflict": "The sources appear to differ, but the evidence is not strong enough to call it confirmed.",
+      "needs_review": "Something unclear that is worth a closer look. It is not a difference between sources.",
+      "inconclusive": "We could not check this, so nothing can be said either way.",
+      "no_issue_detected": "Nothing inconsistent turned up in the evidence we had. This does not mean the app is safe."
+    },
+    "label": "Status"
+  },
+  "color": {
+    "red": "Red",
+    "orange": "Orange",
+    "yellow": "Yellow",
+    "grey": "Grey",
+    "green": "Green"
+  },
+  "card": {
+    "title": "What we found, by area",
+    "lede": "Ten everyday areas, each with a status and a plain-language note. This is not a score or a grade, and there is no overall colour.",
+    "noScore": "No score, no grade. Each area stands on its own.",
+    "answersTitle": "Five quick answers",
+    "categoriesTitle": "By area",
+    "couldNotCheck": "What we could not check",
+    "noteMissing": "See “Rules not evaluated” below for what was not checked.",
+    "checkedAt": "Checked {date}",
+    "seeWhy": "See why",
+    "seeIndicator": "See details",
+    "keyTitle": "Status key",
+    "answerOpen": "Related finding",
+    "category": {
+      "location": "Location",
+      "contacts": "Contacts",
+      "photos_files": "Photos and files",
+      "camera_mic": "Camera and microphone",
+      "messages_calls": "Messages and calls",
+      "money_payments": "Money and payments",
+      "identity": "Identity documents",
+      "health": "Health",
+      "ads_tracking": "Ads and tracking",
+      "account_profile": "Account and profile"
+    },
+    "answer": {
+      "location": "Can the app use my location?",
+      "sharing": "Is my data shared with others?",
+      "ads": "Is my data used for ads?",
+      "deletion": "Can I ask for my data to be deleted?",
+      "grievance": "Who do I contact with a complaint?"
+    }
+  },
+  "limitation": {
+    "title": "What this evidence cannot show",
+    "permission_only": "Based on a permission only. A permission shows the app can do something, not that it does.",
+    "sdk_presence_only": "Based on a library found in the app. Its presence does not show how the app uses it.",
+    "runtime_not_observed": "We did not watch the app run, so we cannot say what it actually sends.",
+    "confidence_below_confirm_threshold": "Our confidence is below the level we need to call this a confirmed difference.",
+    "generic": "This result has a limit on what the evidence can show."
+  },
+  "reason": {
+    "runtime_evidence_unavailable": "Needs watching the app while it runs. This version only analyses the app statically.",
+    "test_account_unavailable": "Needs a test account to try the feature. None was available.",
+    "apk_unavailable": "The app package (APK) was not available, so checks that read the code did not run.",
+    "apk_unparseable": "The app package could not be read.",
+    "apk_partial_coverage": "The app package could only be partly read (its code is obfuscated), so a missing library or permission cannot be ruled out.",
+    "policy_unavailable": "The privacy policy could not be fetched or read.",
+    "data_safety_unavailable": "The Play data-safety section was not available.",
+    "not_enabled_in_this_version": "This check is not turned on in this version.",
+    "missing_source_false_pass_prevented": "A needed source was missing, so we did not report this as fine.",
+    "generic": "This check could not be completed."
+  },
+  "rulesNotEvaluated": {
+    "title": "Rules not evaluated",
+    "intro": "These checks could not run with the evidence available. “Couldn't check” is never a pass: it means nothing can be said either way.",
+    "none": "Every enabled rule ran with usable sources.",
+    "rule": "Rule {id}",
+    "meta": "Family {family} · Phase {phase}",
+    "why": "Why it did not run"
+  },
+  "statusCounts": {
+    "title": "Rule outcomes",
+    "note": "Counted over registry rules, not over findings. This is not a score.",
+    "ran": "{n} rules listed"
+  },
+  "indicators": {
+    "title": "Worth a closer look",
+    "intro": "These are not differences between sources. They are things the app can do, shown so you can decide whether they matter to you. They are not counted in the totals above.",
+    "none": "Nothing to show here for this app.",
+    "rule": "Rule {rule}",
+    "related": "Related to a finding in the same area",
+    "relatedLink": "Open the related finding"
+  },
+  "confidenceBand": {
+    "strong": "Strong confidence",
+    "moderate": "Moderate confidence",
+    "weak": "Weak confidence",
+    "title": "Confidence {value}. Strong is 0.85 or higher."
+  },
+  "actions": {
+    "title": "What can I do?",
+    "rights": "Read about your rights under the DPDP Act",
+    "status": {
+      "confirmed_conflict": [
+        "Read both quotes in “See why”. Check whether the policy or the data-safety section is the newer one.",
+        "Ask the developer to clarify. Developers can respond through the dispute form on the About page."
+      ],
+      "potential_conflict": [
+        "Read the “Why this might be fine” notes before drawing a conclusion.",
+        "If it matters to you, ask the developer which statement is current."
+      ],
+      "needs_review": [
+        "Nothing is inconsistent between the sources here. Decide whether this access matters to you, and change the permission if it does."
+      ],
+      "inconclusive": [
+        "Nothing can be said either way. Treat this area as unchecked, not as fine."
+      ],
+      "no_issue_detected": [
+        "Nothing inconsistent turned up in the evidence we had. That is not a clearance: see what we could not check."
+      ]
+    },
+    "category": {
+      "location": [
+        "Open Android Settings → Apps → this app → Permissions → Location and choose “Allow only while using the app” or “Don't allow”.",
+        "Look for a location setting inside the app itself."
+      ],
+      "contacts": [
+        "Open Settings → Apps → this app → Permissions → Contacts and choose “Don't allow” if you do not need contact features."
+      ],
+      "photos_files": [
+        "In Settings → Apps → this app → Permissions, give Photos and videos or Files only the access you need (selected photos only, where offered)."
+      ],
+      "camera_mic": [
+        "In Settings → Apps → this app → Permissions, set Camera and Microphone to “Allow only while using the app” or “Don't allow”.",
+        "On Android 12 and later, an indicator appears in the status bar while the camera or microphone is in use."
+      ],
+      "messages_calls": [
+        "In Settings → Apps → this app → Permissions, review SMS, Phone and Call logs.",
+        "Grant these only when the app clearly needs them, for example to read a one-time code."
+      ],
+      "money_payments": [
+        "Check which payment methods and UPI IDs are saved in the app and remove the ones you do not use.",
+        "Look through your bank or UPI statements for anything you do not recognise."
+      ],
+      "identity": [
+        "Share identity documents only when the service needs them, and ask how long the app keeps them.",
+        "You can ask the developer to correct or delete the identity details they hold."
+      ],
+      "health": [
+        "In Settings → Apps → this app → Permissions, review the Health and Body sensors permissions.",
+        "Ask the developer which health data is kept and who it is shared with."
+      ],
+      "ads_tracking": [
+        "Open Settings → Privacy → Ads and choose “Delete advertising ID”, or reset it.",
+        "Look for an ads or analytics opt-out inside the app."
+      ],
+      "account_profile": [
+        "Look in the app under Settings or Profile for “Delete account”.",
+        "If you cannot find it, write to the grievance contact named in the policy and ask for deletion."
+      ]
+    }
+  },
+  "rules": {
+    "title": "Rule registry",
+    "lede": "Every check SahamatiCheck can run, with its family and phase, and whether it is turned on in this version. Rules are data: reports cite them by id.",
+    "colId": "Rule",
+    "colName": "Name",
+    "colFamily": "Family",
+    "colPhase": "Phase",
+    "colEnabled": "Enabled",
+    "colVersion": "Version",
+    "on": "On",
+    "off": "Off",
+    "empty": "The API returned no rules.",
+    "notFound": "This API version does not list its rules yet.",
+    "unreachable": "The SahamatiCheck API could not be reached at {base}.",
+    "count": "{n} rules"
+  }
+}

@@ -1,0 +1,28 @@
+# Virtual uv workspace root for the SahamatiCheck backend.
+# uv:   cd backend && uv sync --all-packages --extra dev
+# pip:  cd backend && python3 -m venv .venv && .venv/bin/pip install -e "./core[dev]" -e ./api -e ./worker
+
+[tool.uv.workspace]
+members = ["core", "api", "worker"]
+
+[tool.uv.sources]
+sahamati-core = { workspace = true }
+sahamati-api = { workspace = true }
+sahamati-worker = { workspace = true }
+
+[tool.pytest.ini_options]
+testpaths = ["core/tests", "api/tests", "worker/tests"]
+addopts = "--import-mode=importlib -q"
+filterwarnings = ["ignore::DeprecationWarning", "ignore:Using `httpx` with `starlette.testclient`"]
+
+[tool.ruff]
+line-length = 110
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+ignore = ["E501"]
+
+[tool.mypy]
+python_version = "3.11"
+ignore_missing_imports = true

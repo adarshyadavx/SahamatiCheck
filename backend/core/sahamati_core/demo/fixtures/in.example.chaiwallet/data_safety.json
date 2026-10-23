@@ -1,0 +1,20 @@
+{
+  "schema": "sahamati.data_safety/v1",
+  "package": "in.example.chaiwallet",
+  "captured_at": "2026-10-19",
+  "source": "fixture",
+  "no_data_collected": false,
+  "no_data_shared": false,
+  "data_types": [
+    {"category": "Personal info", "type": "Name", "collected": true, "shared": false, "purposes_collected": ["Account management"], "purposes_shared": []},
+    {"category": "Personal info", "type": "Email address", "collected": true, "shared": false, "purposes_collected": ["Account management", "Developer communications"], "purposes_shared": []},
+    {"category": "Personal info", "type": "Phone number", "collected": true, "shared": false, "purposes_collected": ["Account management"], "purposes_shared": []},
+    {"category": "Financial info", "type": "Other financial info", "collected": true, "shared": false, "purposes_collected": ["App functionality"], "purposes_shared": []},
+    {"category": "Location", "type": "Precise location", "collected": true, "shared": false, "purposes_collected": ["Fraud prevention, security, and compliance"], "purposes_shared": []},
+    {"category": "Device or other IDs", "type": "Device or other IDs", "collected": true, "shared": true, "purposes_collected": ["Analytics"], "purposes_shared": ["Advertising or marketing"]},
+    {"category": "App info and performance", "type": "Crash logs", "collected": true, "shared": false, "purposes_collected": ["Analytics"], "purposes_shared": []},
+    {"category": "Contacts", "type": "Contacts", "collected": false, "shared": false},
+    {"category": "Health and fitness", "type": "Health info", "collected": false, "shared": false}
+  ],
+  "security_practices": {"encrypted_in_transit": true, "deletion_request": true}
+}

@@ -1,0 +1,43 @@
+# Runtime and test-account rules are stubs in this version: they always report inconclusive
+# (CLAUDE.md rule 13), so the report shows honestly that they were not run.
+family: C
+rules:
+  - id: C03
+    version: 1
+    name: Tracking before consent
+    name_hi: सहमति से पहले ट्रैकिंग
+    family: C
+    phase: 1
+    enabled: true
+    severity: high
+    score_track: privacy
+    evidence_sources: {required: [runtime]}
+    result_on_match: potential_conflict
+    inconclusive_reasons: [runtime_evidence_unavailable]
+    categories: [ads_tracking]
+    plain_language: Checks whether the app contacts tracking services before the user has given consent. Needs runtime evidence, which this version does not collect.
+    plain_language_hi: जाँचता है कि उपयोगकर्ता की सहमति से पहले ऐप ट्रैकिंग सेवाओं से संपर्क करता है या नहीं। इसके लिए रनटाइम प्रमाण चाहिए, जो इस संस्करण में एकत्र नहीं किया जाता।
+    tests:
+      - case: inconclusive
+        name: static analysis cannot observe runtime behaviour
+        expect: {status: inconclusive, reason: runtime_evidence_unavailable}
+
+  - id: C07
+    version: 1
+    name: Account deletion functionality
+    name_hi: खाता हटाने की सुविधा
+    family: C
+    phase: 1
+    enabled: true
+    severity: medium
+    score_track: privacy
+    evidence_sources: {required: [test_account]}
+    result_on_match: potential_conflict
+    inconclusive_reasons: [test_account_unavailable]
+    categories: [account_profile]
+    plain_language: Checks that the account deletion the policy describes actually works. Needs a test account, which this version does not use.
+    plain_language_hi: जाँचता है कि नीति में बताई गई खाता हटाने की सुविधा सचमुच काम करती है। इसके लिए टेस्ट खाता चाहिए, जिसका इस संस्करण में उपयोग नहीं होता।
+    tests:
+      - case: inconclusive
+        name: no test account is available
+        expect: {status: inconclusive, reason: test_account_unavailable}

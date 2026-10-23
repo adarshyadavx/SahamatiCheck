@@ -1,0 +1,7 @@
+# Fabricated class list for the fictional demo app "Dosa Notes".
+in.example.dosanotes.NotesActivity
+in.example.dosanotes.sync.SyncWorker
+in.example.dosanotes.editor.PhotoAttachment
+androidx.work.WorkManager
+androidx.room.RoomDatabase
+com.google.firebase.crashlytics.FirebaseCrashlytics

@@ -1,0 +1,10 @@
+{
+  "package": "in.example.chaiwallet",
+  "title": "Chai Wallet (demo)",
+  "developer": "Example Labs",
+  "category": "Finance",
+  "policy_url": "https://chaiwallet.example/privacy",
+  "is_demo": true,
+  "captured_at": "2026-10-19",
+  "note": "Fabricated app for demos and tests. Not a real product."
+}

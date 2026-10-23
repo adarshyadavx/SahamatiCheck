@@ -1,0 +1,57 @@
+family: A
+rules:
+  - id: A01
+    version: 1
+    name: Sensitive permission without apparent purpose
+    name_hi: स्पष्ट उद्देश्य के बिना संवेदनशील अनुमति
+    family: A
+    phase: 1
+    enabled: true
+    investigation: true
+    severity: low
+    score_track: privacy
+    evidence_sources: {required: [apk], any_of: [policy, data_safety]}
+    engine_rules: [APK-PERM]
+    conditions:
+      - {predicate: data_type_under, args: {nodes: [location, contacts, messages, photos_media, files_docs, calendar, health_info, biometric_info]}}
+      - {predicate: no_stated_purpose}
+    result_on_match: needs_review
+    inconclusive_reasons: [apk_unavailable, apk_unparseable, apk_partial_coverage, policy_unavailable, data_safety_unavailable]
+    categories: []
+    applies_to_all: true
+    dedupe: data_type
+    plain_language: The app requests a sensitive permission and neither the policy nor the data-safety section states a purpose for that kind of data.
+    plain_language_hi: ऐप एक संवेदनशील अनुमति माँगता है और न नीति में, न डेटा-सुरक्षा अनुभाग में, उस प्रकार के डेटा का कोई उद्देश्य बताया गया है।
+    tests:
+      - case: positive
+        name: the fine-location permission and no stated purpose for location anywhere
+        claims:
+          - {src: apk_permission, actor: first_party, action: collect, pol: affirm, dt: precise_location, text: android.permission.ACCESS_FINE_LOCATION}
+        expect: {status: needs_review, indicators: 1}
+      - case: positive
+        name: the policy only denies location, which states no purpose
+        claims:
+          - {src: policy, actor: first_party, action: collect, pol: deny, dt: precise_location, s: 1}
+          - {src: apk_permission, actor: first_party, action: collect, pol: affirm, dt: precise_location, text: android.permission.ACCESS_FINE_LOCATION}
+        expect: {status: needs_review, indicators: 1}
+      - case: negative
+        name: the policy states a purpose for precise location
+        claims:
+          - {src: policy, actor: first_party, action: collect, pol: affirm, dt: precise_location, cond: fraud_prevention, s: 1}
+          - {src: apk_permission, actor: first_party, action: collect, pol: affirm, dt: precise_location, text: android.permission.ACCESS_FINE_LOCATION}
+        expect: {status: no_issue_detected, indicators: 0}
+      - case: negative
+        name: a permission that is not in the sensitive set
+        claims:
+          - {src: apk_permission, actor: first_party, action: collect, pol: affirm, dt: advertising_id, text: com.google.android.gms.permission.AD_ID}
+        expect: {status: no_issue_detected, indicators: 0}
+      - case: inconclusive
+        name: no APK
+        coverage: {apk: unavailable}
+        expect: {status: inconclusive, reason: apk_unavailable}
+      - case: inconclusive
+        name: neither the policy nor the declaration, so "no stated purpose" cannot be judged
+        claims:
+          - {src: apk_permission, actor: first_party, action: collect, pol: affirm, dt: precise_location, text: android.permission.ACCESS_FINE_LOCATION}
+        coverage: {policy: unavailable, data_safety: unavailable}
+        expect: {status: inconclusive, reason: policy_unavailable}

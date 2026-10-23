@@ -1,0 +1,85 @@
+# Investigation rules: "worth a closer look". They emit indicators[] (needs_review), never findings[],
+# and are never counted in `summary` (CLAUDE.md rule 14).
+family: D
+rules:
+  - id: D01
+    version: 1
+    name: Location data indicator
+    name_hi: स्थान डेटा संकेतक
+    family: D
+    phase: 1
+    enabled: true
+    investigation: true
+    severity: medium
+    score_track: privacy
+    evidence_sources: {required: [apk]}
+    engine_rules: [APK-PERM]
+    conditions:
+      - {predicate: data_type_under, args: {nodes: [location]}}
+    result_on_match: needs_review
+    inconclusive_reasons: [apk_unavailable, apk_unparseable, apk_partial_coverage]
+    categories: [location]
+    dedupe: category
+    plain_language: The app requests a location permission. This shows capability, not what the app does with it.
+    plain_language_hi: ऐप स्थान की अनुमति माँगता है। यह क्षमता दिखाता है, यह नहीं कि ऐप उसका क्या करता है।
+    tests:
+      - case: positive
+        name: the app requests the fine-location permission
+        claims:
+          - {src: apk_permission, actor: first_party, action: collect, pol: affirm, dt: precise_location, text: android.permission.ACCESS_FINE_LOCATION}
+        expect: {status: needs_review, indicators: 1}
+      - case: positive
+        name: fine and coarse location produce one indicator for the category
+        claims:
+          - {src: apk_permission, actor: first_party, action: collect, pol: affirm, dt: precise_location, text: android.permission.ACCESS_FINE_LOCATION}
+          - {src: apk_permission, actor: first_party, action: collect, pol: affirm, dt: approximate_location, text: android.permission.ACCESS_COARSE_LOCATION}
+        expect: {status: needs_review, indicators: 1}
+      - case: negative
+        name: the app requests only the camera permission
+        claims:
+          - {src: apk_permission, actor: first_party, action: collect, pol: affirm, dt: camera_media, text: android.permission.CAMERA}
+        expect: {status: no_issue_detected, indicators: 0}
+      - case: inconclusive
+        name: no APK
+        coverage: {apk: unavailable}
+        expect: {status: inconclusive, reason: apk_unavailable}
+      - case: inconclusive
+        name: the APK could not be parsed
+        coverage: {apk: unparseable}
+        expect: {status: inconclusive, reason: apk_unparseable}
+
+  - id: D03
+    version: 1
+    name: Camera access indicator
+    name_hi: कैमरा एक्सेस संकेतक
+    family: D
+    phase: 1
+    enabled: true
+    investigation: true
+    severity: medium
+    score_track: privacy
+    evidence_sources: {required: [apk]}
+    engine_rules: [APK-PERM]
+    conditions:
+      - {predicate: data_type_under, args: {nodes: [camera_media]}}
+    result_on_match: needs_review
+    inconclusive_reasons: [apk_unavailable, apk_unparseable, apk_partial_coverage]
+    categories: [camera_mic]
+    dedupe: category
+    plain_language: The app requests the camera permission. This shows capability, not what the app does with it.
+    plain_language_hi: ऐप कैमरे की अनुमति माँगता है। यह क्षमता दिखाता है, यह नहीं कि ऐप उसका क्या करता है।
+    tests:
+      - case: positive
+        name: the app requests the camera permission
+        claims:
+          - {src: apk_permission, actor: first_party, action: collect, pol: affirm, dt: camera_media, text: android.permission.CAMERA}
+        expect: {status: needs_review, indicators: 1}
+      - case: negative
+        name: the app requests only the location permission
+        claims:
+          - {src: apk_permission, actor: first_party, action: collect, pol: affirm, dt: precise_location, text: android.permission.ACCESS_FINE_LOCATION}
+        expect: {status: no_issue_detected, indicators: 0}
+      - case: inconclusive
+        name: the APK is obfuscated, so the result is partial
+        coverage: {apk: obfuscated}
+        expect: {status: inconclusive, reason: apk_partial_coverage}

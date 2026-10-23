@@ -1,0 +1,10 @@
+{
+  "package": "in.example.shopkart",
+  "title": "ShopKart (demo)",
+  "developer": "Example Labs",
+  "category": "Shopping",
+  "policy_url": "https://shopkart.example/privacy",
+  "is_demo": true,
+  "captured_at": "2026-10-19",
+  "note": "Fabricated app for the golden test (backend/core/tests/golden). Not a real product."
+}

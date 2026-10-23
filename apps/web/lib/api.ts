@@ -1,0 +1,242 @@
+import {
+  API_BASE_DEFAULT,
+  type AuditAggregate,
+  type CheckRequest,
+  type CheckResponse,
+  type Job,
+  type Ontology,
+  type Report,
+} from "@sahamati/contracts";
+
+/** Base URL the browser uses. */
+export const PUBLIC_API_BASE = (process.env.NEXT_PUBLIC_API_BASE || API_BASE_DEFAULT).replace(/\/+$/, "");
+
+/** Base URL the Next.js server uses (can differ inside Docker). */
+export function serverApiBase(): string {
+  return (process.env.API_BASE_INTERNAL || process.env.NEXT_PUBLIC_API_BASE || API_BASE_DEFAULT).replace(/\/+$/, "");
+}
+
+export class ApiError extends Error {
+  constructor(
+    message: string,
+    public status: number,
+    public body?: unknown,
+  ) {
+    super(message);
+  }
+}
+/** Thrown when the API could not be reached at all (network, CORS, timeout). */
+export class ApiUnreachable extends Error {}
+
+export async function apiFetch<T>(
+  url: string,
+  init: RequestInit & { timeoutMs?: number } = {},
+): Promise<{ status: number; data: T; headers: Headers }> {
+  const { timeoutMs = 8000, ...rest } = init;
+  let res: Response;
+  try {
+    res = await fetch(url, {
+      ...rest,
+      credentials: "omit",
+      signal: rest.signal ?? AbortSignal.timeout(timeoutMs),
+      headers: { Accept: "application/json", ...(rest.headers || {}) },
+    });
+  } catch (err) {
+    throw new ApiUnreachable(err instanceof Error ? err.message : String(err));
+  }
+  const text = await res.text();
+  let data: unknown = undefined;
+  try {
+    data = text ? JSON.parse(text) : undefined;
+  } catch {
+    data = text;
+  }
+  if (!res.ok) {
+    const detail =
+      data && typeof data === "object" && "detail" in data ? String((data as { detail: unknown }).detail) : res.statusText;
+    throw new ApiError(detail || `HTTP ${res.status}`, res.status, data);
+  }
+  return { status: res.status, data: data as T, headers: res.headers };
+}
+
+/* ---------- report ---------- */
+
+export function isReport(x: unknown): x is Report {
+  return Boolean(x && typeof x === "object" && "report_id" in x && "findings" in x && "summary" in x);
+}
+
+/** Server-side: GET /v1/reports/{id}. `?hl=hi` asks the API to re-render summaries in Hindi. */
+export async function fetchReport(id: string, locale: "en" | "hi" = "en"): Promise<Report> {
+  const hl = locale === "hi" ? "?hl=hi" : "";
+  const { data } = await apiFetch<unknown>(`${serverApiBase()}/v1/reports/${encodeURIComponent(id)}${hl}`, {
+    cache: "no-store",
+    timeoutMs: 4000,
+  });
+  if (!isReport(data)) throw new ApiError("Malformed report", 502, data);
+  return data;
+}
+
+/* ---------- rule registry ---------- */
+
+/** One row of GET /v1/rules (not yet in packages/contracts; see docs/contract-requests.md). */
+export interface RuleRegistryEntry {
+  id: string;
+  name: string;
+  family: string;
+  phase: number;
+  enabled: boolean;
+  version: string | number | null;
+}
+
+function str(x: unknown, fallback = ""): string {
+  return typeof x === "string" ? x : typeof x === "number" ? String(x) : fallback;
+}
+
+/** Accept a bare array or `{ rules: [...] }`; drop rows without an id. */
+export function normaliseRules(data: unknown): RuleRegistryEntry[] {
+  const raw = Array.isArray(data) ? data : data && typeof data === "object" && Array.isArray((data as { rules?: unknown }).rules) ? (data as { rules: unknown[] }).rules : [];
+  const out: RuleRegistryEntry[] = [];
+  for (const r of raw) {
+    if (!r || typeof r !== "object") continue;
+    const o = r as Record<string, unknown>;
+    const id = str(o.id ?? o.rule_id);
+    if (!id) continue;
+    out.push({
+      id,
+      name: str(o.name),
+      family: str(o.family),
+      phase: typeof o.phase === "number" ? o.phase : Number(o.phase) || 0,
+      enabled: o.enabled === true,
+      version: typeof o.version === "number" || typeof o.version === "string" ? o.version : null,
+    });
+  }
+  return out;
+}
+
+/** Server-side: GET /v1/rules. Throws ApiError (404 when the API predates the registry) or ApiUnreachable. */
+export async function fetchRules(): Promise<RuleRegistryEntry[]> {
+  const { data } = await apiFetch<unknown>(`${serverApiBase()}/v1/rules`, { cache: "no-store", timeoutMs: 4000 });
+  return normaliseRules(data);
+}
+
+/* ---------- checks & jobs ---------- */
+
+/**
+ * POST /v1/checks. The contract's CheckResponse is a tagged union; the API may
+ * also answer 200 with a bare Report or 202 with { job_id, ... } untagged, so
+ * normalise all three shapes.
+ */
+export async function postCheck(req: CheckRequest): Promise<CheckResponse> {
+  const { status, data } = await apiFetch<Record<string, unknown>>(`${PUBLIC_API_BASE}/v1/checks`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(req),
+    timeoutMs: 15000,
+  });
+  return normaliseCheckResponse(status, data);
+}
+
+export function normaliseCheckResponse(status: number, data: Record<string, unknown>): CheckResponse {
+  if (data?.kind === "report" && isReport(data.report)) return { kind: "report", report: data.report };
+  if (data?.kind === "job" || (status === 202 && typeof data?.job_id === "string") || typeof data?.job_id === "string") {
+    const job_id = String(data.job_id);
+    return {
+      kind: "job",
+      job_id,
+      status_url: typeof data.status_url === "string" ? data.status_url : `/v1/jobs/${job_id}`,
+      events_url: typeof data.events_url === "string" ? data.events_url : `/v1/jobs/${job_id}/events`,
+    };
+  }
+  if (isReport(data)) return { kind: "report", report: data };
+  if (data && isReport(data.report)) return { kind: "report", report: data.report };
+  throw new ApiError("Unexpected response from /v1/checks", status, data);
+}
+
+export function absoluteApiUrl(pathOrUrl: string): string {
+  return /^https?:\/\//.test(pathOrUrl) ? pathOrUrl : `${PUBLIC_API_BASE}${pathOrUrl.startsWith("/") ? "" : "/"}${pathOrUrl}`;
+}
+
+export async function getJob(statusUrl: string): Promise<Job> {
+  const { data } = await apiFetch<Job>(absoluteApiUrl(statusUrl), { cache: "no-store" });
+  return data;
+}
+
+/* ---------- feedback & disputes ---------- */
+
+export async function postFeedback(findingId: string, reportId: string): Promise<void> {
+  await apiFetch(`${PUBLIC_API_BASE}/v1/findings/${encodeURIComponent(findingId)}/feedback`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ verdict: "looks_wrong", report_id: reportId }),
+  });
+}
+
+export interface DisputeRequest {
+  report_id: string;
+  finding_id?: string;
+  contact_email: string;
+  message: string;
+}
+
+export async function postDispute(req: DisputeRequest): Promise<void> {
+  await apiFetch(`${PUBLIC_API_BASE}/v1/disputes`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(req),
+  });
+}
+
+/* ---------- audit & ontology ---------- */
+
+export type AuditResponse = AuditAggregate & { is_demo?: boolean };
+
+export async function getAudit(): Promise<AuditResponse> {
+  const { data } = await apiFetch<AuditResponse>(`${PUBLIC_API_BASE}/v1/audit/aggregates`, { timeoutMs: 5000 });
+  return data;
+}
+
+export async function getOntology(): Promise<Ontology> {
+  const { data } = await apiFetch<Ontology>(`${PUBLIC_API_BASE}/v1/ontology`, { timeoutMs: 5000 });
+  return data;
+}
+
+/* ---------- self-check ---------- */
+
+export type SelfCheckResponse = CheckResponse;
+
+export async function postSelfCheck(form: FormData): Promise<SelfCheckResponse> {
+  const { status, data } = await apiFetch<Record<string, unknown>>(`${PUBLIC_API_BASE}/v1/self-check`, {
+    method: "POST",
+    body: form,
+    timeoutMs: 120000,
+  });
+  return normaliseCheckResponse(status, data);
+}
+
+/* ---------- input parsing ---------- */
+
+const PKG_RE = /^[a-zA-Z][a-zA-Z0-9_]*(\.[a-zA-Z0-9_]+)+$/;
+
+/** Accept a Play URL or a bare package name. Returns null if neither. */
+export function parseCheckInput(raw: string): CheckRequest | null {
+  const s = raw.trim();
+  if (!s) return null;
+  if (PKG_RE.test(s)) return { package_name: s };
+  try {
+    const u = new URL(s);
+    if (u.hostname === "play.google.com") {
+      const id = u.searchParams.get("id");
+      if (id && PKG_RE.test(id)) return { play_url: u.toString(), package_name: id };
+    }
+  } catch {
+    /* not a URL */
+  }
+  return null;
+}
+
+/** Browser-side: GET /v1/reports/{id}. */
+export async function fetchReportClient(id: string): Promise<Report> {
+  const { data } = await apiFetch<unknown>(`${PUBLIC_API_BASE}/v1/reports/${encodeURIComponent(id)}`);
+  if (!isReport(data)) throw new ApiError("Malformed report", 502, data);
+  return data;
+}

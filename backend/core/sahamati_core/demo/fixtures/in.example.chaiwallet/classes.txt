@@ -1,0 +1,14 @@
+# Fabricated class list for the fictional demo app "Chai Wallet" (one name per line).
+in.example.chaiwallet.MainActivity
+in.example.chaiwallet.wallet.BalanceFragment
+in.example.chaiwallet.wallet.SendMoneyActivity
+in.example.chaiwallet.scan.QrScannerActivity
+in.example.chaiwallet.fraud.LocationCheck
+in.example.chaiwallet.contacts.PayContactPicker
+androidx.appcompat.app.AppCompatActivity
+androidx.camera.core.ImageCapture
+androidx.core.content.ContextCompat
+com.google.firebase.crashlytics.FirebaseCrashlytics
+com.google.firebase.crashlytics.internal.common.CrashlyticsCore
+kotlin.collections.CollectionsKt
+okhttp3.OkHttpClient

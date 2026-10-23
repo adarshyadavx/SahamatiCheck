@@ -1,0 +1,57 @@
+# Play Console data-safety vocabulary -> ontology ids.
+# "type" strings are the fixed labels shown in the Play data-safety section.
+# They are also what the extension uses to anchor rows (never CSS classes).
+# An "Other ..." type maps to its category node.
+version: "2026.10.1"
+types:
+  - {category: Location, type: Approximate location, data_type: approximate_location}
+  - {category: Location, type: Precise location, data_type: precise_location}
+  - {category: Personal info, type: Name, data_type: name}
+  - {category: Personal info, type: Email address, data_type: email}
+  - {category: Personal info, type: User IDs, data_type: user_id}
+  - {category: Personal info, type: Address, data_type: address}
+  - {category: Personal info, type: Phone number, data_type: phone_number}
+  - {category: Personal info, type: Race and ethnicity, data_type: demographic_info}
+  - {category: Personal info, type: Political or religious beliefs, data_type: demographic_info}
+  - {category: Personal info, type: Sexual orientation, data_type: demographic_info}
+  - {category: Personal info, type: Other info, data_type: demographic_info}
+  - {category: Financial info, type: User payment info, data_type: payment_info}
+  - {category: Financial info, type: Purchase history, data_type: purchase_history}
+  - {category: Financial info, type: Credit score, data_type: credit_info}
+  - {category: Financial info, type: Other financial info, data_type: financial_info}
+  - {category: Health and fitness, type: Health info, data_type: health_info}
+  - {category: Health and fitness, type: Fitness info, data_type: fitness_info}
+  - {category: Messages, type: Emails, data_type: email_messages}
+  - {category: Messages, type: SMS or MMS, data_type: sms}
+  - {category: Messages, type: Other in-app messages, data_type: in_app_messages}
+  - {category: Photos and videos, type: Photos, data_type: photos}
+  - {category: Photos and videos, type: Videos, data_type: videos}
+  - {category: Audio files, type: Voice or sound recordings, data_type: voice_recordings}
+  - {category: Audio files, type: Music files, data_type: audio}
+  - {category: Audio files, type: Other audio files, data_type: audio}
+  - {category: Files and docs, type: Files and docs, data_type: files_docs}
+  - {category: Calendar, type: Calendar events, data_type: calendar}
+  - {category: Contacts, type: Contacts, data_type: contacts}
+  - {category: App activity, type: App interactions, data_type: app_interactions}
+  - {category: App activity, type: In-app search history, data_type: search_history}
+  - {category: App activity, type: Installed apps, data_type: installed_apps}
+  - {category: App activity, type: Other user-generated content, data_type: user_content}
+  - {category: App activity, type: Other actions, data_type: app_interactions}
+  - {category: Web browsing, type: Web browsing history, data_type: web_browsing}
+  - {category: App info and performance, type: Crash logs, data_type: crash_logs}
+  - {category: App info and performance, type: Diagnostics, data_type: diagnostics}
+  - {category: App info and performance, type: Other app performance data, data_type: performance_data}
+  - {category: Device or other IDs, type: Device or other IDs, data_type: device_id}
+
+purposes:
+  App functionality: app_functionality
+  Analytics: analytics
+  Developer communications: developer_communications
+  Advertising or marketing: advertising
+  Fraud prevention, security, and compliance: fraud_prevention
+  Personalization: personalization
+  Account management: account_management
+
+# Play does not count these transfers as "sharing"; a declaration of
+# "not shared" / "No data shared" is read with these actors carved out.
+sharing_exemptions: [service_provider, government]

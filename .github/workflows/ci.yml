@@ -1,0 +1,95 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: ["3.11", "3.13"]
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Install (light default install, no heavy extras)
+        run: |
+          python -m venv .venv
+          .venv/bin/pip install --upgrade pip
+          .venv/bin/pip install -e "./core[dev]" -e ./api -e ./worker
+      - name: Ruff
+        run: .venv/bin/ruff check core api worker
+      - name: Ontology validator
+        run: .venv/bin/python -m sahamati_core.ontology
+      - name: Rule registry lint (strict schema, known predicates, tests per rule, version lock)
+        run: .venv/bin/python -m sahamati_core.rules
+      - name: Tests
+        run: .venv/bin/pytest
+      - name: OpenAPI is up to date
+        run: .venv/bin/python scripts/export_openapi.py --check
+
+  backend-postgres:
+    # Same suite against Postgres 16 (the Compose database).
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: sahamati
+          POSTGRES_PASSWORD: sahamati
+          POSTGRES_DB: sahamati_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U sahamati" --health-interval 5s --health-timeout 3s --health-retries 20
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: |
+          python -m venv .venv
+          .venv/bin/pip install -e "./core[dev,postgres]" -e ./api -e ./worker
+      - name: Tests (Postgres)
+        env:
+          SAHAMATI_TEST_DATABASE_URL: postgresql+psycopg://sahamati:sahamati@localhost:5432/sahamati_test
+        run: .venv/bin/pytest
+
+  js:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile=false
+      - name: Build all workspace packages (web + extension)
+        run: pnpm -r --if-present build
+      - name: Tests
+        run: pnpm -r --if-present test
+
+  wording:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Banned-wording check (en + hi catalogs, extension locales, backend templates)
+        run: node packages/i18n/check-wording.mjs

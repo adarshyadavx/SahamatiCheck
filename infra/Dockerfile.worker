@@ -1,0 +1,13 @@
+# Build from the repo root:  docker build -f infra/Dockerfile.worker -t sahamati-worker .
+FROM python:3.12-slim
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PIP_NO_CACHE_DIR=1
+WORKDIR /app
+RUN useradd --create-home --uid 10001 sahamati
+
+COPY backend/core /app/backend/core
+COPY backend/worker /app/backend/worker
+RUN pip install "/app/backend/core[postgres,redis,html,pdf,play]" "/app/backend/worker[redis]"
+
+USER sahamati
+ENV SAHAMATI_DATA_DIR=/tmp/sahamati CELERY_EAGER=0
+CMD ["celery", "-A", "sahamati_worker.tasks", "worker", "--loglevel=info", "--concurrency=2"]

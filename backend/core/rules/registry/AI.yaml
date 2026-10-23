@@ -1,0 +1,29 @@
+# AI09 is not a detector. It is the invariant "missing evidence never passes", enforced inside the
+# evaluator twice (a pre-check per rule, and a post-evaluation rewrite). It is listed here so that it
+# has an id, a version and tests, and appears in GET /v1/rules. It is not part of `rule_runs`.
+family: AI
+rules:
+  - id: AI09
+    version: 1
+    name: Missing evidence never passes
+    name_hi: प्रमाण की कमी को कभी पास नहीं माना जाता
+    family: AI
+    phase: 1
+    enabled: true
+    kind: guard
+    severity: info
+    score_track: privacy
+    result_on_match: needs_review
+    plain_language: When a source a rule needs is missing, unreachable, unparseable or only partly covered, the rule reports inconclusive with a reason. "No issue detected" only ever means nothing was found in the evidence we had.
+    plain_language_hi: जब किसी नियम के लिए ज़रूरी स्रोत अनुपलब्ध, पहुँच से बाहर, पढ़ने योग्य न हो या केवल आंशिक हो, तब नियम कारण सहित अनिर्णायक बताता है। "कोई समस्या नहीं मिली" का मतलब केवल यह है कि हमारे पास जो प्रमाण थे उनमें कुछ नहीं मिला।
+    tests:
+      - case: guard
+        name: with the pre-check disabled, a rule that needs the APK still cannot pass without one
+        sabotage: precheck
+        coverage: {apk: unavailable}
+        expect: {rule: D01, status: inconclusive, reason: missing_source_false_pass_prevented}
+      - case: guard
+        name: with the pre-check disabled, the SDK-absence rule cannot pass on an obfuscated APK
+        sabotage: precheck
+        coverage: {apk: obfuscated}
+        expect: {rule: T01, status: inconclusive, reason: missing_source_false_pass_prevented}

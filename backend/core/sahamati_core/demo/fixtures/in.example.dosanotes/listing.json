@@ -1,0 +1,10 @@
+{
+  "package": "in.example.dosanotes",
+  "title": "Dosa Notes (demo)",
+  "developer": "Example Labs",
+  "category": "Productivity",
+  "policy_url": "https://dosanotes.example/privacy",
+  "is_demo": true,
+  "captured_at": "2026-10-19",
+  "note": "Fabricated app showing the agreement case. Not a real product."
+}

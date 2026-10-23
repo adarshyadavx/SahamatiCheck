@@ -1,0 +1,15 @@
+# Fabricated class list for the fictional demo app "ShopKart" (one name per line).
+in.example.shopkart.MainActivity
+in.example.shopkart.catalog.ProductListFragment
+in.example.shopkart.cart.CartViewModel
+in.example.shopkart.checkout.CheckoutActivity
+in.example.shopkart.scan.BarcodeScannerActivity
+in.example.shopkart.stores.NearbyStoresFragment
+androidx.appcompat.app.AppCompatActivity
+androidx.camera.core.ImageCapture
+androidx.core.content.ContextCompat
+com.google.android.gms.ads.AdView
+com.google.android.gms.ads.MobileAds
+com.google.firebase.crashlytics.FirebaseCrashlytics
+kotlin.collections.CollectionsKt
+okhttp3.OkHttpClient

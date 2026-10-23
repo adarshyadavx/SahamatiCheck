@@ -1,0 +1,19 @@
+[project]
+name = "sahamati-worker"
+version = "0.1.0"
+description = "SahamatiCheck pipeline worker (Celery chain; CELERY_EAGER=1 runs inline in a thread)"
+requires-python = ">=3.11"
+dependencies = [
+  "sahamati-core",
+  "celery>=5.3",
+]
+
+[project.optional-dependencies]
+redis = ["redis>=5.0"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["sahamati_worker"]

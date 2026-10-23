@@ -1,0 +1,164 @@
+family: T
+rules:
+  - id: T01
+    version: 1
+    name: Undisclosed analytics SDK
+    name_hi: घोषित न किया गया एनालिटिक्स SDK
+    family: T
+    phase: 1
+    enabled: true
+    severity: medium
+    score_track: privacy
+    evidence_sources: {required: [apk], any_of: [policy, data_safety]}
+    requires:
+      - {predicate: sdk_scan_complete, reason: apk_partial_coverage}
+    engine_rules: [BM-02, BM-04, GAP]
+    conditions:
+      - {predicate: sdk_actor_under, args: {actor: analytics_provider}}
+    status_ceiling: potential_conflict
+    result_on_match: potential_conflict
+    inconclusive_reasons: [apk_unavailable, apk_unparseable, apk_partial_coverage, policy_unavailable, data_safety_unavailable]
+    categories: [ads_tracking]
+    plain_language: The app includes an analytics SDK that neither the policy nor the data-safety section accounts for. SDK absence is only reported when the whole class list was read.
+    plain_language_hi: ऐप में एक एनालिटिक्स SDK शामिल है जिसका उल्लेख न नीति में है और न डेटा-सुरक्षा अनुभाग में। SDK की अनुपस्थिति तभी बताई जाती है जब पूरी क्लास सूची पढ़ी गई हो।
+    tests:
+      - case: positive
+        name: the declaration says app interactions are not collected, the app includes an analytics SDK
+        claims:
+          - {src: data_safety, actor: first_party, action: collect, pol: deny, dt: app_interactions}
+          - {src: apk_sdk, actor: first_party, action: collect, pol: affirm, dt: app_interactions, text: com.google.firebase.analytics}
+        expect: {status: potential_conflict, findings: [potential_conflict]}
+      - case: positive
+        name: an analytics SDK with no mention in the policy or the declaration is a gap, so only needs_review
+        claims:
+          - {src: apk_sdk, actor: first_party, action: collect, pol: affirm, dt: app_interactions, text: com.mixpanel.android}
+        expect: {status: needs_review}
+      - case: negative
+        name: only a crash-reporting SDK is present
+        claims:
+          - {src: apk_sdk, actor: first_party, action: collect, pol: affirm, dt: crash_logs, text: com.google.firebase.crashlytics}
+        expect: {status: no_issue_detected}
+      - case: negative
+        name: the analytics SDK is accounted for by the declaration
+        claims:
+          - {src: data_safety, actor: first_party, action: collect, pol: affirm, dt: app_interactions}
+          - {src: apk_sdk, actor: first_party, action: collect, pol: affirm, dt: app_interactions, text: com.google.firebase.analytics}
+        expect: {status: no_issue_detected}
+      - case: inconclusive
+        name: an obfuscated APK means the SDK list is partial, so absence proves nothing
+        coverage: {apk: obfuscated}
+        expect: {status: inconclusive, reason: apk_partial_coverage}
+      - case: inconclusive
+        name: no class list was read
+        sdk_scan: false
+        expect: {status: inconclusive, reason: apk_partial_coverage}
+      - case: inconclusive
+        name: no APK
+        coverage: {apk: unavailable}
+        expect: {status: inconclusive, reason: apk_unavailable}
+      - case: inconclusive
+        name: neither the policy nor the declaration to compare with
+        claims:
+          - {src: apk_sdk, actor: first_party, action: collect, pol: affirm, dt: app_interactions, text: com.mixpanel.android}
+        coverage: {policy: unreachable, data_safety: unavailable}
+        expect: {status: inconclusive, reason: policy_unavailable}
+
+  - id: T02
+    version: 1
+    name: Advertising SDK
+    name_hi: विज्ञापन SDK
+    family: T
+    phase: 1
+    enabled: true
+    investigation: true
+    severity: low
+    score_track: privacy
+    evidence_sources: {required: [apk]}
+    requires:
+      - {predicate: sdk_scan_complete, reason: apk_partial_coverage}
+    engine_rules: [APK-SDK]
+    conditions:
+      - {predicate: sdk_actor_under, args: {actor: ad_network}}
+    result_on_match: needs_review
+    inconclusive_reasons: [apk_unavailable, apk_unparseable, apk_partial_coverage]
+    categories: [ads_tracking]
+    user_category: ads_tracking
+    dedupe: evidence
+    plain_language: The app includes an advertising SDK. This shows presence, not what data it sends.
+    plain_language_hi: ऐप में एक विज्ञापन SDK शामिल है। यह उसकी उपस्थिति दिखाता है, यह नहीं कि वह कौन सा डेटा भेजता है।
+    tests:
+      - case: positive
+        name: an advertising SDK is among the classes (two claims, one indicator)
+        claims:
+          - {src: apk_sdk, actor: first_party, action: collect, pol: affirm, dt: advertising_id, text: com.google.android.gms.ads}
+          - {src: apk_sdk, actor: ad_network, action: share, pol: affirm, dt: advertising_id, text: com.google.android.gms.ads}
+        expect: {status: needs_review, indicators: 1}
+      - case: negative
+        name: only a crash-reporting SDK is present
+        claims:
+          - {src: apk_sdk, actor: first_party, action: collect, pol: affirm, dt: crash_logs, text: com.google.firebase.crashlytics}
+        expect: {status: no_issue_detected, indicators: 0}
+      - case: inconclusive
+        name: the class list was not read
+        sdk_scan: false
+        expect: {status: inconclusive, reason: apk_partial_coverage}
+      - case: inconclusive
+        name: obfuscated APK
+        coverage: {apk: obfuscated}
+        expect: {status: inconclusive, reason: apk_partial_coverage}
+
+  - id: T05
+    version: 1
+    name: Third-party endpoint mismatch
+    name_hi: तृतीय-पक्ष एंडपॉइंट में असंगति
+    family: T
+    phase: 1
+    enabled: true
+    severity: medium
+    score_track: privacy
+    evidence_sources: {required: [runtime]}
+    result_on_match: potential_conflict
+    inconclusive_reasons: [runtime_evidence_unavailable]
+    categories: [ads_tracking]
+    plain_language: Compares where the app sends data while it runs with what the policy says. Needs runtime evidence, which this version does not collect.
+    plain_language_hi: ऐप चलते समय जहाँ डेटा भेजता है उसकी तुलना नीति से करता है। इसके लिए रनटाइम प्रमाण चाहिए, जो इस संस्करण में एकत्र नहीं किया जाता।
+    tests:
+      - case: inconclusive
+        name: static analysis cannot observe network traffic
+        expect: {status: inconclusive, reason: runtime_evidence_unavailable}
+
+  - id: T08
+    version: 1
+    name: Advertising ID access
+    name_hi: विज्ञापन आईडी तक पहुँच
+    family: T
+    phase: 1
+    enabled: true
+    investigation: true
+    severity: low
+    score_track: privacy
+    evidence_sources: {required: [apk]}
+    engine_rules: [APK-PERM]
+    conditions:
+      - {predicate: data_type_under, args: {nodes: [advertising_id]}}
+    result_on_match: needs_review
+    inconclusive_reasons: [apk_unavailable, apk_unparseable, apk_partial_coverage]
+    categories: [ads_tracking]
+    dedupe: data_type
+    plain_language: The app declares the advertising-ID permission. Users can reset or delete the advertising ID in Android settings.
+    plain_language_hi: ऐप विज्ञापन-आईडी की अनुमति घोषित करता है। उपयोगकर्ता Android सेटिंग में विज्ञापन आईडी रीसेट या हटा सकते हैं।
+    tests:
+      - case: positive
+        name: the app declares the advertising-ID permission
+        claims:
+          - {src: apk_permission, actor: first_party, action: collect, pol: affirm, dt: advertising_id, text: com.google.android.gms.permission.AD_ID}
+        expect: {status: needs_review, indicators: 1}
+      - case: negative
+        name: no advertising-ID permission
+        claims:
+          - {src: apk_permission, actor: first_party, action: collect, pol: affirm, dt: camera_media, text: android.permission.CAMERA}
+        expect: {status: no_issue_detected, indicators: 0}
+      - case: inconclusive
+        name: no APK
+        coverage: {apk: unavailable}
+        expect: {status: inconclusive, reason: apk_unavailable}

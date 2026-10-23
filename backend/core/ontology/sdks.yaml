@@ -1,0 +1,75 @@
+# SDK package prefixes -> actor + data types.
+# action: "collect" means data the SDK gathers inside the app (Play counts this
+# as collection by the app); "share" means the SDK's purpose is to transfer the
+# data to the named third-party actor. Longest matching prefix wins.
+# doc: the vendor's own data-disclosure / documentation page. Every entry must
+# be re-checked against its doc before it is used for the corpus run
+# (reviewed: false until then). Evidence confidence for SDKs is 0.85.
+version: "2026.10.1"
+sdks:
+  # --- crash reporting / diagnostics (service providers)
+  - {prefix: com.google.firebase.crashlytics, name: Firebase Crashlytics, actor: service_provider, action: collect, data_types: [crash_logs, device_id], doc: "https://firebase.google.com/docs/android/play-data-disclosure", reviewed: false}
+  - {prefix: io.sentry, name: Sentry, actor: service_provider, action: collect, data_types: [crash_logs], doc: "https://docs.sentry.io/platforms/android/data-management/", reviewed: false}
+  - {prefix: com.bugsnag.android, name: Bugsnag, actor: service_provider, action: collect, data_types: [crash_logs], doc: "https://docs.bugsnag.com/platforms/android/", reviewed: false}
+  - {prefix: com.instabug, name: Instabug, actor: service_provider, action: collect, data_types: [crash_logs, app_interactions], doc: "https://docs.instabug.com/", reviewed: false}
+  - {prefix: com.microsoft.appcenter.crashes, name: App Center Crashes, actor: service_provider, action: collect, data_types: [crash_logs], doc: "https://learn.microsoft.com/appcenter/sdk/", reviewed: false}
+  - {prefix: com.newrelic.agent.android, name: New Relic Mobile, actor: service_provider, action: collect, data_types: [performance_data, crash_logs], doc: "https://docs.newrelic.com/docs/mobile-monitoring/", reviewed: false}
+  - {prefix: com.datadog.android, name: Datadog RUM, actor: service_provider, action: collect, data_types: [performance_data, app_interactions], doc: "https://docs.datadoghq.com/real_user_monitoring/android/", reviewed: false}
+  - {prefix: com.google.firebase.perf, name: Firebase Performance Monitoring, actor: service_provider, action: collect, data_types: [performance_data], doc: "https://firebase.google.com/docs/android/play-data-disclosure", reviewed: false}
+
+  # --- analytics / attribution
+  - {prefix: com.google.firebase.analytics, name: Google Analytics for Firebase, actor: analytics_provider, action: share, data_types: [app_interactions, device_id], doc: "https://firebase.google.com/docs/android/play-data-disclosure", reviewed: false}
+  - {prefix: com.google.android.gms.measurement, name: Google Analytics for Firebase (measurement), actor: analytics_provider, action: share, data_types: [app_interactions, device_id], doc: "https://firebase.google.com/docs/android/play-data-disclosure", reviewed: false}
+  - {prefix: com.mixpanel.android, name: Mixpanel, actor: analytics_provider, action: share, data_types: [app_interactions], doc: "https://docs.mixpanel.com/docs/tracking-methods/sdks/android", reviewed: false}
+  - {prefix: com.amplitude, name: Amplitude, actor: analytics_provider, action: share, data_types: [app_interactions, device_id], doc: "https://amplitude.com/docs/sdks/analytics/android", reviewed: false}
+  - {prefix: com.segment.analytics, name: Segment, actor: analytics_provider, action: share, data_types: [app_interactions, device_id], doc: "https://segment.com/docs/connections/sources/catalog/libraries/mobile/android/", reviewed: false}
+  - {prefix: com.flurry, name: Flurry Analytics, actor: analytics_provider, action: share, data_types: [app_interactions, device_id], doc: "https://developer.yahoo.com/flurry/docs/", reviewed: false}
+  - {prefix: com.appsflyer, name: AppsFlyer, actor: analytics_provider, action: share, data_types: [advertising_id, app_interactions], doc: "https://dev.appsflyer.com/hc/docs/android-sdk", reviewed: false}
+  - {prefix: com.adjust.sdk, name: Adjust, actor: analytics_provider, action: share, data_types: [advertising_id, app_interactions], doc: "https://dev.adjust.com/en/sdk/android/", reviewed: false}
+  - {prefix: io.branch.referral, name: Branch, actor: analytics_provider, action: share, data_types: [advertising_id, app_interactions], doc: "https://help.branch.io/developers-hub/docs/android-basic-integration", reviewed: false}
+  - {prefix: com.kochava, name: Kochava, actor: analytics_provider, action: share, data_types: [advertising_id], doc: "https://support.kochava.com/sdk-integration/", reviewed: false}
+  - {prefix: com.singular.sdk, name: Singular, actor: analytics_provider, action: share, data_types: [advertising_id], doc: "https://support.singular.net/hc/en-us/articles/360037581952", reviewed: false}
+  - {prefix: com.clevertap.android, name: CleverTap, actor: analytics_provider, action: share, data_types: [app_interactions, device_id], doc: "https://developer.clevertap.com/docs/android-quickstart-guide", reviewed: false}
+  - {prefix: com.moengage, name: MoEngage, actor: analytics_provider, action: share, data_types: [app_interactions, device_id], doc: "https://developers.moengage.com/hc/en-us/categories/4404199274900-Android-SDK", reviewed: false}
+  - {prefix: com.webengage, name: WebEngage, actor: analytics_provider, action: share, data_types: [app_interactions, device_id], doc: "https://docs.webengage.com/docs/android-getting-started", reviewed: false}
+  - {prefix: com.yandex.metrica, name: AppMetrica, actor: analytics_provider, action: share, data_types: [app_interactions, device_id], doc: "https://appmetrica.yandex.com/docs/", reviewed: false}
+  - {prefix: com.uxcam, name: UXCam, actor: analytics_provider, action: share, data_types: [app_interactions], doc: "https://developer.uxcam.com/docs/android", reviewed: false}
+  - {prefix: com.smartlook, name: Smartlook, actor: analytics_provider, action: share, data_types: [app_interactions], doc: "https://mobile.developer.smartlook.com/", reviewed: false}
+  - {prefix: com.facebook.appevents, name: Meta App Events, actor: analytics_provider, action: share, data_types: [app_interactions, advertising_id], doc: "https://developers.facebook.com/docs/app-events/getting-started-app-events-android", reviewed: false}
+
+  # --- advertising
+  - {prefix: com.google.android.gms.ads, name: Google Mobile Ads, actor: ad_network, action: share, data_types: [advertising_id, approximate_location], doc: "https://developers.google.com/admob/android/privacy/play-data-disclosure", reviewed: false}
+  - {prefix: com.facebook.ads, name: Meta Audience Network, actor: ad_network, action: share, data_types: [advertising_id], doc: "https://developers.facebook.com/docs/audience-network/", reviewed: false}
+  - {prefix: com.unity3d.ads, name: Unity Ads, actor: ad_network, action: share, data_types: [advertising_id], doc: "https://docs.unity.com/ads/en-us/manual/", reviewed: false}
+  - {prefix: com.applovin, name: AppLovin, actor: ad_network, action: share, data_types: [advertising_id, approximate_location], doc: "https://developers.applovin.com/en/android/overview/data-and-privacy", reviewed: false}
+  - {prefix: com.ironsource, name: ironSource, actor: ad_network, action: share, data_types: [advertising_id], doc: "https://developers.is.com/ironsource-mobile/android/", reviewed: false}
+  - {prefix: com.inmobi, name: InMobi, actor: ad_network, action: share, data_types: [advertising_id, approximate_location], doc: "https://support.inmobi.com/monetize/sdk-documentation/android-guidelines", reviewed: false}
+  - {prefix: com.mbridge.msdk, name: Mintegral, actor: ad_network, action: share, data_types: [advertising_id], doc: "https://dev.mintegral.com/", reviewed: false}
+  - {prefix: com.vungle, name: Vungle / Liftoff, actor: ad_network, action: share, data_types: [advertising_id], doc: "https://support.vungle.com/", reviewed: false}
+  - {prefix: com.chartboost, name: Chartboost, actor: ad_network, action: share, data_types: [advertising_id], doc: "https://docs.chartboost.com/", reviewed: false}
+  - {prefix: com.startapp, name: Start.io, actor: ad_network, action: share, data_types: [advertising_id, approximate_location], doc: "https://support.start.io/", reviewed: false}
+  - {prefix: com.bytedance.sdk.openadsdk, name: Pangle, actor: ad_network, action: share, data_types: [advertising_id], doc: "https://www.pangleglobal.com/integration/", reviewed: false}
+  - {prefix: com.huawei.hms.ads, name: HUAWEI Ads Kit, actor: ad_network, action: share, data_types: [advertising_id], doc: "https://developer.huawei.com/consumer/en/hms/huawei-adskit/", reviewed: false}
+
+  # --- messaging / engagement
+  - {prefix: com.google.firebase.messaging, name: Firebase Cloud Messaging, actor: service_provider, action: collect, data_types: [device_id], doc: "https://firebase.google.com/docs/android/play-data-disclosure", reviewed: false}
+  - {prefix: com.onesignal, name: OneSignal, actor: service_provider, action: collect, data_types: [device_id, app_interactions], doc: "https://documentation.onesignal.com/docs/android-sdk-setup", reviewed: false}
+
+  # --- sign-in / identity
+  - {prefix: com.google.android.gms.auth, name: Google Sign-In, actor: service_provider, action: collect, data_types: [email, name], doc: "https://developers.google.com/identity", reviewed: false}
+  - {prefix: com.facebook.login, name: Facebook Login, actor: service_provider, action: collect, data_types: [email, name], doc: "https://developers.facebook.com/docs/facebook-login/android", reviewed: false}
+  - {prefix: com.truecaller.android.sdk, name: Truecaller SDK, actor: service_provider, action: collect, data_types: [phone_number, name], doc: "https://docs.truecaller.com/truecaller-sdk/", reviewed: false}
+
+  # --- payments (India-heavy)
+  - {prefix: com.razorpay, name: Razorpay, actor: service_provider, action: collect, data_types: [payment_info], doc: "https://razorpay.com/docs/payments/payment-gateway/android-integration/", reviewed: false}
+  - {prefix: com.paytm.pgsdk, name: Paytm All-in-One SDK, actor: service_provider, action: collect, data_types: [payment_info], doc: "https://business.paytm.com/docs/", reviewed: false}
+  - {prefix: com.phonepe.intent.sdk, name: PhonePe PG SDK, actor: service_provider, action: collect, data_types: [payment_info], doc: "https://developer.phonepe.com/", reviewed: false}
+  - {prefix: com.cashfree.pg, name: Cashfree Payments, actor: service_provider, action: collect, data_types: [payment_info], doc: "https://docs.cashfree.com/docs/android", reviewed: false}
+  - {prefix: in.juspay, name: Juspay, actor: service_provider, action: collect, data_types: [payment_info], doc: "https://juspay.io/in/docs", reviewed: false}
+  - {prefix: com.payu, name: PayU, actor: service_provider, action: collect, data_types: [payment_info], doc: "https://docs.payu.in/", reviewed: false}
+  - {prefix: com.android.billingclient, name: Google Play Billing, actor: service_provider, action: collect, data_types: [purchase_history], doc: "https://developer.android.com/google/play/billing", reviewed: false}
+
+  # --- maps / location
+  - {prefix: com.google.android.gms.maps, name: Google Maps SDK, actor: service_provider, action: collect, data_types: [approximate_location], doc: "https://developers.google.com/maps/documentation/android-sdk", reviewed: false}
+  - {prefix: com.google.android.gms.location, name: Fused Location Provider, actor: first_party, action: collect, data_types: [location], doc: "https://developer.android.com/training/location", reviewed: false}
+  - {prefix: com.mapbox, name: Mapbox, actor: service_provider, action: collect, data_types: [approximate_location], doc: "https://docs.mapbox.com/android/", reviewed: false}

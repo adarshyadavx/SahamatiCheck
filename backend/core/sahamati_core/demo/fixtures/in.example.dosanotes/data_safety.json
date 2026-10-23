@@ -1,0 +1,15 @@
+{
+  "schema": "sahamati.data_safety/v1",
+  "package": "in.example.dosanotes",
+  "captured_at": "2026-10-19",
+  "source": "fixture",
+  "no_data_collected": false,
+  "no_data_shared": true,
+  "data_types": [
+    {"category": "Personal info", "type": "Email address", "collected": true, "shared": false, "purposes_collected": ["Account management"], "purposes_shared": []},
+    {"category": "Photos and videos", "type": "Photos", "collected": true, "shared": false, "purposes_collected": ["App functionality"], "purposes_shared": []},
+    {"category": "App info and performance", "type": "Crash logs", "collected": true, "shared": false, "purposes_collected": ["Analytics"], "purposes_shared": []},
+    {"category": "Device or other IDs", "type": "Device or other IDs", "collected": true, "shared": false, "purposes_collected": ["Analytics"], "purposes_shared": []}
+  ],
+  "security_practices": {"encrypted_in_transit": true, "deletion_request": true}
+}

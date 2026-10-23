@@ -1,0 +1,782 @@
+{
+  "report_id": "r_demo_shopkart",
+  "app": {
+    "package": "in.example.shopkart",
+    "version_code": 208,
+    "title": "ShopKart (demo)",
+    "developer": "Example Labs",
+    "is_demo": true
+  },
+  "generated_at": "2026-10-23T21:09:21Z",
+  "coverage": {
+    "policy": "ok",
+    "data_safety": "ok",
+    "apk": "ok"
+  },
+  "summary": {
+    "strong": 1,
+    "indicative": 3,
+    "not_mentioned": 2,
+    "agree_types": 6,
+    "vague_claim_ratio": 0.0
+  },
+  "findings": [
+    {
+      "id": "f_dm_01",
+      "class": "declaration_mismatch",
+      "tier": "strong",
+      "confidence": 0.9,
+      "rule_id": "DM-01",
+      "summary": "The policy and the data-safety section appear inconsistent about Device or other IDs.",
+      "ontology_path": [
+        "personal_info",
+        "identifiers",
+        "device_id"
+      ],
+      "sides": [
+        {
+          "source": "policy",
+          "tuple": {
+            "actor": "third_party",
+            "action": "share",
+            "polarity": "deny",
+            "data_type": "device_id",
+            "condition": null
+          },
+          "evidence": {
+            "quote": "We never share your device identifiers or advertising ID with third parties.",
+            "url": "https://shopkart.example/privacy",
+            "char_start": 434,
+            "char_end": 510,
+            "text_fragment": "#:~:text=We%20never%20share%20your%20device%20identifiers%20or%20advertising",
+            "captured_at": "2026-10-19"
+          }
+        },
+        {
+          "source": "data_safety",
+          "tuple": {
+            "actor": "third_party",
+            "action": "share",
+            "polarity": "affirm",
+            "data_type": "device_id",
+            "condition": "advertising"
+          },
+          "evidence": {
+            "label": "Device or other IDs — Shared — Advertising or marketing",
+            "captured_at": "2026-10-19"
+          }
+        }
+      ],
+      "benign_explanations": [
+        "An exception clause elsewhere in the policy may permit this sharing.",
+        "The declaration may describe a newer app version than the policy."
+      ],
+      "status": "confirmed_conflict",
+      "evidence_strength": "declaration",
+      "limitations": [],
+      "user_category": "ads_tracking",
+      "group_id": "g_ads",
+      "related_finding_ids": [
+        "f_bm_03"
+      ]
+    },
+    {
+      "id": "f_bm_01",
+      "class": "behavioural_mismatch",
+      "tier": "indicative",
+      "confidence": 0.69,
+      "rule_id": "BM-01",
+      "summary": "The data-safety section declares precise location is not collected, while the app requests a related permission.",
+      "ontology_path": [
+        "personal_info",
+        "location",
+        "precise_location"
+      ],
+      "sides": [
+        {
+          "source": "data_safety",
+          "tuple": {
+            "actor": "first_party",
+            "action": "collect",
+            "polarity": "deny",
+            "data_type": "precise_location",
+            "condition": null
+          },
+          "evidence": {
+            "label": "Precise location — Not collected",
+            "captured_at": "2026-10-19"
+          }
+        },
+        {
+          "source": "apk_permission",
+          "tuple": {
+            "actor": "first_party",
+            "action": "collect",
+            "polarity": "affirm",
+            "data_type": "precise_location",
+            "condition": null
+          },
+          "evidence": {
+            "permission": "android.permission.ACCESS_FINE_LOCATION",
+            "captured_at": "2026-10-19"
+          }
+        }
+      ],
+      "benign_explanations": [
+        "A permission may be requested but never used.",
+        "Data processed only on the device does not need to be declared as collected."
+      ],
+      "status": "potential_conflict",
+      "evidence_strength": "capability",
+      "limitations": [
+        "permission_only",
+        "runtime_not_observed"
+      ],
+      "user_category": "location",
+      "group_id": "g_loc",
+      "related_finding_ids": [
+        "f_bm_02"
+      ]
+    },
+    {
+      "id": "f_bm_02",
+      "class": "behavioural_mismatch",
+      "tier": "indicative",
+      "confidence": 0.63,
+      "rule_id": "BM-03",
+      "summary": "The policy states precise location is not collected, while the app requests a related permission.",
+      "ontology_path": [
+        "personal_info",
+        "location",
+        "precise_location"
+      ],
+      "sides": [
+        {
+          "source": "policy",
+          "tuple": {
+            "actor": "first_party",
+            "action": "collect",
+            "polarity": "deny",
+            "data_type": "precise_location",
+            "condition": null
+          },
+          "evidence": {
+            "quote": "We never collect your precise location.",
+            "url": "https://shopkart.example/privacy",
+            "char_start": 335,
+            "char_end": 374,
+            "text_fragment": "#:~:text=We%20never%20collect%20your%20precise%20location",
+            "captured_at": "2026-10-19"
+          }
+        },
+        {
+          "source": "apk_permission",
+          "tuple": {
+            "actor": "first_party",
+            "action": "collect",
+            "polarity": "affirm",
+            "data_type": "precise_location",
+            "condition": null
+          },
+          "evidence": {
+            "permission": "android.permission.ACCESS_FINE_LOCATION",
+            "captured_at": "2026-10-19"
+          }
+        }
+      ],
+      "benign_explanations": [
+        "A permission may be requested but never used.",
+        "Data processed only on the device does not need to be declared as collected."
+      ],
+      "status": "potential_conflict",
+      "evidence_strength": "capability",
+      "limitations": [
+        "permission_only",
+        "runtime_not_observed"
+      ],
+      "user_category": "location",
+      "group_id": "g_loc",
+      "related_finding_ids": [
+        "f_bm_01"
+      ]
+    },
+    {
+      "id": "f_bm_03",
+      "class": "behavioural_mismatch",
+      "tier": "indicative",
+      "confidence": 0.59,
+      "rule_id": "BM-04",
+      "summary": "The policy states Advertising ID is not shared, while the app includes an SDK (Google Mobile Ads) associated with this data.",
+      "ontology_path": [
+        "personal_info",
+        "identifiers",
+        "device_id",
+        "advertising_id"
+      ],
+      "sides": [
+        {
+          "source": "policy",
+          "tuple": {
+            "actor": "third_party",
+            "action": "share",
+            "polarity": "deny",
+            "data_type": "advertising_id",
+            "condition": null
+          },
+          "evidence": {
+            "quote": "We never share your device identifiers or advertising ID with third parties.",
+            "url": "https://shopkart.example/privacy",
+            "char_start": 434,
+            "char_end": 510,
+            "text_fragment": "#:~:text=We%20never%20share%20your%20device%20identifiers%20or%20advertising",
+            "captured_at": "2026-10-19"
+          }
+        },
+        {
+          "source": "apk_sdk",
+          "tuple": {
+            "actor": "ad_network",
+            "action": "share",
+            "polarity": "affirm",
+            "data_type": "advertising_id",
+            "condition": null
+          },
+          "evidence": {
+            "sdk": "com.google.android.gms.ads",
+            "captured_at": "2026-10-19"
+          }
+        }
+      ],
+      "benign_explanations": [
+        "The SDK may be included but configured not to collect this data.",
+        "Data processed only on the device does not need to be declared as collected."
+      ],
+      "status": "potential_conflict",
+      "evidence_strength": "presence",
+      "limitations": [
+        "sdk_presence_only",
+        "runtime_not_observed"
+      ],
+      "user_category": "ads_tracking",
+      "group_id": "g_ads",
+      "related_finding_ids": [
+        "f_dm_01"
+      ]
+    }
+  ],
+  "disclosure_gaps": [
+    {
+      "id": "g_01",
+      "data_type": "camera_media",
+      "ontology_path": [
+        "personal_info",
+        "photos_media",
+        "camera_media"
+      ],
+      "evidence": {
+        "permission": "android.permission.CAMERA",
+        "captured_at": "2026-10-19"
+      },
+      "source": "apk_permission"
+    },
+    {
+      "id": "g_02",
+      "data_type": "approximate_location",
+      "ontology_path": [
+        "personal_info",
+        "location",
+        "approximate_location"
+      ],
+      "evidence": {
+        "sdk": "com.google.android.gms.ads",
+        "captured_at": "2026-10-19"
+      },
+      "source": "apk_sdk"
+    }
+  ],
+  "matrix": [
+    {
+      "data_type": "advertising_id",
+      "ontology_path": [
+        "personal_info",
+        "identifiers",
+        "device_id",
+        "advertising_id"
+      ],
+      "policy": "denies",
+      "data_safety": "shares",
+      "apk": "evidence",
+      "conflict_class": "behavioural_mismatch"
+    },
+    {
+      "data_type": "precise_location",
+      "ontology_path": [
+        "personal_info",
+        "location",
+        "precise_location"
+      ],
+      "policy": "denies",
+      "data_safety": "denies",
+      "apk": "evidence",
+      "conflict_class": "behavioural_mismatch"
+    },
+    {
+      "data_type": "approximate_location",
+      "ontology_path": [
+        "personal_info",
+        "location",
+        "approximate_location"
+      ],
+      "policy": "silent",
+      "data_safety": "silent",
+      "apk": "evidence",
+      "conflict_class": "disclosure_gap"
+    },
+    {
+      "data_type": "camera_media",
+      "ontology_path": [
+        "personal_info",
+        "photos_media",
+        "camera_media"
+      ],
+      "policy": "silent",
+      "data_safety": "silent",
+      "apk": "evidence",
+      "conflict_class": "disclosure_gap"
+    },
+    {
+      "data_type": "address",
+      "ontology_path": [
+        "personal_info",
+        "contact_info",
+        "address"
+      ],
+      "policy": "collects",
+      "data_safety": "collects",
+      "apk": "silent"
+    },
+    {
+      "data_type": "crash_logs",
+      "ontology_path": [
+        "app_activity",
+        "diagnostics",
+        "crash_logs"
+      ],
+      "policy": "collects",
+      "data_safety": "collects",
+      "apk": "evidence"
+    },
+    {
+      "data_type": "email",
+      "ontology_path": [
+        "personal_info",
+        "contact_info",
+        "email"
+      ],
+      "policy": "collects",
+      "data_safety": "collects",
+      "apk": "silent"
+    },
+    {
+      "data_type": "name",
+      "ontology_path": [
+        "personal_info",
+        "contact_info",
+        "name"
+      ],
+      "policy": "collects",
+      "data_safety": "collects",
+      "apk": "silent"
+    },
+    {
+      "data_type": "phone_number",
+      "ontology_path": [
+        "personal_info",
+        "contact_info",
+        "phone_number"
+      ],
+      "policy": "collects",
+      "data_safety": "collects",
+      "apk": "silent"
+    },
+    {
+      "data_type": "purchase_history",
+      "ontology_path": [
+        "personal_info",
+        "financial_info",
+        "purchase_history"
+      ],
+      "policy": "collects",
+      "data_safety": "collects",
+      "apk": "silent"
+    }
+  ],
+  "indicators": [
+    {
+      "id": "i_d01",
+      "rule_id": "D01",
+      "status": "needs_review",
+      "user_category": "location",
+      "data_type": "precise_location",
+      "ontology_path": [
+        "personal_info",
+        "location",
+        "precise_location"
+      ],
+      "summary": "The app can access precise location. Whether it does depends on how the app uses the permission.",
+      "source": "apk_permission",
+      "evidence": {
+        "permission": "android.permission.ACCESS_FINE_LOCATION",
+        "captured_at": "2026-10-19"
+      },
+      "group_id": "g_loc"
+    },
+    {
+      "id": "i_d03",
+      "rule_id": "D03",
+      "status": "needs_review",
+      "user_category": "camera_mic",
+      "data_type": "camera_media",
+      "ontology_path": [
+        "personal_info",
+        "photos_media",
+        "camera_media"
+      ],
+      "summary": "The app can use the camera. Whether it does depends on how the app uses the permission.",
+      "source": "apk_permission",
+      "evidence": {
+        "permission": "android.permission.CAMERA",
+        "captured_at": "2026-10-19"
+      }
+    },
+    {
+      "id": "i_t02",
+      "rule_id": "T02",
+      "status": "needs_review",
+      "user_category": "ads_tracking",
+      "data_type": "advertising_id",
+      "ontology_path": [
+        "personal_info",
+        "identifiers",
+        "device_id",
+        "advertising_id"
+      ],
+      "summary": "The app includes an advertising SDK (Google Mobile Ads).",
+      "source": "apk_sdk",
+      "evidence": {
+        "sdk": "com.google.android.gms.ads",
+        "captured_at": "2026-10-19"
+      },
+      "group_id": "g_ads"
+    },
+    {
+      "id": "i_t08",
+      "rule_id": "T08",
+      "status": "needs_review",
+      "user_category": "ads_tracking",
+      "data_type": "advertising_id",
+      "ontology_path": [
+        "personal_info",
+        "identifiers",
+        "device_id",
+        "advertising_id"
+      ],
+      "summary": "The app can read the advertising ID. You can reset or delete it in Android settings.",
+      "source": "apk_permission",
+      "evidence": {
+        "permission": "com.google.android.gms.permission.AD_ID",
+        "captured_at": "2026-10-19"
+      },
+      "group_id": "g_ads"
+    },
+    {
+      "id": "i_a01",
+      "rule_id": "A01",
+      "status": "needs_review",
+      "user_category": "location",
+      "data_type": "precise_location",
+      "ontology_path": [
+        "personal_info",
+        "location",
+        "precise_location"
+      ],
+      "summary": "The app requests a permission for precise location, and neither the policy nor the safety section states a purpose for it.",
+      "source": "apk_permission",
+      "evidence": {
+        "permission": "android.permission.ACCESS_FINE_LOCATION",
+        "captured_at": "2026-10-19"
+      },
+      "group_id": "g_loc"
+    },
+    {
+      "id": "i_a01_2",
+      "rule_id": "A01",
+      "status": "needs_review",
+      "user_category": "camera_mic",
+      "data_type": "camera_media",
+      "ontology_path": [
+        "personal_info",
+        "photos_media",
+        "camera_media"
+      ],
+      "summary": "The app requests a permission for camera images, and neither the policy nor the safety section states a purpose for it.",
+      "source": "apk_permission",
+      "evidence": {
+        "permission": "android.permission.CAMERA",
+        "captured_at": "2026-10-19"
+      }
+    }
+  ],
+  "rule_runs": [
+    {
+      "rule_id": "P05",
+      "name": "Collection contradiction",
+      "family": "P",
+      "phase": 1,
+      "status": "potential_conflict"
+    },
+    {
+      "rule_id": "P06",
+      "name": "Sharing contradiction",
+      "family": "P",
+      "phase": 1,
+      "status": "confirmed_conflict"
+    },
+    {
+      "rule_id": "P07",
+      "name": "Data Safety mismatch",
+      "family": "P",
+      "phase": 1,
+      "status": "potential_conflict"
+    },
+    {
+      "rule_id": "P12",
+      "name": "Conflicting statements within policy",
+      "family": "P",
+      "phase": 1,
+      "status": "no_issue_detected"
+    },
+    {
+      "rule_id": "D01",
+      "name": "Location data indicator",
+      "family": "D",
+      "phase": 1,
+      "status": "needs_review"
+    },
+    {
+      "rule_id": "D03",
+      "name": "Camera access indicator",
+      "family": "D",
+      "phase": 1,
+      "status": "needs_review"
+    },
+    {
+      "rule_id": "T01",
+      "name": "Undisclosed analytics SDK",
+      "family": "T",
+      "phase": 1,
+      "status": "no_issue_detected"
+    },
+    {
+      "rule_id": "T02",
+      "name": "Advertising SDK",
+      "family": "T",
+      "phase": 1,
+      "status": "needs_review"
+    },
+    {
+      "rule_id": "T05",
+      "name": "Third-party endpoint mismatch",
+      "family": "T",
+      "phase": 1,
+      "status": "inconclusive",
+      "reason": "runtime_evidence_unavailable"
+    },
+    {
+      "rule_id": "T08",
+      "name": "Advertising ID access",
+      "family": "T",
+      "phase": 1,
+      "status": "needs_review"
+    },
+    {
+      "rule_id": "A01",
+      "name": "Sensitive permission without apparent purpose",
+      "family": "A",
+      "phase": 1,
+      "status": "needs_review"
+    },
+    {
+      "rule_id": "C03",
+      "name": "Tracking before consent",
+      "family": "C",
+      "phase": 1,
+      "status": "inconclusive",
+      "reason": "runtime_evidence_unavailable"
+    },
+    {
+      "rule_id": "C07",
+      "name": "Account deletion functionality",
+      "family": "C",
+      "phase": 1,
+      "status": "inconclusive",
+      "reason": "test_account_unavailable"
+    },
+    {
+      "rule_id": "S06",
+      "name": "Sensitive data in logs",
+      "family": "S",
+      "phase": 1,
+      "status": "inconclusive",
+      "reason": "runtime_evidence_unavailable"
+    }
+  ],
+  "status_counts": {
+    "confirmed_conflict": 1,
+    "potential_conflict": 2,
+    "needs_review": 5,
+    "inconclusive": 4,
+    "no_issue_detected": 2
+  },
+  "card": {
+    "categories": [
+      {
+        "id": "location",
+        "color": "orange",
+        "status": "potential_conflict",
+        "note": "The safety section says precise location is not collected, but the app has a related permission. This shows capability, not behaviour.",
+        "finding_ids": [
+          "f_bm_01",
+          "f_bm_02"
+        ],
+        "indicator_ids": [
+          "i_d01",
+          "i_a01"
+        ]
+      },
+      {
+        "id": "contacts",
+        "color": "grey",
+        "status": "inconclusive",
+        "note": "Not checked in this version.",
+        "finding_ids": [],
+        "indicator_ids": []
+      },
+      {
+        "id": "photos_files",
+        "color": "grey",
+        "status": "inconclusive",
+        "note": "Not checked in this version.",
+        "finding_ids": [],
+        "indicator_ids": []
+      },
+      {
+        "id": "camera_mic",
+        "color": "yellow",
+        "status": "needs_review",
+        "note": "The app can use the camera. Whether it does depends on how the app uses the permission.",
+        "finding_ids": [],
+        "indicator_ids": [
+          "i_d03",
+          "i_a01_2"
+        ]
+      },
+      {
+        "id": "messages_calls",
+        "color": "grey",
+        "status": "inconclusive",
+        "note": "Not checked in this version.",
+        "finding_ids": [],
+        "indicator_ids": []
+      },
+      {
+        "id": "money_payments",
+        "color": "grey",
+        "status": "inconclusive",
+        "note": "Not checked in this version.",
+        "finding_ids": [],
+        "indicator_ids": []
+      },
+      {
+        "id": "identity",
+        "color": "grey",
+        "status": "inconclusive",
+        "note": "Not checked in this version.",
+        "finding_ids": [],
+        "indicator_ids": []
+      },
+      {
+        "id": "health",
+        "color": "grey",
+        "status": "inconclusive",
+        "note": "Not checked in this version.",
+        "finding_ids": [],
+        "indicator_ids": []
+      },
+      {
+        "id": "ads_tracking",
+        "color": "red",
+        "status": "confirmed_conflict",
+        "note": "The policy says Device or other IDs are not shared, but the safety section says Device or other IDs are shared.",
+        "finding_ids": [
+          "f_dm_01",
+          "f_bm_03"
+        ],
+        "indicator_ids": [
+          "i_t02",
+          "i_t08"
+        ]
+      },
+      {
+        "id": "account_profile",
+        "color": "grey",
+        "status": "inconclusive",
+        "note": "We could not check whether account deletion works.",
+        "finding_ids": [],
+        "indicator_ids": []
+      }
+    ],
+    "answers": [
+      {
+        "id": "location",
+        "text": "The app can access your precise location.",
+        "finding_ids": [
+          "f_bm_01",
+          "f_bm_02"
+        ]
+      },
+      {
+        "id": "sharing",
+        "text": "The safety section says Device or other IDs are shared with third parties.",
+        "finding_ids": [
+          "f_dm_01",
+          "f_bm_03"
+        ]
+      },
+      {
+        "id": "ads",
+        "text": "The safety section lists advertising as a purpose. The app includes an advertising SDK (Google Mobile Ads).",
+        "finding_ids": [
+          "f_dm_01",
+          "f_bm_03"
+        ]
+      },
+      {
+        "id": "deletion",
+        "text": "The policy describes how to ask for deletion. We could not check that it works.",
+        "finding_ids": []
+      },
+      {
+        "id": "grievance",
+        "text": "The policy names a contact for complaints.",
+        "finding_ids": []
+      }
+    ],
+    "checked_at": "2026-10-23T21:09:21Z"
+  },
+  "versions": {
+    "engine": "0.2.0",
+    "ontology": "2026.10.1",
+    "extractor": "rules@0.1.0"
+  }
+}

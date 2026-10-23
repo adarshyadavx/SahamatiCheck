@@ -1,0 +1,138 @@
+/* Mudra design tokens: shared by apps/web and apps/extension. */
+:root {
+  --neel: #2a3a8f;
+  --neel-soft: #e6e9f7;
+  --surface: #fbf8f3;
+  --surface-raised: #ffffff;
+  --border: #e4dfd5;
+  --ink: #1b1d26;
+  --ink-muted: #5a5e6e;
+  --class-internal: #b3261e;
+  --class-declaration: #5b3fa8;
+  --class-behaviour: #8a5a00;
+  --class-behaviour-fill: #e0a526;
+  --class-gap: #5f6b73;
+  --agree: #2e6b4a;
+  --radius: 12px;
+  --font-display: "Anek Latin", "Anek Devanagari", system-ui, sans-serif;
+  --font-body: "Noto Sans", "Noto Sans Devanagari", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+  /* Extended tokens (Agent 3). Existing names above are unchanged. */
+  --haldi: #e0a526;
+  --surface-sunken: #f3eee5;
+  --border-strong: #cfc6b6;
+  --ink-faint: #676b79;
+  --on-neel: #ffffff;
+  --focus: #2a3a8f;
+  --class-internal-soft: #fbeae7;
+  --class-declaration-soft: #efeaf9;
+  --class-behaviour-soft: #fbf0d6;
+  --class-gap-soft: #ebeef0;
+  --agree-soft: #e2efe7;
+  --seal-ink: rgba(42, 58, 143, 0.9);
+  --weave: rgba(120, 96, 60, 0.045);
+  --shadow-1: 0 1px 0 rgba(27, 29, 38, 0.04), 0 1px 3px rgba(27, 29, 38, 0.06);
+  --shadow-2: 0 1px 0 rgba(27, 29, 38, 0.05), 0 14px 32px -18px rgba(42, 58, 143, 0.35);
+  /* Report-card status colours (Agent 3). Red is reserved for confirmed_conflict. */
+  --st-red: #b3261e;
+  --st-red-soft: #fbeae7;
+  --st-orange: #a84a00;
+  --st-orange-soft: #fcebdd;
+  --st-yellow: #7a5200;
+  --st-yellow-soft: #fbf0d6;
+  --st-grey: #565f66;
+  --st-grey-soft: #eceff1;
+  --st-green: #2e6b4a;
+  --st-green-soft: #e2efe7;
+  --radius-sm: 8px;
+  --radius-pill: 999px;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --neel: #9daaf2;
+    --neel-soft: #23284a;
+    --surface: #12141c;
+    --surface-raised: #1c1f2b;
+    --border: #2c3040;
+    --ink: #e8e6e1;
+    --ink-muted: #a3a6b4;
+    --class-internal: #f2b8b5;
+    --class-declaration: #c9b8f5;
+    --class-behaviour: #f0c46a;
+    --class-gap: #aeb8bf;
+    --agree: #8fd3ae;
+    --haldi: #e0a526;
+    --surface-sunken: #0c0e14;
+    --border-strong: #3e4359;
+    --ink-faint: #8f93a3;
+    --on-neel: #12141c;
+    --focus: #b9c3ff;
+    --class-internal-soft: #3a2124;
+    --class-declaration-soft: #2a2442;
+    --class-behaviour-soft: #372c15;
+    --class-gap-soft: #23292e;
+    --agree-soft: #19302a;
+    --seal-ink: rgba(157, 170, 242, 0.92);
+    --weave: rgba(255, 255, 255, 0.022);
+    --shadow-1: 0 1px 0 rgba(0, 0, 0, 0.3);
+    --shadow-2: 0 1px 0 rgba(0, 0, 0, 0.3), 0 18px 40px -20px rgba(0, 0, 0, 0.8);
+    --st-red: #f2b8b5;
+    --st-red-soft: #3a2124;
+    --st-orange: #f5b685;
+    --st-orange-soft: #3a2616;
+    --st-yellow: #f0c46a;
+    --st-yellow-soft: #372c15;
+    --st-grey: #aeb8bf;
+    --st-grey-soft: #23292e;
+    --st-green: #8fd3ae;
+    --st-green-soft: #19302a;
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme="dark"] {
+  --neel: #9daaf2;
+  --neel-soft: #23284a;
+  --surface: #12141c;
+  --surface-raised: #1c1f2b;
+  --border: #2c3040;
+  --ink: #e8e6e1;
+  --ink-muted: #a3a6b4;
+  --class-internal: #f2b8b5;
+  --class-declaration: #c9b8f5;
+  --class-behaviour: #f0c46a;
+  --class-gap: #aeb8bf;
+  --agree: #8fd3ae;
+  --haldi: #e0a526;
+  --surface-sunken: #0c0e14;
+  --border-strong: #3e4359;
+  --ink-faint: #8f93a3;
+  --on-neel: #12141c;
+  --focus: #b9c3ff;
+  --class-internal-soft: #3a2124;
+  --class-declaration-soft: #2a2442;
+  --class-behaviour-soft: #372c15;
+  --class-gap-soft: #23292e;
+  --agree-soft: #19302a;
+  --seal-ink: rgba(157, 170, 242, 0.92);
+  --weave: rgba(255, 255, 255, 0.022);
+  --shadow-1: 0 1px 0 rgba(0, 0, 0, 0.3);
+  --shadow-2: 0 1px 0 rgba(0, 0, 0, 0.3), 0 18px 40px -20px rgba(0, 0, 0, 0.8);
+  --st-red: #f2b8b5;
+  --st-red-soft: #3a2124;
+  --st-orange: #f5b685;
+  --st-orange-soft: #3a2616;
+  --st-yellow: #f0c46a;
+  --st-yellow-soft: #372c15;
+  --st-grey: #aeb8bf;
+  --st-grey-soft: #23292e;
+  --st-green: #8fd3ae;
+  --st-green-soft: #19302a;
+  color-scheme: dark;
+}
+
+/* Devanagari is set ~1.1x with line-height 1.7. Applied only to the outermost
+   Hindi element so the 1.1em does not compound at every nesting level. */
+:lang(hi):not(:lang(hi) *) { font-size: 1.1em; line-height: 1.7; }
