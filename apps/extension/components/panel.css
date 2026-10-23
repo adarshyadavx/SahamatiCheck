@@ -15,17 +15,9 @@ body {
   line-height: 1.5;
 }
 
-/* Orange has no Mudra token yet (see docs/contract-requests.md). Red, yellow, grey and green use the existing tokens. */
+/* Orange comes from the shared Mudra status token (--st-orange in packages/ui/src/tokens.css). */
 :root {
-  --card-orange: #a3470a;
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme='light']) {
-    --card-orange: #f4a261;
-  }
-}
-:root[data-theme='dark'] {
-  --card-orange: #f4a261;
+  --card-orange: var(--st-orange);
 }
 
 a {
