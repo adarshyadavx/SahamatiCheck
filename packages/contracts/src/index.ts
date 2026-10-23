@@ -222,4 +222,32 @@ export interface AuditAggregate {
   failure_rates: { policy_unreachable: number; apk_unparseable: number };
 }
 
+// GET /v1/rules?family=P|D|T|A|C|S|AI → RuleInfo[] (bare array). AI09 is listed with kind "guard"; it never appears in rule_runs.
+export interface RuleInfo {
+  id: string;
+  version: number;
+  name: string;
+  name_hi: string;
+  family: "P" | "D" | "T" | "A" | "C" | "S" | "AI";
+  phase: number;
+  enabled: boolean;
+  kind: "detector" | "guard";
+  investigation: boolean;
+  severity: "high" | "medium" | "low" | "info";
+  score_track: "privacy" | "security";
+  required_sources: string[];
+  any_of_sources: string[];
+  engine_rules: string[];
+  result_on_match: "confirmed_conflict" | "potential_conflict" | "needs_review";
+  status_ceiling: "confirmed_conflict" | "potential_conflict" | "needs_review" | null;
+  categories: UserCategory[];
+  inconclusive_reasons: string[];
+  plain_language: string;
+  plain_language_hi: string;
+}
+
+// Confidence bands shown to users. Must equal status.confirm_threshold and status.min_claim_confidence in
+// backend/core/sahamati_core/engine/thresholds.yaml (a backend test enforces this). Clients import these instead of hardcoding.
+export const CONFIDENCE_BANDS = { strong_min: 0.85, moderate_min: 0.7 } as const;
+
 export const API_BASE_DEFAULT = "http://localhost:8000";

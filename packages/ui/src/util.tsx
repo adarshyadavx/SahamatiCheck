@@ -1,3 +1,4 @@
+import { CONFIDENCE_BANDS } from "@sahamati/contracts";
 import type { ReactNode } from "react";
 import type { DisclosureGap, Finding } from "@sahamati/contracts";
 import { contentLang, createT, type Locale, type Translator } from "@sahamati/i18n";
@@ -83,8 +84,8 @@ export function langAttr(locale: Locale, text: string): Locale | undefined {
 
 /** Display-only bands for a calibrated confidence value. The engine's own thresholds stay in the backend. */
 export type ConfidenceBandId = "strong" | "moderate" | "weak";
-export const CONFIDENCE_STRONG_MIN = 0.85;
-export const CONFIDENCE_MODERATE_MIN = 0.7;
+export const CONFIDENCE_STRONG_MIN: number = CONFIDENCE_BANDS.strong_min;
+export const CONFIDENCE_MODERATE_MIN: number = CONFIDENCE_BANDS.moderate_min;
 
 export function confidenceBand(value: number): ConfidenceBandId {
   if (value >= CONFIDENCE_STRONG_MIN) return "strong";

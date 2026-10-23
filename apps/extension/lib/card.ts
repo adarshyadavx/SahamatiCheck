@@ -1,4 +1,4 @@
-import type { CardCategory, Finding, Indicator, Report } from '@sahamati/contracts';
+import { CONFIDENCE_BANDS, type CardCategory, type Finding, type Indicator, type Report } from '@sahamati/contracts';
 import { hasKey, type MessageKey, type Translator } from './i18n';
 
 /**
@@ -8,8 +8,8 @@ import { hasKey, type MessageKey, type Translator } from './i18n';
  */
 
 /** Presentation bands for the confidence number. Strong matches the backend's confirm threshold. */
-export const CONFIDENCE_STRONG = 0.85;
-export const CONFIDENCE_MODERATE = 0.7;
+export const CONFIDENCE_STRONG: number = CONFIDENCE_BANDS.strong_min;
+export const CONFIDENCE_MODERATE: number = CONFIDENCE_BANDS.moderate_min;
 export type ConfidenceBand = 'strong' | 'moderate' | 'weak';
 
 export function confidenceBand(value: number): ConfidenceBand {

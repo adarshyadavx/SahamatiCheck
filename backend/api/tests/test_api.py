@@ -267,3 +267,25 @@ def test_a_finding_under_review_is_hidden_with_its_card_and_summary(client: Test
     with session_scope() as s:
         for d in s.query(DisputeRow).filter(DisputeRow.report_id == "r_demo_shopkart"):
             s.delete(d)
+
+
+def test_rules_listing_matches_ts_contract(client: TestClient) -> None:
+    rules = client.get("/v1/rules").json()
+    assert rules
+    for i, rule in enumerate(rules):
+        assert CONTRACT.check("RuleInfo", rule, f"$.rules[{i}]") == []
+
+
+def test_ts_confidence_bands_match_engine_thresholds() -> None:
+    import re
+    from sahamati_core.engine import load_config  # noqa: F401  (config import proves the package is installed)
+    import yaml
+    from pathlib import Path
+    import sahamati_core.engine as eng
+
+    cfg = yaml.safe_load((Path(eng.__file__).parent / "thresholds.yaml").read_text(encoding="utf-8"))["status"]
+    src = (Path(__file__).resolve().parents[3] / "packages" / "contracts" / "src" / "index.ts").read_text(encoding="utf-8")
+    m = re.search(r"CONFIDENCE_BANDS = \{ strong_min: ([0-9.]+), moderate_min: ([0-9.]+) \}", src)
+    assert m
+    assert float(m.group(1)) == cfg["confirm_threshold"]
+    assert float(m.group(2)) == cfg["min_claim_confidence"]
