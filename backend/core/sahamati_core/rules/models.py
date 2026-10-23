@@ -97,6 +97,16 @@ class TestCase(Strict):
     expect: TestExpect
 
 
+class Catalogue(Strict):
+    """The rule's row in the 86-rule catalogue (PLAN.md §4.9), verbatim where it is prose."""
+
+    evidence: str  # "Evidence needed" cell, e.g. "Pol + (DS | APK | RT)"
+    static_check: Literal["yes", "partial", "no_inconclusive"]  # can static evidence alone settle it?
+    max_status_static: str  # highest status reachable with policy + data safety + APK only
+    phase_note: str  # the catalogue's phase cell, e.g. "1 (stub), 2-RT"
+    report_category: str  # the catalogue's report-card category cell
+
+
 class Rule(Strict):
     id: str = Field(pattern=r"^[A-Z]{1,2}\d{2}$")
     version: int = Field(ge=1)
@@ -123,7 +133,8 @@ class Rule(Strict):
     dedupe: Literal["data_type", "category", "evidence"] = "data_type"  # investigation rules only
     plain_language: str
     plain_language_hi: str
-    tests: list[TestCase]
+    catalogue: Catalogue
+    tests: list[TestCase] = Field(default_factory=list)  # required for enabled rules only
 
     @field_validator("engine_rules")
     @classmethod
@@ -161,7 +172,8 @@ class Rule(Strict):
         if self.investigation and not set(self.engine_rules) <= {"APK-PERM", "APK-SDK", "GAP"}:
             errs.append("an investigation rule reads APK claims or gaps only")
         if not self.tests:
-            errs.append("a rule without tests is rejected")
+            if self.enabled:
+                errs.append("an enabled rule without tests is rejected")
         else:
             kinds = {t.case for t in self.tests}
             has_sources = bool(self.evidence_sources.required or self.evidence_sources.any_of)
@@ -205,3 +217,4 @@ class RuleInfo(Strict):
     inconclusive_reasons: list[str]
     plain_language: str
     plain_language_hi: str
+    catalogue: Catalogue

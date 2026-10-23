@@ -70,7 +70,7 @@ class Registry:
                 any_of_sources=list(r.evidence_sources.any_of), engine_rules=list(r.engine_rules),
                 result_on_match=r.result_on_match, status_ceiling=r.status_ceiling, categories=list(r.categories),
                 inconclusive_reasons=list(r.inconclusive_reasons), plain_language=r.plain_language,
-                plain_language_hi=r.plain_language_hi)
+                plain_language_hi=r.plain_language_hi, catalogue=r.catalogue)
             for r in self.rules if family is None or r.family == family
         ]
 
@@ -129,6 +129,7 @@ def load_registry_uncached(directory: Path | None = None, ontology: Ontology | N
             if r.family != fam:
                 errors.append(f"{path.name}: rule {r.id} has family {r.family}")
             rules.append(r)
+    rules.sort(key=lambda r: (FAMILY_FILES.index(r.family), int(r.id[len(r.family):])))  # P01..P12, D01.., ... AI12
     seen: set[str] = set()
     cats = set(onto.data_types.report_categories)
     for r in rules:
@@ -181,7 +182,7 @@ def load_registry(directory: Path | str | None = None) -> Registry:
 
 
 def rule_digest(rule: Rule) -> str:
-    body = rule.model_dump(mode="json", exclude={"version"})
+    body = rule.model_dump(mode="json", exclude={"version", "catalogue"})  # catalogue is documentation, not behaviour
     return hashlib.sha256(json.dumps(body, sort_keys=True, ensure_ascii=False).encode("utf-8")).hexdigest()
 
 

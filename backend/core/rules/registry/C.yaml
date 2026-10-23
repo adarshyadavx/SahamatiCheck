@@ -6,6 +6,12 @@ rules:
     version: 1
     name: Tracking before consent
     name_hi: सहमति से पहले ट्रैकिंग
+    catalogue:
+      evidence: "RT [APK leads]"
+      static_check: no_inconclusive
+      max_status_static: "inconclusive"
+      phase_note: "1 (stub), 2-RT"
+      report_category: "Ads & tracking"
     family: C
     phase: 1
     enabled: true
@@ -26,6 +32,12 @@ rules:
     version: 1
     name: Account deletion functionality
     name_hi: खाता हटाने की सुविधा
+    catalogue:
+      evidence: "BE (test account) [Pol, DS deletion URL]"
+      static_check: no_inconclusive
+      max_status_static: "inconclusive"
+      phase_note: "1 (stub), 3"
+      report_category: "Account & profile"
     family: C
     phase: 1
     enabled: true
@@ -41,3 +53,203 @@ rules:
       - case: inconclusive
         name: no test account is available
         expect: {status: inconclusive, reason: test_account_unavailable}
+  - id: C01
+    version: 1
+    name: "Consent before applicable processing"
+    name_hi: "लागू प्रसंस्करण से पहले सहमति"
+    family: C
+    phase: 2
+    enabled: false
+    investigation: false
+    severity: medium
+    score_track: privacy
+    evidence_sources: {required: [runtime], any_of: []}
+    result_on_match: needs_review
+    catalogue:
+      evidence: "RT [APK] + pack"
+      static_check: no_inconclusive
+      max_status_static: "inconclusive"
+      phase_note: "2-RT, 3 (pack)"
+      report_category: "Per data type"
+    plain_language: This check is not available in this version.
+    plain_language_hi: "यह जाँच इस संस्करण में उपलब्ध नहीं है।"
+  - id: C02
+    version: 1
+    name: "Consent withdrawal"
+    name_hi: "सहमति वापस लेना"
+    family: C
+    phase: 2
+    enabled: false
+    investigation: false
+    severity: low
+    score_track: privacy
+    evidence_sources: {required: [policy], any_of: []}
+    result_on_match: needs_review
+    catalogue:
+      evidence: "Pol [RT | BE]"
+      static_check: partial
+      max_status_static: "needs_review"
+      phase_note: "2, 3"
+      report_category: "Account & profile"
+    plain_language: This check is not available in this version.
+    plain_language_hi: "यह जाँच इस संस्करण में उपलब्ध नहीं है।"
+  - id: C04
+    version: 1
+    name: "Consent-state inconsistency"
+    name_hi: "सहमति-स्थिति में असंगति"
+    family: C
+    phase: 2
+    enabled: false
+    investigation: false
+    severity: medium
+    score_track: privacy
+    evidence_sources: {required: [runtime], any_of: []}
+    result_on_match: needs_review
+    catalogue:
+      evidence: "RT (consent-granted and consent-denied runs)"
+      static_check: no_inconclusive
+      max_status_static: "inconclusive"
+      phase_note: "2-RT"
+      report_category: "Ads & tracking"
+    plain_language: This check is not available in this version.
+    plain_language_hi: "यह जाँच इस संस्करण में उपलब्ध नहीं है।"
+  - id: C05
+    version: 1
+    name: "Privacy settings unavailable"
+    name_hi: "गोपनीयता सेटिंग अनुपलब्ध"
+    family: C
+    phase: 2
+    enabled: false
+    investigation: false
+    severity: low
+    score_track: privacy
+    evidence_sources: {required: [policy, apk], any_of: []}
+    result_on_match: needs_review
+    catalogue:
+      evidence: "Pol + APK (settings screens, strings) [RT]"
+      static_check: partial
+      max_status_static: "needs_review"
+      phase_note: "2"
+      report_category: "Account & profile"
+    plain_language: This check is not available in this version.
+    plain_language_hi: "यह जाँच इस संस्करण में उपलब्ध नहीं है।"
+  - id: C06
+    version: 1
+    name: "Account deletion disclosure"
+    name_hi: "खाता हटाने की जानकारी"
+    family: C
+    phase: 2
+    enabled: false
+    investigation: false
+    severity: medium
+    score_track: privacy
+    evidence_sources: {required: [policy, data_safety], any_of: []}
+    result_on_match: potential_conflict
+    catalogue:
+      evidence: "Pol + DS (deletion URL, deletion flag) + Meta (account creation)"
+      static_check: "yes"
+      max_status_static: "potential"
+      phase_note: "2"
+      report_category: "Account & profile"
+    plain_language: This check is not available in this version.
+    plain_language_hi: "यह जाँच इस संस्करण में उपलब्ध नहीं है।"
+  - id: C08
+    version: 1
+    name: "Retention period absent"
+    name_hi: "प्रतिधारण अवधि का अभाव"
+    family: C
+    phase: 2
+    enabled: false
+    investigation: false
+    severity: low
+    score_track: privacy
+    evidence_sources: {required: [policy], any_of: []}
+    result_on_match: needs_review
+    catalogue:
+      evidence: "Pol"
+      static_check: "yes"
+      max_status_static: "needs_review (pack may raise to potential)"
+      phase_note: "2"
+      report_category: "Account & profile"
+    plain_language: This check is not available in this version.
+    plain_language_hi: "यह जाँच इस संस्करण में उपलब्ध नहीं है।"
+  - id: C09
+    version: 1
+    name: "Retention inconsistency"
+    name_hi: "प्रतिधारण में असंगति"
+    family: C
+    phase: 2
+    enabled: false
+    investigation: false
+    severity: medium
+    score_track: privacy
+    evidence_sources: {required: [policy, data_safety], any_of: []}
+    result_on_match: potential_conflict
+    catalogue:
+      evidence: "Pol + DS [BE]"
+      static_check: partial
+      max_status_static: "potential"
+      phase_note: "2"
+      report_category: "Account & profile"
+    plain_language: This check is not available in this version.
+    plain_language_hi: "यह जाँच इस संस्करण में उपलब्ध नहीं है।"
+  - id: C10
+    version: 1
+    name: "Deletion does not propagate"
+    name_hi: "हटाना आगे तक नहीं पहुँचता"
+    family: C
+    phase: 3
+    enabled: false
+    investigation: false
+    severity: medium
+    score_track: privacy
+    evidence_sources: {required: [test_account], any_of: []}
+    result_on_match: needs_review
+    catalogue:
+      evidence: "BE"
+      static_check: no_inconclusive
+      max_status_static: "inconclusive"
+      phase_note: "3"
+      report_category: "Account & profile"
+    plain_language: This check is not available in this version.
+    plain_language_hi: "यह जाँच इस संस्करण में उपलब्ध नहीं है।"
+  - id: C11
+    version: 1
+    name: "Consent persistence issue"
+    name_hi: "सहमति के बने रहने की समस्या"
+    family: C
+    phase: 2
+    enabled: false
+    investigation: false
+    severity: medium
+    score_track: privacy
+    evidence_sources: {required: [runtime], any_of: []}
+    result_on_match: needs_review
+    catalogue:
+      evidence: "RT (multi-session, across update)"
+      static_check: no_inconclusive
+      max_status_static: "inconclusive"
+      phase_note: "2-RT"
+      report_category: "Ads & tracking"
+    plain_language: This check is not available in this version.
+    plain_language_hi: "यह जाँच इस संस्करण में उपलब्ध नहीं है।"
+  - id: C12
+    version: 1
+    name: "Privacy settings mismatch"
+    name_hi: "गोपनीयता सेटिंग में अंतर"
+    family: C
+    phase: 2
+    enabled: false
+    investigation: false
+    severity: low
+    score_track: privacy
+    evidence_sources: {required: [policy, apk], any_of: []}
+    result_on_match: needs_review
+    catalogue:
+      evidence: "Pol + APK [RT]"
+      static_check: partial
+      max_status_static: "needs_review"
+      phase_note: "2"
+      report_category: "Account & profile"
+    plain_language: This check is not available in this version.
+    plain_language_hi: "यह जाँच इस संस्करण में उपलब्ध नहीं है।"

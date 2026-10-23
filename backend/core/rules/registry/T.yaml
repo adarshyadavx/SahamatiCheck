@@ -4,6 +4,12 @@ rules:
     version: 1
     name: Undisclosed analytics SDK
     name_hi: घोषित न किया गया एनालिटिक्स SDK
+    catalogue:
+      evidence: "APK + (Pol | DS)"
+      static_check: partial
+      max_status_static: "potential"
+      phase_note: "1"
+      report_category: "Ads & tracking"
     family: T
     phase: 1
     enabled: true
@@ -67,6 +73,12 @@ rules:
     version: 1
     name: Advertising SDK
     name_hi: विज्ञापन SDK
+    catalogue:
+      evidence: "APK + Pol + DS"
+      static_check: "yes"
+      max_status_static: "needs_review"
+      phase_note: "1"
+      report_category: "Ads & tracking"
     family: T
     phase: 1
     enabled: true
@@ -111,6 +123,12 @@ rules:
     version: 1
     name: Third-party endpoint mismatch
     name_hi: तृतीय-पक्ष एंडपॉइंट में असंगति
+    catalogue:
+      evidence: "RT + (Pol | DS)"
+      static_check: no_inconclusive
+      max_status_static: "inconclusive"
+      phase_note: "1 (stub), 2-RT"
+      report_category: "Ads & tracking"
     family: T
     phase: 1
     enabled: true
@@ -131,6 +149,12 @@ rules:
     version: 1
     name: Advertising ID access
     name_hi: विज्ञापन आईडी तक पहुँच
+    catalogue:
+      evidence: "APK (AD_ID permission, AdvertisingIdClient) + DS + Pol"
+      static_check: "yes"
+      max_status_static: "needs_review"
+      phase_note: "1"
+      report_category: "Ads & tracking"
     family: T
     phase: 1
     enabled: true
@@ -162,3 +186,163 @@ rules:
         name: no APK
         coverage: {apk: unavailable}
         expect: {status: inconclusive, reason: apk_unavailable}
+  - id: T03
+    version: 1
+    name: "Attribution tracking"
+    name_hi: "एट्रिब्यूशन ट्रैकिंग"
+    family: T
+    phase: 2
+    enabled: false
+    investigation: false
+    severity: low
+    score_track: privacy
+    evidence_sources: {required: [apk, policy, data_safety], any_of: []}
+    result_on_match: needs_review
+    catalogue:
+      evidence: "APK + Pol + DS"
+      static_check: partial
+      max_status_static: "needs_review"
+      phase_note: "2"
+      report_category: "Ads & tracking"
+    plain_language: This check is not available in this version.
+    plain_language_hi: "यह जाँच इस संस्करण में उपलब्ध नहीं है।"
+  - id: T04
+    version: 1
+    name: "Multiple tracking SDKs"
+    name_hi: "एकाधिक ट्रैकिंग SDK"
+    family: T
+    phase: 2
+    enabled: false
+    investigation: false
+    severity: low
+    score_track: privacy
+    evidence_sources: {required: [apk], any_of: []}
+    result_on_match: needs_review
+    catalogue:
+      evidence: "APK"
+      static_check: "yes"
+      max_status_static: "needs_review"
+      phase_note: "2"
+      report_category: "Ads & tracking"
+    plain_language: This check is not available in this version.
+    plain_language_hi: "यह जाँच इस संस्करण में उपलब्ध नहीं है।"
+  - id: T06
+    version: 1
+    name: "Cross-app identifier use"
+    name_hi: "ऐप्स के बीच पहचानकर्ता का उपयोग"
+    family: T
+    phase: 2
+    enabled: false
+    investigation: false
+    severity: medium
+    score_track: privacy
+    evidence_sources: {required: [runtime], any_of: []}
+    result_on_match: needs_review
+    catalogue:
+      evidence: "RT [APK]"
+      static_check: no_inconclusive
+      max_status_static: "inconclusive"
+      phase_note: "2-RT"
+      report_category: "Ads & tracking"
+    plain_language: This check is not available in this version.
+    plain_language_hi: "यह जाँच इस संस्करण में उपलब्ध नहीं है।"
+  - id: T07
+    version: 1
+    name: "Persistent identifier"
+    name_hi: "स्थायी पहचानकर्ता"
+    family: T
+    phase: 2
+    enabled: false
+    investigation: false
+    severity: low
+    score_track: privacy
+    evidence_sources: {required: [apk, data_safety], any_of: []}
+    result_on_match: needs_review
+    catalogue:
+      evidence: "APK (ANDROID_ID and hardware ID APIs) + DS"
+      static_check: partial
+      max_status_static: "needs_review"
+      phase_note: "2"
+      report_category: "Ads & tracking"
+    plain_language: This check is not available in this version.
+    plain_language_hi: "यह जाँच इस संस्करण में उपलब्ध नहीं है।"
+  - id: T09
+    version: 1
+    name: "SDK supply-chain change"
+    name_hi: "SDK आपूर्ति-श्रृंखला में बदलाव"
+    family: T
+    phase: 2
+    enabled: false
+    investigation: false
+    severity: low
+    score_track: privacy
+    evidence_sources: {required: [apk], any_of: []}
+    result_on_match: needs_review
+    catalogue:
+      evidence: "APK (current and prior version)"
+      static_check: "yes"
+      max_status_static: "needs_review"
+      phase_note: "2"
+      report_category: "Ads & tracking"
+    plain_language: This check is not available in this version.
+    plain_language_hi: "यह जाँच इस संस्करण में उपलब्ध नहीं है।"
+  - id: T10
+    version: 1
+    name: "SDK policy coverage gap"
+    name_hi: "SDK का नीति में उल्लेख न होना"
+    family: T
+    phase: 2
+    enabled: false
+    investigation: false
+    severity: low
+    score_track: privacy
+    evidence_sources: {required: [apk, policy], any_of: []}
+    result_on_match: needs_review
+    catalogue:
+      evidence: "APK + Pol"
+      static_check: partial
+      max_status_static: "needs_review"
+      phase_note: "2"
+      report_category: "Ads & tracking"
+    plain_language: This check is not available in this version.
+    plain_language_hi: "यह जाँच इस संस्करण में उपलब्ध नहीं है।"
+  - id: T11
+    version: 1
+    name: "Unexpected domain"
+    name_hi: "अप्रत्याशित डोमेन"
+    family: T
+    phase: 2
+    enabled: false
+    investigation: false
+    severity: medium
+    score_track: privacy
+    evidence_sources: {required: [runtime], any_of: []}
+    result_on_match: needs_review
+    catalogue:
+      evidence: "RT [APK strings]"
+      static_check: no_inconclusive
+      max_status_static: "inconclusive"
+      phase_note: "2-RT"
+      report_category: "Ads & tracking"
+    plain_language: This check is not available in this version.
+    plain_language_hi: "यह जाँच इस संस्करण में उपलब्ध नहीं है।"
+  - id: T12
+    version: 1
+    name: "Unencrypted transmission"
+    name_hi: "बिना एन्क्रिप्शन के प्रेषण"
+    family: T
+    phase: 2
+    enabled: false
+    investigation: false
+    severity: medium
+    score_track: security
+    evidence_sources: {required: [runtime], any_of: []}
+    result_on_match: needs_review
+    catalogue:
+      evidence: "RT"
+      static_check: no_inconclusive
+      max_status_static: "inconclusive"
+      phase_note: "2-RT"
+      report_category: "Security panel"
+    plain_language: This check is not available in this version.
+    plain_language_hi: "यह जाँच इस संस्करण में उपलब्ध नहीं है।"

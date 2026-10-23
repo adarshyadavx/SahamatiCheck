@@ -222,7 +222,7 @@ export interface AuditAggregate {
   failure_rates: { policy_unreachable: number; apk_unparseable: number };
 }
 
-// GET /v1/rules?family=P|D|T|A|C|S|AI → RuleInfo[] (bare array). AI09 is listed with kind "guard"; it never appears in rule_runs.
+// GET /v1/rules?family=P|D|T|A|C|S|AI → RuleInfo[] (bare array, all 86 rules; `enabled` says which ones run). AI09 is listed with kind "guard"; it never appears in rule_runs.
 export interface RuleInfo {
   id: string;
   version: number;
@@ -244,6 +244,14 @@ export interface RuleInfo {
   inconclusive_reasons: string[];
   plain_language: string;
   plain_language_hi: string;
+  catalogue: RuleCatalogue;  // the rule's row in the 86-rule catalogue
+}
+export interface RuleCatalogue {
+  evidence: string;          // "Evidence needed" cell, e.g. "Pol + (DS | APK | RT)"
+  static_check: "yes" | "partial" | "no_inconclusive";
+  max_status_static: string;
+  phase_note: string;        // e.g. "1 (stub), 2-RT"
+  report_category: string;
 }
 
 // GET /version (also /v1/version). Clients compare api_schema with API_SCHEMA_EXPECTED and show a "backend out of date" warning on a mismatch.

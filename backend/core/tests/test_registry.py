@@ -26,10 +26,11 @@ PHASE1 = {"P05", "P06", "P07", "P12", "D01", "D03", "T01", "T02", "T05", "T08", 
 def test_phase1_registry_content() -> None:
     assert {r.id for r in REG.enabled()} == PHASE1 | {"AI09"}
     assert {r.id for r in REG.runnable()} == PHASE1  # AI09 is a guard: not a rule run
-    assert all(r.phase == 1 for r in REG.rules)
+    assert all(r.phase == 1 for r in REG.enabled())  # every enabled rule ships in phase 1
+    assert len(REG.rules) == 86
     assert [r.family for r in REG.rules] == sorted((r.family for r in REG.rules), key=["P", "D", "T", "A", "C", "S", "AI"].index)
     # investigation rules (CLAUDE.md rule 14)
-    assert {r.id for r in REG.rules if r.investigation} == {"D01", "D03", "T02", "T08", "A01"}
+    assert {r.id for r in REG.enabled() if r.investigation} == {"D01", "D03", "T02", "T08", "A01"}
     # runtime stubs read nothing
     for rid in ("C03", "T05", "C07", "S06"):
         assert REG.by_id[rid].engine_rules == []
@@ -37,7 +38,7 @@ def test_phase1_registry_content() -> None:
 
 
 def test_every_rule_has_the_required_test_cases() -> None:
-    for r in REG.rules:
+    for r in REG.enabled():  # disabled catalogue entries have no behaviour to test
         kinds = {t.case for t in r.tests}
         if r.kind == "guard":
             assert "guard" in kinds

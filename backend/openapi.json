@@ -920,6 +920,46 @@
         ],
         "title": "CardCategory"
       },
+      "Catalogue": {
+        "properties": {
+          "evidence": {
+            "type": "string",
+            "title": "Evidence"
+          },
+          "static_check": {
+            "type": "string",
+            "enum": [
+              "yes",
+              "partial",
+              "no_inconclusive"
+            ],
+            "title": "Static Check"
+          },
+          "max_status_static": {
+            "type": "string",
+            "title": "Max Status Static"
+          },
+          "phase_note": {
+            "type": "string",
+            "title": "Phase Note"
+          },
+          "report_category": {
+            "type": "string",
+            "title": "Report Category"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "evidence",
+          "static_check",
+          "max_status_static",
+          "phase_note",
+          "report_category"
+        ],
+        "title": "Catalogue",
+        "description": "The rule's row in the 86-rule catalogue (PLAN.md §4.9), verbatim where it is prose."
+      },
       "CheckJobResponse": {
         "properties": {
           "kind": {
@@ -2370,6 +2410,9 @@
           "plain_language_hi": {
             "type": "string",
             "title": "Plain Language Hi"
+          },
+          "catalogue": {
+            "$ref": "#/components/schemas/Catalogue"
           }
         },
         "additionalProperties": false,
@@ -2394,7 +2437,8 @@
           "categories",
           "inconclusive_reasons",
           "plain_language",
-          "plain_language_hi"
+          "plain_language_hi",
+          "catalogue"
         ],
         "title": "RuleInfo",
         "description": "Public listing of one registry rule (GET /v1/rules)."

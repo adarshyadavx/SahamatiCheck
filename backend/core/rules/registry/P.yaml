@@ -6,6 +6,12 @@ rules:
     version: 1
     name: Collection contradiction
     name_hi: एकत्रण से जुड़ा विरोधाभास
+    catalogue:
+      evidence: "Pol + (DS | APK | RT)"
+      static_check: partial
+      max_status_static: "confirmed (vs DS); potential (APK only)"
+      phase_note: "1"
+      report_category: "Per data type"
     family: P
     phase: 1
     enabled: true
@@ -61,6 +67,12 @@ rules:
     version: 1
     name: Sharing contradiction
     name_hi: साझा करने से जुड़ा विरोधाभास
+    catalogue:
+      evidence: "Pol + (DS | APK | RT)"
+      static_check: partial
+      max_status_static: "confirmed (vs DS); potential (SDK only)"
+      phase_note: "1"
+      report_category: "Per data type (usually Ads & tracking)"
     family: P
     phase: 1
     enabled: true
@@ -122,6 +134,12 @@ rules:
     version: 1
     name: Data Safety mismatch
     name_hi: डेटा-सुरक्षा घोषणा में असंगति
+    catalogue:
+      evidence: "DS + (Pol | APK | RT)"
+      static_check: partial
+      max_status_static: "confirmed (vs Pol); potential (vs code path)"
+      phase_note: "1"
+      report_category: "Per data type"
     family: P
     phase: 1
     enabled: true
@@ -177,6 +195,12 @@ rules:
     version: 1
     name: Conflicting statements within policy
     name_hi: नीति के भीतर परस्पर विरोधी कथन
+    catalogue:
+      evidence: "Pol"
+      static_check: "yes"
+      max_status_static: "confirmed"
+      phase_note: "1"
+      report_category: "Per data type"
     family: P
     phase: 1
     enabled: true
@@ -219,3 +243,163 @@ rules:
         name: the policy could not be fetched
         coverage: {policy: unreachable}
         expect: {status: inconclusive, reason: policy_unavailable}
+  - id: P01
+    version: 1
+    name: "Missing privacy policy"
+    name_hi: "गोपनीयता नीति का अभाव"
+    family: P
+    phase: 2
+    enabled: false
+    investigation: false
+    severity: high
+    score_track: privacy
+    evidence_sources: {required: [policy], any_of: []}
+    result_on_match: confirmed_conflict
+    catalogue:
+      evidence: "Meta + Pol (fetch result)"
+      static_check: "yes"
+      max_status_static: "confirmed"
+      phase_note: "2"
+      report_category: "Banner"
+    plain_language: This check is not available in this version.
+    plain_language_hi: "यह जाँच इस संस्करण में उपलब्ध नहीं है।"
+  - id: P02
+    version: 1
+    name: "Invalid policy URL"
+    name_hi: "अमान्य नीति URL"
+    family: P
+    phase: 2
+    enabled: false
+    investigation: false
+    severity: high
+    score_track: privacy
+    evidence_sources: {required: [policy], any_of: []}
+    result_on_match: confirmed_conflict
+    catalogue:
+      evidence: "Meta + Pol (HTTP status, redirect chain, content type)"
+      static_check: "yes"
+      max_status_static: "confirmed"
+      phase_note: "2"
+      report_category: "Banner"
+    plain_language: This check is not available in this version.
+    plain_language_hi: "यह जाँच इस संस्करण में उपलब्ध नहीं है।"
+  - id: P03
+    version: 1
+    name: "Empty or placeholder policy"
+    name_hi: "खाली या नमूना नीति"
+    family: P
+    phase: 2
+    enabled: false
+    investigation: false
+    severity: high
+    score_track: privacy
+    evidence_sources: {required: [policy], any_of: []}
+    result_on_match: confirmed_conflict
+    catalogue:
+      evidence: "Pol"
+      static_check: "yes"
+      max_status_static: "confirmed (template match); needs_review (generic boilerplate)"
+      phase_note: "2"
+      report_category: "Banner"
+    plain_language: This check is not available in this version.
+    plain_language_hi: "यह जाँच इस संस्करण में उपलब्ध नहीं है।"
+  - id: P04
+    version: 1
+    name: "Missing data categories"
+    name_hi: "डेटा श्रेणियों का अभाव"
+    family: P
+    phase: 2
+    enabled: false
+    investigation: false
+    severity: medium
+    score_track: privacy
+    evidence_sources: {required: [policy], any_of: [data_safety, apk]}
+    result_on_match: potential_conflict
+    catalogue:
+      evidence: "Pol + (DS | APK)"
+      static_check: partial
+      max_status_static: "potential (requirement); needs_review (recommendation)"
+      phase_note: "2"
+      report_category: "Per data type"
+    plain_language: This check is not available in this version.
+    plain_language_hi: "यह जाँच इस संस्करण में उपलब्ध नहीं है।"
+  - id: P08
+    version: 1
+    name: "Purpose mismatch"
+    name_hi: "उद्देश्य में अंतर"
+    family: P
+    phase: 2
+    enabled: false
+    investigation: false
+    severity: medium
+    score_track: privacy
+    evidence_sources: {required: [policy, data_safety], any_of: []}
+    result_on_match: potential_conflict
+    catalogue:
+      evidence: "Pol + DS [APK SDK purposes]"
+      static_check: partial
+      max_status_static: "potential"
+      phase_note: "2"
+      report_category: "Per data type"
+    plain_language: This check is not available in this version.
+    plain_language_hi: "यह जाँच इस संस्करण में उपलब्ध नहीं है।"
+  - id: P09
+    version: 1
+    name: "Conditional collection ignored"
+    name_hi: "शर्त वाला संग्रह अनदेखा"
+    family: P
+    phase: 2
+    enabled: false
+    investigation: false
+    severity: medium
+    score_track: privacy
+    evidence_sources: {required: [policy, data_safety], any_of: []}
+    result_on_match: potential_conflict
+    catalogue:
+      evidence: "Pol + DS (optional/required flag) [APK]"
+      static_check: partial
+      max_status_static: "potential"
+      phase_note: "2"
+      report_category: "Per data type"
+    plain_language: This check is not available in this version.
+    plain_language_hi: "यह जाँच इस संस्करण में उपलब्ध नहीं है।"
+  - id: P10
+    version: 1
+    name: "Policy version mismatch"
+    name_hi: "नीति संस्करण में अंतर"
+    family: P
+    phase: 2
+    enabled: false
+    investigation: false
+    severity: low
+    score_track: privacy
+    evidence_sources: {required: [policy, data_safety, apk], any_of: []}
+    result_on_match: needs_review
+    catalogue:
+      evidence: "Meta + Pol + DS + APK (dates, versions)"
+      static_check: "yes"
+      max_status_static: "needs_review"
+      phase_note: "2"
+      report_category: "Banner"
+    plain_language: This check is not available in this version.
+    plain_language_hi: "यह जाँच इस संस्करण में उपलब्ध नहीं है।"
+  - id: P11
+    version: 1
+    name: "Missing policy update information"
+    name_hi: "नीति अद्यतन की जानकारी का अभाव"
+    family: P
+    phase: 2
+    enabled: false
+    investigation: false
+    severity: low
+    score_track: privacy
+    evidence_sources: {required: [policy], any_of: []}
+    result_on_match: needs_review
+    catalogue:
+      evidence: "Pol"
+      static_check: "yes"
+      max_status_static: "needs_review (Phase 3 pack may raise to potential)"
+      phase_note: "2"
+      report_category: "Banner"
+    plain_language: This check is not available in this version.
+    plain_language_hi: "यह जाँच इस संस्करण में उपलब्ध नहीं है।"

@@ -4,6 +4,12 @@ rules:
     version: 1
     name: Sensitive data in logs
     name_hi: लॉग में संवेदनशील डेटा
+    catalogue:
+      evidence: "RT (logcat); static proxy on APK"
+      static_check: partial
+      max_status_static: "potential (proxy)"
+      phase_note: "1"
+      report_category: "Security panel"
     family: S
     phase: 1
     enabled: true
@@ -19,3 +25,223 @@ rules:
       - case: inconclusive
         name: a static proxy with no leads is not a pass
         expect: {status: inconclusive, reason: runtime_evidence_unavailable}
+  - id: S01
+    version: 1
+    name: "Unspecified recipient"
+    name_hi: "अनिर्दिष्ट प्राप्तकर्ता"
+    family: S
+    phase: 2
+    enabled: false
+    investigation: false
+    severity: low
+    score_track: privacy
+    evidence_sources: {required: [policy], any_of: []}
+    result_on_match: needs_review
+    catalogue:
+      evidence: "Pol [APK SDK actors]"
+      static_check: "yes"
+      max_status_static: "needs_review (pack may raise to potential)"
+      phase_note: "2"
+      report_category: "Per data type"
+    plain_language: This check is not available in this version.
+    plain_language_hi: "यह जाँच इस संस्करण में उपलब्ध नहीं है।"
+  - id: S02
+    version: 1
+    name: "Purpose limitation mismatch"
+    name_hi: "उद्देश्य-सीमा में अंतर"
+    family: S
+    phase: 2
+    enabled: false
+    investigation: false
+    severity: medium
+    score_track: privacy
+    evidence_sources: {required: [policy, data_safety], any_of: [apk, runtime]}
+    result_on_match: potential_conflict
+    catalogue:
+      evidence: "Pol + DS + (APK SDK purposes | RT)"
+      static_check: partial
+      max_status_static: "potential"
+      phase_note: "2"
+      report_category: "Per data type"
+    plain_language: This check is not available in this version.
+    plain_language_hi: "यह जाँच इस संस्करण में उपलब्ध नहीं है।"
+  - id: S03
+    version: 1
+    name: "Data minimization concern"
+    name_hi: "डेटा न्यूनीकरण संबंधी चिंता"
+    family: S
+    phase: 2
+    enabled: false
+    investigation: false
+    severity: low
+    score_track: privacy
+    evidence_sources: {required: [apk, data_safety], any_of: []}
+    result_on_match: needs_review
+    catalogue:
+      evidence: "APK + DS + Meta"
+      static_check: partial
+      max_status_static: "needs_review"
+      phase_note: "2"
+      report_category: "Per data type"
+    plain_language: This check is not available in this version.
+    plain_language_hi: "यह जाँच इस संस्करण में उपलब्ध नहीं है।"
+  - id: S04
+    version: 1
+    name: "Cross-border transfer disclosure"
+    name_hi: "सीमा-पार स्थानांतरण की जानकारी"
+    family: S
+    phase: 2
+    enabled: false
+    investigation: false
+    severity: low
+    score_track: privacy
+    evidence_sources: {required: [policy, apk], any_of: []}
+    result_on_match: needs_review
+    catalogue:
+      evidence: "Pol + APK (SDK vendor jurisdiction, hardcoded endpoints) [RT]"
+      static_check: partial
+      max_status_static: "needs_review"
+      phase_note: "2, 3"
+      report_category: "Banner"
+    plain_language: This check is not available in this version.
+    plain_language_hi: "यह जाँच इस संस्करण में उपलब्ध नहीं है।"
+  - id: S05
+    version: 1
+    name: "Third-party retention"
+    name_hi: "तृतीय पक्ष द्वारा प्रतिधारण"
+    family: S
+    phase: 2
+    enabled: false
+    investigation: false
+    severity: low
+    score_track: privacy
+    evidence_sources: {required: [policy], any_of: []}
+    result_on_match: needs_review
+    catalogue:
+      evidence: "Pol + SDK reference data"
+      static_check: partial
+      max_status_static: "needs_review"
+      phase_note: "2"
+      report_category: "Account & profile"
+    plain_language: This check is not available in this version.
+    plain_language_hi: "यह जाँच इस संस्करण में उपलब्ध नहीं है।"
+  - id: S07
+    version: 1
+    name: "Sensitive data in notifications"
+    name_hi: "नोटिफ़िकेशन में संवेदनशील डेटा"
+    family: S
+    phase: 2
+    enabled: false
+    investigation: false
+    severity: low
+    score_track: security
+    evidence_sources: {required: [apk], any_of: []}
+    result_on_match: needs_review
+    catalogue:
+      evidence: "APK [RT]"
+      static_check: partial
+      max_status_static: "needs_review"
+      phase_note: "2"
+      report_category: "Security panel"
+    plain_language: This check is not available in this version.
+    plain_language_hi: "यह जाँच इस संस्करण में उपलब्ध नहीं है।"
+  - id: S08
+    version: 1
+    name: "Data in crash reports"
+    name_hi: "क्रैश रिपोर्ट में डेटा"
+    family: S
+    phase: 2
+    enabled: false
+    investigation: false
+    severity: low
+    score_track: security
+    evidence_sources: {required: [apk, runtime], any_of: []}
+    result_on_match: needs_review
+    catalogue:
+      evidence: "APK (crash SDK, custom keys) + RT"
+      static_check: partial
+      max_status_static: "needs_review"
+      phase_note: "2, 2-RT"
+      report_category: "Security panel"
+    plain_language: This check is not available in this version.
+    plain_language_hi: "यह जाँच इस संस्करण में उपलब्ध नहीं है।"
+  - id: S09
+    version: 1
+    name: "Local database exposure"
+    name_hi: "स्थानीय डेटाबेस का जोखिम"
+    family: S
+    phase: 2
+    enabled: false
+    investigation: false
+    severity: medium
+    score_track: security
+    evidence_sources: {required: [apk], any_of: []}
+    result_on_match: potential_conflict
+    catalogue:
+      evidence: "APK (exported providers, unencrypted databases)"
+      static_check: partial
+      max_status_static: "potential"
+      phase_note: "2"
+      report_category: "Security panel"
+    plain_language: This check is not available in this version.
+    plain_language_hi: "यह जाँच इस संस्करण में उपलब्ध नहीं है।"
+  - id: S10
+    version: 1
+    name: "Unprotected temporary files"
+    name_hi: "असुरक्षित अस्थायी फ़ाइलें"
+    family: S
+    phase: 2
+    enabled: false
+    investigation: false
+    severity: low
+    score_track: security
+    evidence_sources: {required: [apk], any_of: []}
+    result_on_match: needs_review
+    catalogue:
+      evidence: "APK"
+      static_check: partial
+      max_status_static: "needs_review"
+      phase_note: "2"
+      report_category: "Security panel"
+    plain_language: This check is not available in this version.
+    plain_language_hi: "यह जाँच इस संस्करण में उपलब्ध नहीं है।"
+  - id: S11
+    version: 1
+    name: "Data-sharing chain incomplete"
+    name_hi: "डेटा-साझाकरण श्रृंखला अधूरी"
+    family: S
+    phase: 2
+    enabled: false
+    investigation: false
+    severity: low
+    score_track: privacy
+    evidence_sources: {required: [policy, apk], any_of: []}
+    result_on_match: needs_review
+    catalogue:
+      evidence: "Pol + APK (mediation adapters, onward-sharing SDKs)"
+      static_check: partial
+      max_status_static: "needs_review"
+      phase_note: "2"
+      report_category: "Ads & tracking"
+    plain_language: This check is not available in this version.
+    plain_language_hi: "यह जाँच इस संस्करण में उपलब्ध नहीं है।"
+  - id: S12
+    version: 1
+    name: "Retention after purpose ends"
+    name_hi: "उद्देश्य समाप्त होने के बाद प्रतिधारण"
+    family: S
+    phase: 3
+    enabled: false
+    investigation: false
+    severity: medium
+    score_track: privacy
+    evidence_sources: {required: [], any_of: [test_account, runtime]}
+    result_on_match: needs_review
+    catalogue:
+      evidence: "BE | RT (test account)"
+      static_check: no_inconclusive
+      max_status_static: "inconclusive"
+      phase_note: "3"
+      report_category: "Account & profile"
+    plain_language: This check is not available in this version.
+    plain_language_hi: "यह जाँच इस संस्करण में उपलब्ध नहीं है।"

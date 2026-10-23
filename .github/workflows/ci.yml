@@ -37,6 +37,8 @@ jobs:
         run: .venv/bin/python -m sahamati_core.ontology
       - name: Rule registry lint (strict schema, known predicates, tests per rule, version lock)
         run: .venv/bin/python -m sahamati_core.rules
+      - name: Rule catalogue document is generated from the registry
+        run: .venv/bin/python -m sahamati_core.rules --check-catalogue-md ../docs/RULE_CATALOGUE.md
       - name: Tests
         run: .venv/bin/pytest
       - name: OpenAPI is up to date

@@ -219,14 +219,20 @@ def test_rules_listing(client: TestClient) -> None:
     assert r.status_code == 200
     rules = r.json()
     ids = [x["id"] for x in rules]
+    assert len(ids) == 86 and len(set(ids)) == 86  # the whole catalogue, enabled or not
+    enabled = {x["id"] for x in rules if x["enabled"]}
     assert {"P05", "P06", "P07", "P12", "D01", "D03", "T01", "T02", "T08", "A01", "C03", "T05", "C07", "S06",
-            "AI09"} == set(ids)
+            "AI09"} == enabled
+    assert all(x["catalogue"]["evidence"] and "phase_note" in x["catalogue"] for x in rules)
     p06 = next(x for x in rules if x["id"] == "P06")
     assert p06["engine_rules"] == ["DM-01", "BM-03", "BM-04"] and p06["required_sources"] == ["policy"]
     assert p06["name_hi"] and p06["plain_language_hi"] and p06["enabled"] is True
     only_d = client.get("/v1/rules", params={"family": "D"}).json()
-    assert [x["id"] for x in only_d] == ["D01", "D03"] and all(x["investigation"] for x in only_d)
-    assert [x["id"] for x in client.get("/v1/rules", params={"family": "AI"}).json()] == ["AI09"]
+    assert [x["id"] for x in only_d] == [f"D{i:02d}" for i in range(1, 13)] and all(x["investigation"] for x in only_d)
+    assert [x["id"] for x in only_d if x["enabled"]] == ["D01", "D03"]
+    ai = client.get("/v1/rules", params={"family": "AI"}).json()
+    assert [x["id"] for x in ai] == [f"AI{i:02d}" for i in range(1, 13)]
+    assert [x["id"] for x in ai if x["enabled"]] == ["AI09"]
     assert client.get("/v1/rules", params={"family": "Z"}).status_code == 422
     assert "/v1/rules" in client.get("/openapi.json").json()["paths"]
 

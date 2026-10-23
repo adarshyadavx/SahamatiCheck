@@ -4,9 +4,15 @@
 family: AI
 rules:
   - id: AI09
-    version: 1
-    name: Missing evidence never passes
+    version: 2
+    name: "Missing-source false pass"
     name_hi: प्रमाण की कमी को कभी पास नहीं माना जाता
+    catalogue:
+      evidence: "Eng (coverage, RuleRun)"
+      static_check: "yes"
+      max_status_static: "Effect: rewrite to inconclusive"
+      phase_note: "1"
+      report_category: "Rules-not-evaluated appendix"
     family: AI
     phase: 1
     enabled: true
@@ -27,3 +33,223 @@ rules:
         sabotage: precheck
         coverage: {apk: obfuscated}
         expect: {rule: T01, status: inconclusive, reason: missing_source_false_pass_prevented}
+  - id: AI01
+    version: 1
+    name: "Negation detection"
+    name_hi: "निषेध की पहचान"
+    family: AI
+    phase: 2
+    enabled: false
+    investigation: false
+    severity: info
+    score_track: privacy
+    evidence_sources: {required: [], any_of: []}
+    result_on_match: needs_review
+    catalogue:
+      evidence: "Eng (negation parse plus second signal)"
+      static_check: "yes"
+      max_status_static: "Effect: suppress or downgrade one step"
+      phase_note: "2 (predicate used in 1)"
+      report_category: "none"
+    plain_language: This check is not available in this version.
+    plain_language_hi: "यह जाँच इस संस्करण में उपलब्ध नहीं है।"
+  - id: AI02
+    version: 1
+    name: "Context mismatch"
+    name_hi: "संदर्भ में अंतर"
+    family: AI
+    phase: 2
+    enabled: false
+    investigation: false
+    severity: info
+    score_track: privacy
+    evidence_sources: {required: [], any_of: []}
+    result_on_match: needs_review
+    catalogue:
+      evidence: "Eng (section context tags)"
+      static_check: "yes"
+      max_status_static: "Effect: suppress binding"
+      phase_note: "2"
+      report_category: "none"
+    plain_language: This check is not available in this version.
+    plain_language_hi: "यह जाँच इस संस्करण में उपलब्ध नहीं है।"
+  - id: AI03
+    version: 1
+    name: "Purpose mismatch"
+    name_hi: "उद्देश्य में अंतर (आंतरिक जाँच)"
+    family: AI
+    phase: 2
+    enabled: false
+    investigation: false
+    severity: info
+    score_track: privacy
+    evidence_sources: {required: [], any_of: []}
+    result_on_match: needs_review
+    catalogue:
+      evidence: "Eng (purpose nodes)"
+      static_check: "yes"
+      max_status_static: "Effect: route to P08"
+      phase_note: "2"
+      report_category: "none"
+    plain_language: This check is not available in this version.
+    plain_language_hi: "यह जाँच इस संस्करण में उपलब्ध नहीं है।"
+  - id: AI04
+    version: 1
+    name: "Conditional statement mismatch"
+    name_hi: "शर्त वाले कथन में अंतर"
+    family: AI
+    phase: 2
+    enabled: false
+    investigation: false
+    severity: info
+    score_track: privacy
+    evidence_sources: {required: [], any_of: []}
+    result_on_match: needs_review
+    catalogue:
+      evidence: "Eng (conditions from `scope.py`)"
+      static_check: "yes"
+      max_status_static: "Effect: downgrade one step"
+      phase_note: "2 (predicate used in 1)"
+      report_category: "none"
+    plain_language: This check is not available in this version.
+    plain_language_hi: "यह जाँच इस संस्करण में उपलब्ध नहीं है।"
+  - id: AI05
+    version: 1
+    name: "Ambiguous disclosure"
+    name_hi: "अस्पष्ट प्रकटीकरण"
+    family: AI
+    phase: 2
+    enabled: false
+    investigation: false
+    severity: info
+    score_track: privacy
+    evidence_sources: {required: [], any_of: []}
+    result_on_match: needs_review
+    catalogue:
+      evidence: "Eng (vagueness class)"
+      static_check: "yes"
+      max_status_static: "Effect: suppress; category yellow \"too vague\""
+      phase_note: "2 (predicate used in 1)"
+      report_category: "Per data type (yellow)"
+    plain_language: This check is not available in this version.
+    plain_language_hi: "यह जाँच इस संस्करण में उपलब्ध नहीं है।"
+  - id: AI06
+    version: 1
+    name: "Contradictory definitions"
+    name_hi: "परस्पर विरोधी परिभाषाएँ"
+    family: AI
+    phase: 2
+    enabled: false
+    investigation: false
+    severity: info
+    score_track: privacy
+    evidence_sources: {required: [policy], any_of: []}
+    result_on_match: needs_review
+    catalogue:
+      evidence: "Pol definitions section + Eng"
+      static_check: partial
+      max_status_static: "Effect: cap needs_review"
+      phase_note: "2"
+      report_category: "none"
+    plain_language: This check is not available in this version.
+    plain_language_hi: "यह जाँच इस संस्करण में उपलब्ध नहीं है।"
+  - id: AI07
+    version: 1
+    name: "Unsupported model conclusion"
+    name_hi: "असमर्थित मॉडल निष्कर्ष"
+    family: AI
+    phase: 1
+    enabled: false
+    investigation: false
+    severity: info
+    score_track: privacy
+    evidence_sources: {required: [], any_of: []}
+    result_on_match: needs_review
+    catalogue:
+      evidence: "Eng (refs, evidence store)"
+      static_check: "yes"
+      max_status_static: "Effect: block finding"
+      phase_note: "1"
+      report_category: "none"
+    plain_language: This check is not available in this version.
+    plain_language_hi: "यह जाँच इस संस्करण में उपलब्ध नहीं है।"
+  - id: AI08
+    version: 1
+    name: "Low extraction confidence"
+    name_hi: "निम्न निष्कर्षण विश्वास"
+    family: AI
+    phase: 2
+    enabled: false
+    investigation: false
+    severity: info
+    score_track: privacy
+    evidence_sources: {required: [], any_of: []}
+    result_on_match: needs_review
+    catalogue:
+      evidence: "Eng (claim confidence)"
+      static_check: "yes"
+      max_status_static: "Effect: cap needs_review"
+      phase_note: "2 (threshold used in 1)"
+      report_category: "none"
+    plain_language: This check is not available in this version.
+    plain_language_hi: "यह जाँच इस संस्करण में उपलब्ध नहीं है।"
+  - id: AI10
+    version: 1
+    name: "Version drift"
+    name_hi: "संस्करण में अंतर"
+    family: AI
+    phase: 1
+    enabled: false
+    investigation: false
+    severity: info
+    score_track: privacy
+    evidence_sources: {required: [policy, data_safety, apk], any_of: []}
+    result_on_match: needs_review
+    catalogue:
+      evidence: "Meta + Pol date + DS snapshot + APK version"
+      static_check: "yes"
+      max_status_static: "Effect: cap needs_review; `V_ver`"
+      phase_note: "1"
+      report_category: "Banner"
+    plain_language: This check is not available in this version.
+    plain_language_hi: "यह जाँच इस संस्करण में उपलब्ध नहीं है।"
+  - id: AI11
+    version: 1
+    name: "Duplicate finding"
+    name_hi: "दोहराया गया निष्कर्ष"
+    family: AI
+    phase: 2
+    enabled: false
+    investigation: false
+    severity: info
+    score_track: privacy
+    evidence_sources: {required: [], any_of: []}
+    result_on_match: needs_review
+    catalogue:
+      evidence: "Eng (findings)"
+      static_check: "yes"
+      max_status_static: "Effect: merge into parent and children"
+      phase_note: "2 (`dedup.py` built in 1)"
+      report_category: "none"
+    plain_language: This check is not available in this version.
+    plain_language_hi: "यह जाँच इस संस्करण में उपलब्ध नहीं है।"
+  - id: AI12
+    version: 1
+    name: "Evidence freshness"
+    name_hi: "प्रमाण की ताज़गी"
+    family: AI
+    phase: 2
+    enabled: false
+    investigation: false
+    severity: info
+    score_track: privacy
+    evidence_sources: {required: [], any_of: []}
+    result_on_match: needs_review
+    catalogue:
+      evidence: "Provenance `fetched_at` + TTL"
+      static_check: "yes"
+      max_status_static: "Effect: cap needs_review; `F_fresh`"
+      phase_note: "2"
+      report_category: "Banner"
+    plain_language: This check is not available in this version.
+    plain_language_hi: "यह जाँच इस संस्करण में उपलब्ध नहीं है।"

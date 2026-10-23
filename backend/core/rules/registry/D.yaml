@@ -6,6 +6,12 @@ rules:
     version: 1
     name: Location data indicator
     name_hi: स्थान डेटा संकेतक
+    catalogue:
+      evidence: "APK + (Pol | DS)"
+      static_check: "yes"
+      max_status_static: "needs_review"
+      phase_note: "1"
+      report_category: "Location"
     family: D
     phase: 1
     enabled: true
@@ -52,6 +58,12 @@ rules:
     version: 1
     name: Camera access indicator
     name_hi: कैमरा एक्सेस संकेतक
+    catalogue:
+      evidence: "APK + Pol [Meta category]"
+      static_check: "yes"
+      max_status_static: "needs_review"
+      phase_note: "2"
+      report_category: "Camera & microphone"
     family: D
     phase: 1
     enabled: true
@@ -83,3 +95,203 @@ rules:
         name: the APK is obfuscated, so the result is partial
         coverage: {apk: obfuscated}
         expect: {status: inconclusive, reason: apk_partial_coverage}
+  - id: D02
+    version: 1
+    name: "Contacts data indicator"
+    name_hi: "संपर्क डेटा संकेतक"
+    family: D
+    phase: 2
+    enabled: false
+    investigation: true
+    severity: low
+    score_track: privacy
+    evidence_sources: {required: [apk], any_of: [policy, data_safety]}
+    result_on_match: needs_review
+    catalogue:
+      evidence: "APK + (Pol | DS)"
+      static_check: "yes"
+      max_status_static: "needs_review"
+      phase_note: "2"
+      report_category: "Contacts"
+    plain_language: This check is not available in this version.
+    plain_language_hi: "यह जाँच इस संस्करण में उपलब्ध नहीं है।"
+  - id: D04
+    version: 1
+    name: "Microphone access indicator"
+    name_hi: "माइक्रोफ़ोन एक्सेस संकेतक"
+    family: D
+    phase: 2
+    enabled: false
+    investigation: true
+    severity: low
+    score_track: privacy
+    evidence_sources: {required: [apk, policy], any_of: []}
+    result_on_match: needs_review
+    catalogue:
+      evidence: "APK + Pol"
+      static_check: "yes"
+      max_status_static: "needs_review"
+      phase_note: "2"
+      report_category: "Camera & microphone"
+    plain_language: This check is not available in this version.
+    plain_language_hi: "यह जाँच इस संस्करण में उपलब्ध नहीं है।"
+  - id: D05
+    version: 1
+    name: "Photos and media"
+    name_hi: "फ़ोटो और मीडिया"
+    family: D
+    phase: 2
+    enabled: false
+    investigation: true
+    severity: low
+    score_track: privacy
+    evidence_sources: {required: [apk, data_safety], any_of: []}
+    result_on_match: needs_review
+    catalogue:
+      evidence: "APK + DS [RT for uploads]"
+      static_check: partial
+      max_status_static: "needs_review"
+      phase_note: "2"
+      report_category: "Photos & files"
+    plain_language: This check is not available in this version.
+    plain_language_hi: "यह जाँच इस संस्करण में उपलब्ध नहीं है।"
+  - id: D06
+    version: 1
+    name: "Health data"
+    name_hi: "स्वास्थ्य डेटा"
+    family: D
+    phase: 2
+    enabled: false
+    investigation: true
+    severity: low
+    score_track: privacy
+    evidence_sources: {required: [apk, policy, data_safety], any_of: []}
+    result_on_match: needs_review
+    catalogue:
+      evidence: "APK (Health Connect permissions, fitness SDKs) + Pol + DS"
+      static_check: partial
+      max_status_static: "needs_review"
+      phase_note: "2"
+      report_category: "Health"
+    plain_language: This check is not available in this version.
+    plain_language_hi: "यह जाँच इस संस्करण में उपलब्ध नहीं है।"
+  - id: D07
+    version: 1
+    name: "Financial data"
+    name_hi: "वित्तीय डेटा"
+    family: D
+    phase: 2
+    enabled: false
+    investigation: true
+    severity: low
+    score_track: privacy
+    evidence_sources: {required: [apk, policy, data_safety], any_of: []}
+    result_on_match: needs_review
+    catalogue:
+      evidence: "APK (payment and UPI SDKs) + Pol + DS"
+      static_check: partial
+      max_status_static: "needs_review"
+      phase_note: "2"
+      report_category: "Money & payments"
+    plain_language: This check is not available in this version.
+    plain_language_hi: "यह जाँच इस संस्करण में उपलब्ध नहीं है।"
+  - id: D08
+    version: 1
+    name: "Authentication credentials"
+    name_hi: "प्रमाणीकरण क्रेडेंशियल"
+    family: D
+    phase: 2
+    enabled: false
+    investigation: true
+    severity: low
+    score_track: security
+    evidence_sources: {required: [apk], any_of: []}
+    result_on_match: needs_review
+    catalogue:
+      evidence: "APK (code path, strings) [RT]"
+      static_check: partial
+      max_status_static: "needs_review"
+      phase_note: "2"
+      report_category: "Security panel"
+    plain_language: This check is not available in this version.
+    plain_language_hi: "यह जाँच इस संस्करण में उपलब्ध नहीं है।"
+  - id: D09
+    version: 1
+    name: "Government identifiers"
+    name_hi: "सरकारी पहचान-पत्र"
+    family: D
+    phase: 2
+    enabled: false
+    investigation: true
+    severity: low
+    score_track: privacy
+    evidence_sources: {required: [apk, policy, data_safety], any_of: []}
+    result_on_match: needs_review
+    catalogue:
+      evidence: "APK (KYC SDKs, Aadhaar/PAN field patterns) + Pol + DS"
+      static_check: partial
+      max_status_static: "needs_review"
+      phase_note: "2"
+      report_category: "Identity"
+    plain_language: This check is not available in this version.
+    plain_language_hi: "यह जाँच इस संस्करण में उपलब्ध नहीं है।"
+  - id: D10
+    version: 1
+    name: "Children's data"
+    name_hi: "बच्चों का डेटा"
+    family: D
+    phase: 2
+    enabled: false
+    investigation: true
+    severity: low
+    score_track: privacy
+    evidence_sources: {required: [policy, data_safety], any_of: []}
+    result_on_match: needs_review
+    catalogue:
+      evidence: "Meta (target audience, content rating) + Pol + DS"
+      static_check: partial
+      max_status_static: "needs_review"
+      phase_note: "2 (3 for pack)"
+      report_category: "Banner"
+    plain_language: This check is not available in this version.
+    plain_language_hi: "यह जाँच इस संस्करण में उपलब्ध नहीं है।"
+  - id: D11
+    version: 1
+    name: "Biometric data"
+    name_hi: "बायोमेट्रिक डेटा"
+    family: D
+    phase: 2
+    enabled: false
+    investigation: true
+    severity: low
+    score_track: privacy
+    evidence_sources: {required: [apk, policy], any_of: []}
+    result_on_match: needs_review
+    catalogue:
+      evidence: "APK (BiometricPrompt, face or voice SDKs) + Pol"
+      static_check: partial
+      max_status_static: "needs_review"
+      phase_note: "2"
+      report_category: "Identity"
+    plain_language: This check is not available in this version.
+    plain_language_hi: "यह जाँच इस संस्करण में उपलब्ध नहीं है।"
+  - id: D12
+    version: 1
+    name: "Clipboard access"
+    name_hi: "क्लिपबोर्ड एक्सेस"
+    family: D
+    phase: 2
+    enabled: false
+    investigation: true
+    severity: low
+    score_track: privacy
+    evidence_sources: {required: [apk], any_of: []}
+    result_on_match: needs_review
+    catalogue:
+      evidence: "APK (ClipboardManager code path) [RT]"
+      static_check: partial
+      max_status_static: "needs_review"
+      phase_note: "2"
+      report_category: "Photos & files"
+    plain_language: This check is not available in this version.
+    plain_language_hi: "यह जाँच इस संस्करण में उपलब्ध नहीं है।"
