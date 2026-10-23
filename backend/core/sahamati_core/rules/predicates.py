@@ -79,7 +79,7 @@ def action_in(ctx: EvalContext, cand: Candidate | None, a: dict[str, Any]) -> bo
 @predicate("candidate_kind_is", params=("kind",))
 def candidate_kind_is(ctx: EvalContext, cand: Candidate | None, a: dict[str, Any]) -> bool:
     """finding | gap | apk_claim."""
-    return _cand(cand).kind == a["kind"]
+    return bool(_cand(cand).kind == a["kind"])
 
 
 @predicate("evidence_strength_is", params=("strength",))

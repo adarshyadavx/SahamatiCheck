@@ -16,7 +16,8 @@ _PATH = Path(__file__).with_name("templates.yaml")
 @lru_cache(maxsize=1)
 def _templates() -> dict[str, Any]:
     with _PATH.open(encoding="utf-8") as fh:
-        return yaml.safe_load(fh)
+        data: dict[str, Any] = yaml.safe_load(fh)
+        return data
 
 
 def inline_label(onto: Ontology, data_type: str, lang: str = "en") -> str:
@@ -40,7 +41,7 @@ def render_summary(onto: Ontology, rule_id: str, data_type: str, *, action: str 
     t = _templates().get(lang) or _templates()["en"]
     tpl = t["summary"].get(rule_id) or _templates()["en"]["summary"][rule_id]
     label = inline_label(onto, data_type, lang)
-    return tpl.format(
+    return str(tpl).format(
         label=label,
         is_are=_is_are(label),
         action_past=t["action_past"].get(action, action),

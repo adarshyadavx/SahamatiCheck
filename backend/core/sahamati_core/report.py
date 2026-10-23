@@ -114,7 +114,7 @@ def finding_view(onto: Ontology, f: EngineFinding, fid: str, lang: str = "en", *
     if f.b.source_kind == SourceKind.APK_SDK:
         sdk_name = next((s.name for s in onto.sdks if s.prefix == f.b.evidence.text), f.b.evidence.text)
     assert decision is not None and user_category is not None
-    return Finding(
+    return Finding(  # type: ignore[call-arg]  # pydantic populates `class` by name via class_
         id=fid,
         class_=f.cls.value,  # type: ignore[arg-type]
         tier=f.tier.value,  # type: ignore[arg-type]
@@ -314,10 +314,10 @@ def build_report_full(inp: ReportInputs, *, ontology: Ontology | None = None, la
 
     plan = assign_groups(onto=onto, reg=reg, findings=findings, finding_rules=finding_rules,
                          indicators=indicators, indicator_roots=roots)
-    for i, f in enumerate(findings):
-        f.group_id = plan.group_of_finding[i]
+    for i, fv in enumerate(findings):
+        fv.group_id = plan.group_of_finding[i]
         if i in plan.related:
-            f.related_finding_ids = [findings[j].id for j in plan.related[i]]
+            fv.related_finding_ids = [findings[j].id for j in plan.related[i]]
     for j, ind in enumerate(indicators):
         ind.group_id = plan.group_of_indicator.get(j)
 

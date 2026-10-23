@@ -26,3 +26,5 @@ ignore = ["E501"]
 [tool.mypy]
 python_version = "3.11"
 ignore_missing_imports = true
+
+# CI also runs `mypy --strict core/sahamati_core/rules core/sahamati_core/engine` (the research contribution).

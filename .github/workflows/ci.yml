@@ -29,6 +29,10 @@ jobs:
           .venv/bin/pip install -e "./core[dev]" -e ./api -e ./worker
       - name: Ruff
         run: .venv/bin/ruff check core api worker
+      - name: Mypy
+        run: .venv/bin/mypy core/sahamati_core api/sahamati_api worker/sahamati_worker
+      - name: Mypy strict on the rule engine and registry
+        run: .venv/bin/mypy --strict core/sahamati_core/rules core/sahamati_core/engine
       - name: Ontology validator
         run: .venv/bin/python -m sahamati_core.ontology
       - name: Rule registry lint (strict schema, known predicates, tests per rule, version lock)
