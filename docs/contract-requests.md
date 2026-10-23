@@ -1,5 +1,33 @@
 # Contract requests
 
+## Triage (G1, 2026-10-24)
+
+Every request below has one decision. "Done" means it is already in `packages/contracts/src/index.ts`, the Pydantic models or the API, with a test. Backlog ids refer to `docs/VERIFICATION_GAPS.md`.
+
+| # | Request | Raised by | Decision | Reason | Task |
+|---|---|---|---|---|---|
+| W1 | `AuditAggregate.is_demo` | web | Done | In `index.ts`; backend always sends it | - |
+| W2 | `GET /v1/reports/{id}` | web | Done | Implemented, in OpenAPI | - |
+| W3 | Request bodies (feedback, dispute, self-check) | web | Done | `FeedbackRequest`, `DisputeRequest`, `SelfCheckResponse` are in `index.ts` | - |
+| W4 | SSE event shape and stage names | web | Done | Backend pinned it (`progress`, then one `done` or `error`) | - |
+| W5 | One `POST /v1/checks` response shape | web | Done | Always the tagged `CheckResponse` | - |
+| W6 | `GET /v1/rules` type and shape | web | Done | `RuleInfo` added; a backend test validates the live response against it (commit 41a2e28) | - |
+| W7 | Report-level feedback endpoint | web | Defer | Needs a new endpoint and UI on grey rows; not a blocker for v0.1.0 | BL-1 |
+| W8 | `?hl=hi` localises card notes, answers, indicators | web | Accept | Backend renders them; the leak test in G6 proves it | G6 |
+| W9 | Known demo ids | web | Done | `KNOWN_DEMO_IDS` lists both; add new ids there when created | - |
+| B1-B6, B9 | Reports, bodies, self-check, SSE, checks, TS additions | backend | Done | See W1-W5 | - |
+| B7 | `PolicyHistory` in TS | backend | Done | In `index.ts` | - |
+| B8 | `GET /v1/ontology/{version}` | backend | Done | Implemented; no TS type needed | - |
+| E1 | Shared orange token | extension | Done | The extension now aliases the shared `--st-orange` (commit 088beaf) | - |
+| E2 | Language of server-written card text | extension | Accept | Clients re-fetch with `?hl=`; `note_code` style codes deferred | G6, BL-2 |
+| E3 | Confidence band cut-offs | extension | Done | `CONFIDENCE_BANDS` in `index.ts`; web and extension import it; a backend test ties it to `thresholds.yaml` | - |
+| E4 | List of limitation and reason codes | extension | Accept | A test must fail when a code emitted by the backend has no en/hi string | G6, BL-3 |
+| R1 | `RuleInfo` TS type | backend | Done | See W6 | - |
+| R2 | New reason codes | backend | Done | `apk_partial_coverage`, `missing_source_false_pass_prevented` are in both locales | - |
+| R3 | Limitation codes emitted | backend | Accept | Same as E4 | G6, BL-3 |
+| R4 | Live Chai Wallet differs from `report.sample.json` | backend | Reject | The sample is a hand-written example of the contract shape, not a behavioural reference. The ShopKart golden test is the reference | - |
+| R5 | Wording lint covers registry YAML | backend | Done | Commit b906094 | - |
+
 ## From Agent 3 (web)
 
 The web works around each of these today; none blocks the build.
