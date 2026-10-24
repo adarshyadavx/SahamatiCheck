@@ -16,7 +16,7 @@ The ontology lives in YAML in `core/ontology/`. It is the source of truth; no da
 cd backend
 python3 -m venv .venv
 .venv/bin/pip install -e "./core[dev]" -e ./api -e ./worker
-.venv/bin/pytest                                   # 287 tests, no network
+.venv/bin/pytest                                   # no network needed
 .venv/bin/uvicorn sahamati_api.main:app --reload --port 8000
 ```
 
@@ -177,3 +177,28 @@ core/sahamati_core/db/            SQLAlchemy 2.0 models + repo helpers (shared b
 core/sahamati_core/demo/fixtures/ in.example.chaiwallet, in.example.dosanotes, in.example.shopkart (fabricated apps only)
 scripts/export_openapi.py         writes openapi.json
 ```
+
+
+## Limitations
+
+This version is static-first (PLAN.md §4.9). It reads the privacy policy, the Play data-safety section and the APK's manifest and
+class list. It never runs the app, and it has no test account. So:
+
+| Rule | Name | Always reports | Reason code | What would unblock it |
+|---|---|---|---|---|
+| C03 | Tracking before consent | inconclusive | `runtime_evidence_unavailable` | Runtime capture of network traffic before and after the consent choice |
+| T05 | Third-party endpoint mismatch | inconclusive | `runtime_evidence_unavailable` | Runtime capture of the hosts the app contacts |
+| C07 | Account deletion functionality | inconclusive | `test_account_unavailable` | A controlled test account and a scripted deletion flow |
+| S06 | Sensitive data in logs | inconclusive | `runtime_evidence_unavailable` | Runtime logcat capture with seeded values. A static proxy (log calls near sensitive values) is not implemented yet |
+
+These four are listed under "Rules not evaluated" in every report, with the reason in plain words. They can never return
+`no_issue_detected` (AI09; tests: `api/tests/test_runtime_rules.py`, `core/tests/test_ai09.py`). Because they cover `ads_tracking`
+and `account_profile`, those report-card categories can never be green in a static run.
+
+Other limits to keep in mind:
+
+- Only 15 of the 86 catalogued rules are enabled (`../docs/RULE_CATALOGUE.md`). The rest are listed by `GET /v1/rules` with `enabled: false` and are not run.
+- Of the plan's Phase 1 rules, AI07 (enforced elsewhere by schema validators, not a registry rule) and AI10 (version drift) are not implemented.
+- A permission or an SDK prefix shows what an app *can* do, not what it does, so those findings stop at `potential_conflict`.
+- There is no schema migration tool: tables are created with `create_all`. A Postgres database created by an older build needs the `reports.facts` column added by hand (SQLite files are upgraded automatically).
+- All Hindi text is machine-written and awaits a native-speaker review (`../docs/HINDI_GLOSSARY.md`).
