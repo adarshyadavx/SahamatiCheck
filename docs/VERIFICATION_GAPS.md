@@ -17,7 +17,7 @@ The tag stays `v0.1.0-unverified`. It should move to `v0.1.0` only after G6's re
 
 ## G1. Committed, contract requests triaged
 - First commit `8dd22eb` on `main`, tag `v0.1.0-unverified`. `.gitignore` extended first. Secret scan (Google, AWS, Razorpay, private keys, Anthropic keys): no hits. Package-name scan: only SDK prefixes and `in.example.*`.
-- `docs/contract-requests.md` now starts with a triage table: all 29 requests have a decision (22 done, 3 accepted, 1 deferred, 1 rejected, 2 already covered). Accepted work went on branch `fix/contracts`, one commit each: `088beaf` orange token, `b906094` wording lint covers the registry, `41a2e28` `RuleInfo` and `CONFIDENCE_BANDS`, `5a271ad` triage and `docs/BACKLOG.md`. Merged fast-forward.
+- `docs/contract-requests.md` now starts with a triage table: all 27 requests have a decision (21 already done or done here, 4 accepted into G6, 1 deferred, 1 rejected). Accepted work went on branch `fix/contracts`, one commit each: `088beaf` orange token, `b906094` wording lint covers the registry, `41a2e28` `RuleInfo` and `CONFIDENCE_BANDS`, `5a271ad` triage and `docs/BACKLOG.md`. Merged fast-forward.
 - Deferred: report-level feedback endpoint (BL-1), message codes for card notes (BL-2). Rejected: refreshing `report.sample.json` to match the live Chai Wallet report. The sample is a contract-shape example; the ShopKart golden test is the behavioural reference.
 
 ## G2. Clients against a live backend
