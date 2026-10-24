@@ -207,8 +207,9 @@ export interface PolicySnapshot { snapshot_id: string; captured_at: string; url:
 export interface PolicyChange {
   kind: "added" | "removed" | "polarity_flipped" | "broadened";
   actor: string; action: Action; data_type: string;
-  before?: string | null; after?: string | null;
+  before?: PolicyClaimView | null; after?: PolicyClaimView | null;
 }
+export interface PolicyClaimView { polarity: Polarity; data_type: string; quote: string }
 export interface PolicyHistory {
   package: string;
   snapshots: PolicySnapshot[];

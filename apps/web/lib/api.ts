@@ -226,7 +226,7 @@ export function parseCheckInput(raw: string): CheckRequest | null {
   if (PKG_RE.test(s)) return { package_name: s };
   try {
     const u = new URL(s);
-    if (u.hostname === "play.google.com") {
+    if ((u.protocol === "https:" || u.protocol === "http:") && u.hostname === "play.google.com") {
       const id = u.searchParams.get("id");
       if (id && PKG_RE.test(id)) return { play_url: u.toString(), package_name: id };
     }

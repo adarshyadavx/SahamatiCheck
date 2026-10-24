@@ -39,8 +39,8 @@ jobs:
         run: .venv/bin/python -m sahamati_core.rules
       - name: Rule catalogue document is generated from the registry
         run: .venv/bin/python -m sahamati_core.rules --check-catalogue-md ../docs/RULE_CATALOGUE.md
-      - name: Tests
-        run: .venv/bin/pytest
+      - name: Tests (coverage floor 90%)
+        run: .venv/bin/pytest --cov=sahamati_core --cov=sahamati_api --cov=sahamati_worker --cov-fail-under=90
       - name: OpenAPI is up to date
         run: .venv/bin/python scripts/export_openapi.py --check
 
