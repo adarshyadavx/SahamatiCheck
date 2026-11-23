@@ -53,3 +53,6 @@ coverage/
 
 # Logs
 *.log
+
+# Downloadable builds served by the website (apps/web/public/downloads)
+!apps/web/public/downloads/*.apk

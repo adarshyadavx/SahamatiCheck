@@ -14,6 +14,7 @@ export const NAV_ITEMS = [
   { key: "ontology", path: "/ontology" },
   { key: "rights", path: "/rights" },
   { key: "about", path: "/about" },
+  { key: "download", path: "/download" },
 ] as const;
 
 export function SiteHeader({ locale }: { locale: Locale }) {

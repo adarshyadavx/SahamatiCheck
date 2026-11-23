@@ -18,7 +18,8 @@
     "api": "API",
     "menu": "Menu",
     "closeMenu": "Close menu",
-    "rules": "Rules"
+    "rules": "Rules",
+    "download": "Download"
   },
   "common": {
     "skip": "Skip to content",
@@ -939,6 +940,43 @@
     "ev": {
       "permission": "Asks for the Android permission {p}",
       "sdk": "Includes the code library {s}"
+    }
+  },
+  "download": {
+    "title": "Get SahamatiCheck",
+    "lede": "Use SahamatiCheck in your browser while you browse Google Play, or on your Android phone straight from the Play Store's Share button.",
+    "size": "{size}",
+    "version": "Version {v}",
+    "ext": {
+      "title": "Browser extension",
+      "body": "Adds a side panel to Chrome, Edge and Brave. Open any app on play.google.com and it shows the check for that app; it can also mark rows on the Play data-safety page.",
+      "button": "Download for Chrome",
+      "stepsTitle": "Install it",
+      "steps": [
+        "Download the zip file and unzip it into a folder you will keep.",
+        "Open chrome://extensions (or edge://extensions) and turn on Developer mode.",
+        "Click “Load unpacked” and choose the unzipped folder.",
+        "Open an app page on play.google.com and click the SahamatiCheck icon."
+      ],
+      "note": "It asks only for access to Google Play pages. It never uploads APKs and sends no analytics."
+    },
+    "apk": {
+      "title": "Android app",
+      "body": "Opens SahamatiCheck on your phone. In the Play Store, open any app, tap ⋮ → Share → SahamatiCheck, and the check starts on its own.",
+      "button": "Download the APK",
+      "stepsTitle": "Install it",
+      "steps": [
+        "Download the APK on your Android phone (Android 8.0 or newer).",
+        "Open it. If Android asks, allow installing apps from this source.",
+        "On first launch, enter the address of your SahamatiCheck website (see below).",
+        "In the Play Store, open an app and tap ⋮ → Share → SahamatiCheck."
+      ],
+      "note": "It asks only for internet access. This is a test build signed with a development key, so Android may warn that it is from an unknown developer."
+    },
+    "server": {
+      "title": "Which address do I enter in the app?",
+      "body": "The app shows a SahamatiCheck website. If the website runs on your computer, start it so that the phone can reach it, then enter the computer's Wi-Fi address with port 3100:",
+      "hint": "Both devices must be on the same Wi-Fi. If the website is hosted online, enter its https:// address instead."
     }
   }
 }

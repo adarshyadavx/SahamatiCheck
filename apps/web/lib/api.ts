@@ -11,11 +11,15 @@ import {
 } from "@sahamati/contracts";
 
 /** Base URL the browser uses. */
-export const PUBLIC_API_BASE = (process.env.NEXT_PUBLIC_API_BASE || API_BASE_DEFAULT).replace(/\/+$/, "");
+/** "same-origin" (or "/") means: the API is proxied on the website's own origin (see next.config.mjs rewrites). */
+const SAME_ORIGIN = ["/", "same-origin"].includes(process.env.NEXT_PUBLIC_API_BASE ?? "");
+
+export const PUBLIC_API_BASE = SAME_ORIGIN ? "" : (process.env.NEXT_PUBLIC_API_BASE || API_BASE_DEFAULT).replace(/\/+$/, "");
 
 /** Base URL the Next.js server uses (can differ inside Docker). */
 export function serverApiBase(): string {
-  return (process.env.API_BASE_INTERNAL || process.env.NEXT_PUBLIC_API_BASE || API_BASE_DEFAULT).replace(/\/+$/, "");
+  const pub = SAME_ORIGIN ? undefined : process.env.NEXT_PUBLIC_API_BASE;
+  return (process.env.API_BASE_INTERNAL || pub || API_BASE_DEFAULT).replace(/\/+$/, "");
 }
 
 export class ApiError extends Error {

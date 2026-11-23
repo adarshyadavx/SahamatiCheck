@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">सहमतिचेक</string>
+    <string name="share_label">सहमतिचेक से जाँचें</string>
+    <string name="server_title">सर्वर का पता</string>
+    <string name="server_message">अपनी सहमतिचेक वेबसाइट का पता लिखें, जैसे उसी वाई-फ़ाई पर किसी कंप्यूटर के लिए http://192.168.1.20:3100, या कोई https:// पता।</string>
+    <string name="server_hint">http://192.168.1.20:3100</string>
+    <string name="server_invalid">यह वेब पता नहीं लगता।</string>
+    <string name="save">सहेजें</string>
+    <string name="reload">फिर से लोड करें</string>
+    <string name="open_in_browser">ब्राउज़र में खोलें</string>
+    <string name="offline_title">सहमतिचेक तक नहीं पहुँच सके</string>
+    <string name="offline_body">ऐप इस पते पर सहमतिचेक वेबसाइट नहीं खोल सका:</string>
+    <string name="offline_hint">देखें कि सर्वर चल रहा है और आपका फ़ोन उसी नेटवर्क पर है, या मेनू से पता बदलें (⋮ → सर्वर का पता)।</string>
+</resources>

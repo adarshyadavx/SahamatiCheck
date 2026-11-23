@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">SahamatiCheck</string>
+    <string name="share_label">Check with SahamatiCheck</string>
+    <string name="server_title">Server address</string>
+    <string name="server_message">Enter the address of your SahamatiCheck website, for example http://192.168.1.20:3100 for a computer on the same Wi-Fi, or an https:// address.</string>
+    <string name="server_hint">http://192.168.1.20:3100</string>
+    <string name="server_invalid">That does not look like a web address.</string>
+    <string name="save">Save</string>
+    <string name="reload">Reload</string>
+    <string name="open_in_browser">Open in browser</string>
+    <string name="offline_title">Could not reach SahamatiCheck</string>
+    <string name="offline_body">The app could not open the SahamatiCheck website at this address:</string>
+    <string name="offline_hint">Check that the server is running and that your phone is on the same network, or change the address from the menu (⋮ → Server address).</string>
+</resources>

@@ -9,6 +9,7 @@ It is automated static analysis. It may be wrong, it reports a snapshot of one a
 | `backend/` | Python: analysis library, rule registry, FastAPI `/v1`, worker. See `backend/README.md` |
 | `apps/web/` | Next.js website |
 | `apps/extension/` | Chrome (Manifest V3) extension |
+| `apps/android/` | Android app: shows the website and adds a Play Store Share target. See `apps/android/README.md` |
 | `packages/` | `contracts` (the API types and sample report), `ui` (Mudra design system), `i18n` (en + hi) |
 | `docs/` | `RULE_CATALOGUE.md` (generated), `VERIFICATION_GAPS.md`, `contract-requests.md`, `HINDI_GLOSSARY.md` |
 
@@ -27,7 +28,7 @@ npx pnpm@9.15.0 --filter @sahamati/web dev
 npx pnpm@9.15.0 --filter @sahamati/extension build      # load apps/extension/.output/chrome-mv3 as an unpacked extension
 ```
 
-Open `http://localhost:3000/en/r/r_demo_shopkart`. Demo apps are fabricated (`in.example.shopkart`, `in.example.chaiwallet`).
+Open `http://localhost:3000/en/r/r_demo_shopkart`. Ready-made builds of the extension and the Android app are on the website's Download page (`/en/download`). Demo apps are fabricated (`in.example.shopkart`, `in.example.chaiwallet`).
 
 ## Checks
 

@@ -18,6 +18,7 @@ export function middleware(req: NextRequest) {
 }
 
 export const config = {
-  // Skip Next internals, API routes and files with an extension.
-  matcher: ["/((?!_next|api|.*\\..*).*)"],
+  // Skip Next internals, API routes, files with an extension, and the backend paths that
+  // next.config.mjs passes through to the API when NEXT_PUBLIC_API_BASE=same-origin (v1/*, version).
+  matcher: ["/((?!_next|api|v1/|v1$|version$|.*\\..*).*)"],
 };

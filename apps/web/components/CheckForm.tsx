@@ -127,9 +127,26 @@ export function CheckForm({ locale, compact = false }: { locale: Locale; compact
     };
   }
 
+  // `?q=<link or share text>` (the Android app's Share target, or any link) fills the box and starts the
+  // check once. Read from window.location so the page stays statically renderable.
+  const autoRan = useRef(false);
+  useEffect(() => {
+    if (autoRan.current || typeof window === "undefined") return;
+    const q = new URLSearchParams(window.location.search).get("q");
+    if (!q) return;
+    autoRan.current = true;
+    setValue(q);
+    void run(q);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   async function submit(e: FormEvent) {
     e.preventDefault();
-    const req = parseCheckInput(value);
+    await run(value);
+  }
+
+  async function run(raw: string) {
+    const req = parseCheckInput(raw);
     if (!req) {
       setInvalid(true);
       inputRef.current?.focus();

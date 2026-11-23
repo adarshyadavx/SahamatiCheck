@@ -11,6 +11,7 @@ backend/            Python 3.11+ (uv-compatible pyproject; venv at backend/.venv
   worker/               Celery tasks (CELERY_EAGER=1 runs inline, no Redis needed)
 apps/web/           Next.js App Router website
 apps/extension/     WXT + React Manifest V3 extension
+apps/android/       Android app (WebView shell + Share target); built by build.sh, no Gradle
 packages/contracts/ TS types for the API + fixtures/report.sample.json (THE contract)
 packages/ui/        Mudra design tokens (tokens.css) + shared React components
 packages/i18n/      en.json, hi.json, banned-words.json
