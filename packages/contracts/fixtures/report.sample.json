@@ -63,7 +63,7 @@
             "condition": "advertising"
           },
           "evidence": {
-            "label": "Device or other IDs — Shared — Advertising or marketing",
+            "label": "Device or other IDs \u2014 Shared \u2014 Advertising or marketing",
             "captured_at": "2026-10-19"
           }
         }
@@ -161,7 +161,7 @@
             "condition": null
           },
           "evidence": {
-            "label": "Contacts — Not collected",
+            "label": "Contacts \u2014 Not collected",
             "captured_at": "2026-10-19"
           }
         },
@@ -621,5 +621,412 @@
         "finding_ids": []
       }
     ]
-  }
+  },
+  "sources": {
+    "policy": {
+      "url": "https://chaiwallet.example/privacy",
+      "method": "fixture"
+    },
+    "data_safety": {
+      "method": "fixture"
+    },
+    "apk": {
+      "method": "manifest+classes"
+    }
+  },
+  "data_flows": [
+    {
+      "data_type": "device_id",
+      "label_en": "Device or other IDs",
+      "label_hi": "\u0921\u093f\u0935\u093e\u0907\u0938 \u092f\u093e \u0905\u0928\u094d\u092f \u0906\u0908\u0921\u0940",
+      "category": "ads_tracking",
+      "collected": true,
+      "shared": true,
+      "sold": false,
+      "collect_purposes": [
+        {
+          "id": "analytics",
+          "label_en": "Analytics",
+          "label_hi": "\u090f\u0928\u093e\u0932\u093f\u091f\u093f\u0915\u094d\u0938"
+        }
+      ],
+      "share_purposes": [
+        {
+          "id": "advertising",
+          "label_en": "Advertising or marketing",
+          "label_hi": "\u0935\u093f\u091c\u094d\u091e\u093e\u092a\u0928 \u092f\u093e \u092e\u093e\u0930\u094d\u0915\u0947\u091f\u093f\u0902\u0917"
+        }
+      ],
+      "recipients": [
+        {
+          "id": "third_party",
+          "label_en": "Third parties",
+          "label_hi": "\u0924\u0943\u0924\u0940\u092f \u092a\u0915\u094d\u0937"
+        }
+      ],
+      "sources": [
+        "data_safety",
+        "apk"
+      ],
+      "denied_by": [
+        "policy"
+      ],
+      "finding_ids": [
+        "f_dm_01"
+      ],
+      "evidence": [
+        {
+          "source": "data_safety",
+          "quote": "Device or other IDs \u2014 Collected \u2014 Analytics"
+        },
+        {
+          "source": "data_safety",
+          "quote": "Device or other IDs \u2014 Shared \u2014 Advertising or marketing"
+        },
+        {
+          "source": "apk",
+          "quote": "com.google.firebase.crashlytics"
+        }
+      ]
+    },
+    {
+      "data_type": "advertising_id",
+      "label_en": "Advertising ID",
+      "label_hi": "\u0935\u093f\u091c\u094d\u091e\u093e\u092a\u0928 \u0906\u0908\u0921\u0940",
+      "category": "ads_tracking",
+      "collected": true,
+      "shared": false,
+      "sold": false,
+      "collect_purposes": [],
+      "share_purposes": [],
+      "recipients": [],
+      "sources": [
+        "apk"
+      ],
+      "denied_by": [],
+      "finding_ids": [
+        "f_dm_01"
+      ],
+      "evidence": [
+        {
+          "source": "apk",
+          "quote": "com.google.android.gms.permission.AD_ID"
+        }
+      ]
+    },
+    {
+      "data_type": "contacts",
+      "label_en": "Contacts",
+      "label_hi": "\u0938\u0902\u092a\u0930\u094d\u0915 \u0938\u0942\u091a\u0940",
+      "category": "contacts",
+      "collected": true,
+      "shared": false,
+      "sold": false,
+      "collect_purposes": [],
+      "share_purposes": [],
+      "recipients": [],
+      "sources": [
+        "apk"
+      ],
+      "denied_by": [
+        "data_safety"
+      ],
+      "finding_ids": [
+        "f_bm_01"
+      ],
+      "evidence": [
+        {
+          "source": "apk",
+          "quote": "android.permission.READ_CONTACTS"
+        }
+      ]
+    },
+    {
+      "data_type": "precise_location",
+      "label_en": "Precise location",
+      "label_hi": "\u0938\u091f\u0940\u0915 \u0938\u094d\u0925\u093e\u0928",
+      "category": "location",
+      "collected": true,
+      "shared": false,
+      "sold": false,
+      "collect_purposes": [
+        {
+          "id": "fraud_prevention",
+          "label_en": "Security and abuse prevention",
+          "label_hi": "\u0938\u0941\u0930\u0915\u094d\u0937\u093e \u0914\u0930 \u0926\u0941\u0930\u0941\u092a\u092f\u094b\u0917 \u0915\u0940 \u0930\u094b\u0915\u0925\u093e\u092e"
+        }
+      ],
+      "share_purposes": [],
+      "recipients": [],
+      "sources": [
+        "data_safety",
+        "policy",
+        "apk"
+      ],
+      "denied_by": [
+        "policy"
+      ],
+      "finding_ids": [
+        "f_ic_01"
+      ],
+      "evidence": [
+        {
+          "source": "data_safety",
+          "quote": "Precise location \u2014 Collected \u2014 Fraud prevention, security, and compliance"
+        },
+        {
+          "source": "policy",
+          "quote": "We collect your precise GPS location to help prevent fraud.",
+          "url": "https://chaiwallet.example/privacy"
+        },
+        {
+          "source": "apk",
+          "quote": "android.permission.ACCESS_FINE_LOCATION"
+        }
+      ]
+    },
+    {
+      "data_type": "email",
+      "label_en": "Email address",
+      "label_hi": "\u0908\u092e\u0947\u0932 \u092a\u0924\u093e",
+      "category": "account_profile",
+      "collected": true,
+      "shared": false,
+      "sold": false,
+      "collect_purposes": [
+        {
+          "id": "account_management",
+          "label_en": "Account management",
+          "label_hi": "\u0916\u093e\u0924\u093e \u092a\u094d\u0930\u092c\u0902\u0927\u0928"
+        },
+        {
+          "id": "developer_communications",
+          "label_en": "Developer communications",
+          "label_hi": "\u0921\u0947\u0935\u0932\u092a\u0930 \u0915\u0940 \u0913\u0930 \u0938\u0947 \u0938\u0902\u091a\u093e\u0930"
+        }
+      ],
+      "share_purposes": [],
+      "recipients": [],
+      "sources": [
+        "data_safety",
+        "policy"
+      ],
+      "denied_by": [],
+      "finding_ids": [],
+      "evidence": [
+        {
+          "source": "data_safety",
+          "quote": "Email address \u2014 Collected \u2014 Account management"
+        },
+        {
+          "source": "policy",
+          "quote": "We collect your name, email address and phone number when you create an account.",
+          "url": "https://chaiwallet.example/privacy"
+        },
+        {
+          "source": "policy",
+          "quote": "We use your email address to send you transaction receipts.",
+          "url": "https://chaiwallet.example/privacy"
+        }
+      ]
+    },
+    {
+      "data_type": "name",
+      "label_en": "Name",
+      "label_hi": "\u0928\u093e\u092e",
+      "category": "account_profile",
+      "collected": true,
+      "shared": false,
+      "sold": false,
+      "collect_purposes": [
+        {
+          "id": "account_management",
+          "label_en": "Account management",
+          "label_hi": "\u0916\u093e\u0924\u093e \u092a\u094d\u0930\u092c\u0902\u0927\u0928"
+        }
+      ],
+      "share_purposes": [],
+      "recipients": [],
+      "sources": [
+        "data_safety",
+        "policy"
+      ],
+      "denied_by": [],
+      "finding_ids": [],
+      "evidence": [
+        {
+          "source": "data_safety",
+          "quote": "Name \u2014 Collected \u2014 Account management"
+        },
+        {
+          "source": "policy",
+          "quote": "We collect your name, email address and phone number when you create an account.",
+          "url": "https://chaiwallet.example/privacy"
+        }
+      ]
+    },
+    {
+      "data_type": "phone_number",
+      "label_en": "Phone number",
+      "label_hi": "\u092b\u093c\u094b\u0928 \u0928\u0902\u092c\u0930",
+      "category": "account_profile",
+      "collected": true,
+      "shared": false,
+      "sold": false,
+      "collect_purposes": [
+        {
+          "id": "account_management",
+          "label_en": "Account management",
+          "label_hi": "\u0916\u093e\u0924\u093e \u092a\u094d\u0930\u092c\u0902\u0927\u0928"
+        }
+      ],
+      "share_purposes": [],
+      "recipients": [],
+      "sources": [
+        "data_safety",
+        "policy"
+      ],
+      "denied_by": [],
+      "finding_ids": [],
+      "evidence": [
+        {
+          "source": "data_safety",
+          "quote": "Phone number \u2014 Collected \u2014 Account management"
+        },
+        {
+          "source": "policy",
+          "quote": "We collect your name, email address and phone number when you create an account.",
+          "url": "https://chaiwallet.example/privacy"
+        }
+      ]
+    },
+    {
+      "data_type": "diagnostics",
+      "label_en": "App info and performance",
+      "label_hi": "\u0910\u092a \u091c\u093e\u0928\u0915\u093e\u0930\u0940 \u0914\u0930 \u092a\u094d\u0930\u0926\u0930\u094d\u0936\u0928",
+      "category": "ads_tracking",
+      "collected": true,
+      "shared": false,
+      "sold": false,
+      "collect_purposes": [
+        {
+          "id": "analytics",
+          "label_en": "Analytics",
+          "label_hi": "\u090f\u0928\u093e\u0932\u093f\u091f\u093f\u0915\u094d\u0938"
+        }
+      ],
+      "share_purposes": [],
+      "recipients": [],
+      "sources": [
+        "policy"
+      ],
+      "denied_by": [],
+      "finding_ids": [],
+      "evidence": [
+        {
+          "source": "policy",
+          "quote": "We collect crash logs and diagnostic information to improve app stability.",
+          "url": "https://chaiwallet.example/privacy"
+        }
+      ]
+    },
+    {
+      "data_type": "crash_logs",
+      "label_en": "Crash logs",
+      "label_hi": "\u0915\u094d\u0930\u0948\u0936 \u0932\u0949\u0917",
+      "category": "ads_tracking",
+      "collected": true,
+      "shared": false,
+      "sold": false,
+      "collect_purposes": [
+        {
+          "id": "analytics",
+          "label_en": "Analytics",
+          "label_hi": "\u090f\u0928\u093e\u0932\u093f\u091f\u093f\u0915\u094d\u0938"
+        }
+      ],
+      "share_purposes": [],
+      "recipients": [],
+      "sources": [
+        "data_safety",
+        "policy",
+        "apk"
+      ],
+      "denied_by": [],
+      "finding_ids": [],
+      "evidence": [
+        {
+          "source": "data_safety",
+          "quote": "Crash logs \u2014 Collected \u2014 Analytics"
+        },
+        {
+          "source": "policy",
+          "quote": "We collect crash logs and diagnostic information to improve app stability.",
+          "url": "https://chaiwallet.example/privacy"
+        },
+        {
+          "source": "apk",
+          "quote": "com.google.firebase.crashlytics"
+        }
+      ]
+    },
+    {
+      "data_type": "camera_media",
+      "label_en": "Camera images",
+      "label_hi": "\u0915\u0948\u092e\u0930\u093e \u0938\u0947 \u0932\u0940 \u0917\u0908 \u0924\u0938\u094d\u0935\u0940\u0930\u0947\u0902",
+      "category": "camera_mic",
+      "collected": true,
+      "shared": false,
+      "sold": false,
+      "collect_purposes": [],
+      "share_purposes": [],
+      "recipients": [],
+      "sources": [
+        "apk"
+      ],
+      "denied_by": [],
+      "finding_ids": [],
+      "evidence": [
+        {
+          "source": "apk",
+          "quote": "android.permission.CAMERA"
+        }
+      ]
+    },
+    {
+      "data_type": "financial_info",
+      "label_en": "Financial information",
+      "label_hi": "\u0935\u093f\u0924\u094d\u0924\u0940\u092f \u091c\u093e\u0928\u0915\u093e\u0930\u0940",
+      "category": "money_payments",
+      "collected": true,
+      "shared": false,
+      "sold": false,
+      "collect_purposes": [
+        {
+          "id": "app_functionality",
+          "label_en": "App functionality",
+          "label_hi": "\u0910\u092a \u0915\u0940 \u0915\u093e\u0930\u094d\u092f\u0915\u094d\u0937\u092e\u0924\u093e"
+        }
+      ],
+      "share_purposes": [],
+      "recipients": [],
+      "sources": [
+        "data_safety",
+        "policy"
+      ],
+      "denied_by": [],
+      "finding_ids": [],
+      "evidence": [
+        {
+          "source": "data_safety",
+          "quote": "Other financial info \u2014 Collected \u2014 App functionality"
+        },
+        {
+          "source": "policy",
+          "quote": "We collect payment and bank account details to process transactions.",
+          "url": "https://chaiwallet.example/privacy"
+        }
+      ]
+    }
+  ]
 }

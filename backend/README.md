@@ -15,7 +15,7 @@ The ontology lives in YAML in `core/ontology/`. It is the source of truth; no da
 ```bash
 cd backend
 python3 -m venv .venv
-.venv/bin/pip install -e "./core[dev]" -e ./api -e ./worker
+.venv/bin/pip install -e "./core[dev,render,apk]" -e ./api -e ./worker && .venv/bin/python -m playwright install chromium
 .venv/bin/pytest                                   # no network needed
 .venv/bin/uvicorn sahamati_api.main:app --reload --port 8000
 ```
@@ -72,7 +72,9 @@ Its summary and matrix equal `packages/contracts/fixtures/report.sample.json` (a
 | `SAHAMATI_RATE_CHECKS_PER_HOUR` / `SAHAMATI_RATE_READS_PER_MIN` | `10` / `120` | Per-IP limits. Demo apps are exempt from the checks limit |
 | `SAHAMATI_RATE_LIMIT_DISABLED` | `0` | Set to `1` to disable rate limits |
 | `ANTHROPIC_API_KEY` | unset | Enables the LLM fallback |
-| `ANDROZOO_API_KEY` | unset | AndroZoo client (stub; downloads are not wired yet) |
+| `ANDROZOO_API_KEY` | unset | Turns on APK checks for real apps (request access at https://androzoo.uni.lu/access; keys expire after 6 months) |
+| `ANDROZOO_INDEX` | `<data dir>/androzoo_index.sqlite` | Local package → newest Play APK index, built once (below) |
+| `ANDROZOO_MAX_APK_MB` | `300` | Larger APKs are not downloaded |
 
 ## API (`/v1`, see `openapi.json`)
 
@@ -202,3 +204,21 @@ Other limits to keep in mind:
 - A permission or an SDK prefix shows what an app *can* do, not what it does, so those findings stop at `potential_conflict`.
 - There is no schema migration tool: tables are created with `create_all`. A Postgres database created by an older build needs the `reports.facts` column added by hand (SQLite files are upgraded automatically).
 - All Hindi text is machine-written and awaits a native-speaker review (`../docs/HINDI_GLOSSARY.md`).
+
+## APK checks with AndroZoo
+
+APKs for public checks come only from [AndroZoo](https://androzoo.uni.lu) (never from Google Play). AndroZoo has no
+"APKs for this package" endpoint, so the backend keeps a small local index of the newest Google Play APK per package:
+
+```bash
+export ANDROZOO_API_KEY=...                                   # your AndroZoo key
+# build the index once (the public list is several GB; refresh it now and then)
+.venv/bin/python -m sahamati_core.ingest.androzoo build-index --download
+#   or, from a copy you downloaded yourself:  build-index --csv /path/to/latest.csv.gz
+.venv/bin/python -m sahamati_core.ingest.androzoo lookup com.example.app   # check one package
+```
+
+During a check the APK is downloaded (size-capped, SHA-256 verified), read with androguard (`apk` extra), and deleted;
+only the extracted permissions and class names are cached, per SHA-256. Without a key or an index, the report says
+so ("APK checks are off on this server…") and the policy and data-safety checks still run. AndroZoo may hold an older
+version than the one on Play; the report notes this.

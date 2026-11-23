@@ -37,6 +37,7 @@ services:
       SAHAMATI_TRUST_PROXY: "0"
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
       ANDROZOO_API_KEY: ${ANDROZOO_API_KEY:-}
+      ANDROZOO_INDEX: ${ANDROZOO_INDEX:-}
     ports:
       - "8000:8000"
     depends_on:

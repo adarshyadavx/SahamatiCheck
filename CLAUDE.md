@@ -17,7 +17,7 @@ packages/i18n/      en.json, hi.json, banned-words.json
 ```
 
 ## Commands
-- Backend: `cd backend && python3 -m venv .venv && .venv/bin/pip install -e "./core[dev]" -e ./api -e ./worker`
+- Backend: `cd backend && python3 -m venv .venv && .venv/bin/pip install -e "./core[dev,render,apk]" -e ./api -e ./worker && .venv/bin/python -m playwright install chromium`
   - Tests: `cd backend && .venv/bin/pytest`
   - API: `cd backend && .venv/bin/uvicorn sahamati_api.main:app --reload --port 8000`
 - JS (pnpm is not installed globally): `npx -y pnpm@9.15.0 install` at the repo root

@@ -7,7 +7,7 @@
     "developer": "Example Labs",
     "is_demo": true
   },
-  "generated_at": "2026-10-23T21:09:21Z",
+  "generated_at": "2026-11-23T10:39:00Z",
   "coverage": {
     "policy": "ok",
     "data_safety": "ok",
@@ -772,11 +772,419 @@
         "finding_ids": []
       }
     ],
-    "checked_at": "2026-10-23T21:09:21Z"
+    "checked_at": "2026-11-23T10:39:00Z"
   },
   "versions": {
     "engine": "0.2.0",
     "ontology": "2026.10.1",
     "extractor": "rules@0.1.0"
-  }
+  },
+  "sources": {
+    "policy": {
+      "url": "https://shopkart.example/privacy",
+      "method": "fixture"
+    },
+    "data_safety": {
+      "method": "fixture"
+    },
+    "apk": {
+      "method": "manifest+classes"
+    }
+  },
+  "data_flows": [
+    {
+      "data_type": "advertising_id",
+      "label_en": "Advertising ID",
+      "label_hi": "विज्ञापन आईडी",
+      "category": "ads_tracking",
+      "collected": true,
+      "shared": true,
+      "sold": false,
+      "collect_purposes": [],
+      "share_purposes": [],
+      "recipients": [
+        {
+          "id": "ad_network",
+          "label_en": "Advertising networks",
+          "label_hi": "विज्ञापन नेटवर्क"
+        }
+      ],
+      "sources": [
+        "apk"
+      ],
+      "denied_by": [
+        "policy"
+      ],
+      "finding_ids": [
+        "f_dm_01",
+        "f_bm_03"
+      ],
+      "evidence": [
+        {
+          "source": "apk",
+          "quote": "com.google.android.gms.permission.AD_ID"
+        },
+        {
+          "source": "apk",
+          "quote": "com.google.android.gms.ads"
+        }
+      ]
+    },
+    {
+      "data_type": "device_id",
+      "label_en": "Device or other IDs",
+      "label_hi": "डिवाइस या अन्य आईडी",
+      "category": "ads_tracking",
+      "collected": true,
+      "shared": true,
+      "sold": false,
+      "collect_purposes": [
+        {
+          "id": "analytics",
+          "label_en": "Analytics",
+          "label_hi": "एनालिटिक्स"
+        }
+      ],
+      "share_purposes": [
+        {
+          "id": "advertising",
+          "label_en": "Advertising or marketing",
+          "label_hi": "विज्ञापन या मार्केटिंग"
+        }
+      ],
+      "recipients": [
+        {
+          "id": "third_party",
+          "label_en": "Third parties",
+          "label_hi": "तृतीय पक्ष"
+        }
+      ],
+      "sources": [
+        "data_safety",
+        "apk"
+      ],
+      "denied_by": [
+        "policy"
+      ],
+      "finding_ids": [
+        "f_dm_01",
+        "f_bm_03"
+      ],
+      "evidence": [
+        {
+          "source": "data_safety",
+          "quote": "Device or other IDs — Collected — Analytics"
+        },
+        {
+          "source": "data_safety",
+          "quote": "Device or other IDs — Shared — Advertising or marketing"
+        },
+        {
+          "source": "apk",
+          "quote": "com.google.firebase.crashlytics"
+        }
+      ]
+    },
+    {
+      "data_type": "approximate_location",
+      "label_en": "Approximate location",
+      "label_hi": "अनुमानित स्थान",
+      "category": "location",
+      "collected": true,
+      "shared": true,
+      "sold": false,
+      "collect_purposes": [],
+      "share_purposes": [],
+      "recipients": [
+        {
+          "id": "ad_network",
+          "label_en": "Advertising networks",
+          "label_hi": "विज्ञापन नेटवर्क"
+        }
+      ],
+      "sources": [
+        "apk"
+      ],
+      "denied_by": [],
+      "finding_ids": [],
+      "evidence": [
+        {
+          "source": "apk",
+          "quote": "com.google.android.gms.ads"
+        }
+      ]
+    },
+    {
+      "data_type": "precise_location",
+      "label_en": "Precise location",
+      "label_hi": "सटीक स्थान",
+      "category": "location",
+      "collected": true,
+      "shared": false,
+      "sold": false,
+      "collect_purposes": [],
+      "share_purposes": [],
+      "recipients": [],
+      "sources": [
+        "apk"
+      ],
+      "denied_by": [
+        "data_safety",
+        "policy"
+      ],
+      "finding_ids": [
+        "f_bm_01",
+        "f_bm_02"
+      ],
+      "evidence": [
+        {
+          "source": "apk",
+          "quote": "android.permission.ACCESS_FINE_LOCATION"
+        }
+      ]
+    },
+    {
+      "data_type": "email",
+      "label_en": "Email address",
+      "label_hi": "ईमेल पता",
+      "category": "account_profile",
+      "collected": true,
+      "shared": false,
+      "sold": false,
+      "collect_purposes": [
+        {
+          "id": "account_management",
+          "label_en": "Account management",
+          "label_hi": "खाता प्रबंधन"
+        },
+        {
+          "id": "developer_communications",
+          "label_en": "Developer communications",
+          "label_hi": "डेवलपर की ओर से संचार"
+        }
+      ],
+      "share_purposes": [],
+      "recipients": [],
+      "sources": [
+        "data_safety",
+        "policy"
+      ],
+      "denied_by": [],
+      "finding_ids": [],
+      "evidence": [
+        {
+          "source": "data_safety",
+          "quote": "Email address — Collected — Account management"
+        },
+        {
+          "source": "policy",
+          "quote": "We collect your name, email address and phone number when you create an account.",
+          "url": "https://shopkart.example/privacy"
+        }
+      ]
+    },
+    {
+      "data_type": "name",
+      "label_en": "Name",
+      "label_hi": "नाम",
+      "category": "account_profile",
+      "collected": true,
+      "shared": false,
+      "sold": false,
+      "collect_purposes": [
+        {
+          "id": "account_management",
+          "label_en": "Account management",
+          "label_hi": "खाता प्रबंधन"
+        }
+      ],
+      "share_purposes": [],
+      "recipients": [],
+      "sources": [
+        "data_safety",
+        "policy"
+      ],
+      "denied_by": [],
+      "finding_ids": [],
+      "evidence": [
+        {
+          "source": "data_safety",
+          "quote": "Name — Collected — Account management"
+        },
+        {
+          "source": "policy",
+          "quote": "We collect your name, email address and phone number when you create an account.",
+          "url": "https://shopkart.example/privacy"
+        }
+      ]
+    },
+    {
+      "data_type": "phone_number",
+      "label_en": "Phone number",
+      "label_hi": "फ़ोन नंबर",
+      "category": "account_profile",
+      "collected": true,
+      "shared": false,
+      "sold": false,
+      "collect_purposes": [
+        {
+          "id": "account_management",
+          "label_en": "Account management",
+          "label_hi": "खाता प्रबंधन"
+        }
+      ],
+      "share_purposes": [],
+      "recipients": [],
+      "sources": [
+        "data_safety",
+        "policy"
+      ],
+      "denied_by": [],
+      "finding_ids": [],
+      "evidence": [
+        {
+          "source": "data_safety",
+          "quote": "Phone number — Collected — Account management"
+        },
+        {
+          "source": "policy",
+          "quote": "We collect your name, email address and phone number when you create an account.",
+          "url": "https://shopkart.example/privacy"
+        }
+      ]
+    },
+    {
+      "data_type": "address",
+      "label_en": "Postal address",
+      "label_hi": "डाक पता",
+      "category": "account_profile",
+      "collected": true,
+      "shared": false,
+      "sold": false,
+      "collect_purposes": [
+        {
+          "id": "app_functionality",
+          "label_en": "App functionality",
+          "label_hi": "ऐप की कार्यक्षमता"
+        }
+      ],
+      "share_purposes": [],
+      "recipients": [],
+      "sources": [
+        "data_safety",
+        "policy"
+      ],
+      "denied_by": [],
+      "finding_ids": [],
+      "evidence": [
+        {
+          "source": "data_safety",
+          "quote": "Address — Collected — App functionality"
+        },
+        {
+          "source": "policy",
+          "quote": "We collect your shipping address and order history to process your orders.",
+          "url": "https://shopkart.example/privacy"
+        }
+      ]
+    },
+    {
+      "data_type": "crash_logs",
+      "label_en": "Crash logs",
+      "label_hi": "क्रैश लॉग",
+      "category": "ads_tracking",
+      "collected": true,
+      "shared": false,
+      "sold": false,
+      "collect_purposes": [
+        {
+          "id": "analytics",
+          "label_en": "Analytics",
+          "label_hi": "एनालिटिक्स"
+        }
+      ],
+      "share_purposes": [],
+      "recipients": [],
+      "sources": [
+        "data_safety",
+        "policy",
+        "apk"
+      ],
+      "denied_by": [],
+      "finding_ids": [],
+      "evidence": [
+        {
+          "source": "data_safety",
+          "quote": "Crash logs — Collected — Analytics"
+        },
+        {
+          "source": "policy",
+          "quote": "We collect crash logs to improve app stability.",
+          "url": "https://shopkart.example/privacy"
+        },
+        {
+          "source": "apk",
+          "quote": "com.google.firebase.crashlytics"
+        }
+      ]
+    },
+    {
+      "data_type": "camera_media",
+      "label_en": "Camera images",
+      "label_hi": "कैमरा से ली गई तस्वीरें",
+      "category": "camera_mic",
+      "collected": true,
+      "shared": false,
+      "sold": false,
+      "collect_purposes": [],
+      "share_purposes": [],
+      "recipients": [],
+      "sources": [
+        "apk"
+      ],
+      "denied_by": [],
+      "finding_ids": [],
+      "evidence": [
+        {
+          "source": "apk",
+          "quote": "android.permission.CAMERA"
+        }
+      ]
+    },
+    {
+      "data_type": "purchase_history",
+      "label_en": "Purchase history",
+      "label_hi": "ख़रीद इतिहास",
+      "category": "money_payments",
+      "collected": true,
+      "shared": false,
+      "sold": false,
+      "collect_purposes": [
+        {
+          "id": "app_functionality",
+          "label_en": "App functionality",
+          "label_hi": "ऐप की कार्यक्षमता"
+        }
+      ],
+      "share_purposes": [],
+      "recipients": [],
+      "sources": [
+        "data_safety",
+        "policy"
+      ],
+      "denied_by": [],
+      "finding_ids": [],
+      "evidence": [
+        {
+          "source": "data_safety",
+          "quote": "Purchase history — Collected — App functionality"
+        },
+        {
+          "source": "policy",
+          "quote": "We collect your shipping address and order history to process your orders.",
+          "url": "https://shopkart.example/privacy"
+        }
+      ]
+    }
+  ]
 }

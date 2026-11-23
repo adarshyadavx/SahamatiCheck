@@ -20,7 +20,7 @@ type State =
   | { kind: "done"; report: Report }
   | { kind: "error"; message: string };
 
-export function SelfCheckForm({ locale }: { locale: Locale }) {
+export function SelfCheckForm({ locale, defaultPackage }: { locale: Locale; defaultPackage?: string }) {
   const t = createT(locale);
   const id = useId();
   const formRef = useRef<HTMLFormElement>(null);
@@ -118,7 +118,7 @@ export function SelfCheckForm({ locale }: { locale: Locale }) {
           <label htmlFor={`${id}-pkg`} className="field-label">
             {t("selfCheck.package")} <span className="font-normal text-ink-faint">({t("common.optional")})</span>
           </label>
-          <input id={`${id}-pkg`} name="package_name" type="text" className="input font-mono text-sm" placeholder="in.example.myapp" spellCheck={false} />
+          <input id={`${id}-pkg`} name="package_name" type="text" className="input font-mono text-sm" placeholder="in.example.myapp" spellCheck={false} defaultValue={defaultPackage} />
         </div>
         <div>
           <label htmlFor={`${id}-purl`} className="field-label">

@@ -237,6 +237,22 @@ describe("parseCheckInput", () => {
     ["https://play.google.com/store/apps/details?id=in.example.shopkart&hl=en", {
       play_url: "https://play.google.com/store/apps/details?id=in.example.shopkart&hl=en", package_name: "in.example.shopkart",
     }],
+    // the Play app's Share button: free text around the link
+    ["Check out ShopKart on Google Play! https://play.google.com/store/apps/details?id=in.example.shopkart&pcampaignid=web_share", {
+      play_url: "https://play.google.com/store/apps/details?id=in.example.shopkart&pcampaignid=web_share", package_name: "in.example.shopkart",
+    }],
+    ["play.google.com/store/apps/details?id=in.example.shopkart", {
+      play_url: "https://play.google.com/store/apps/details?id=in.example.shopkart", package_name: "in.example.shopkart",
+    }],
+    ["market://details?id=in.example.shopkart", {
+      play_url: "https://play.google.com/store/apps/details?id=in.example.shopkart", package_name: "in.example.shopkart",
+    }],
+    ["https://play.google.com/store/apps/datasafety?id=in.example.shopkart&hl=en", {
+      play_url: "https://play.google.com/store/apps/datasafety?id=in.example.shopkart&hl=en", package_name: "in.example.shopkart",
+    }],
+    ["https://www.play.google.com/store/apps/details?hl=en&id=in.example.shopkart", {
+      play_url: "https://www.play.google.com/store/apps/details?hl=en&id=in.example.shopkart", package_name: "in.example.shopkart",
+    }],
   ])("accepts %s", (raw, expected) => expect(parseCheckInput(raw)).toEqual(expected));
 
   it.each([

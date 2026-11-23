@@ -219,21 +219,42 @@ export async function postSelfCheck(form: FormData): Promise<SelfCheckResponse> 
 
 const PKG_RE = /^[a-zA-Z][a-zA-Z0-9_]*(\.[a-zA-Z0-9_]+)+$/;
 
-/** Accept a Play URL or a bare package name. Returns null if neither. */
+// A Play app page anywhere in the text: web links with or without a scheme or "www.", the
+// datasafety sub-page, and market:// links. The Play app's Share button produces text like
+// "Check out X on Google Play! https://play.google.com/store/apps/details?id=...".
+const PLAY_LINK_RE =
+  /(?:([a-z][a-z0-9+.-]*:)?\/\/)?(?:www\.)?(?:play\.google\.com|market\.android\.com)\/store\/apps\/(?:details|datasafety)[^\s<>"']*|market:\/\/details[^\s<>"']*/gi;
+
+/** The first Play app link in `raw` and its package id, or null. Other schemes (ftp:, …) are ignored. */
+export function packageFromText(raw: string): { pkg: string; link: string } | null {
+  for (const m of raw.matchAll(PLAY_LINK_RE)) {
+    const link = m[0];
+    const scheme = m[1]?.toLowerCase();
+    if (scheme && scheme !== "http:" && scheme !== "https:") continue;
+    const q = /[?&]id=([^&#\s]+)/.exec(link);
+    if (!q) continue;
+    let id: string;
+    try {
+      id = decodeURIComponent(q[1]);
+    } catch {
+      continue;
+    }
+    if (PKG_RE.test(id) && id.length <= 200) return { pkg: id, link };
+  }
+  return null;
+}
+
+/** Accept a package name, a Play link, or the text the Play app's Share button produces. Null if none. */
 export function parseCheckInput(raw: string): CheckRequest | null {
   const s = raw.trim();
   if (!s) return null;
   if (PKG_RE.test(s)) return { package_name: s };
-  try {
-    const u = new URL(s);
-    if ((u.protocol === "https:" || u.protocol === "http:") && u.hostname === "play.google.com") {
-      const id = u.searchParams.get("id");
-      if (id && PKG_RE.test(id)) return { play_url: u.toString(), package_name: id };
-    }
-  } catch {
-    /* not a URL */
-  }
-  return null;
+  const found = packageFromText(s);
+  if (!found) return null;
+  const play_url = /^https?:\/\//i.test(found.link)
+    ? found.link
+    : `https://play.google.com/store/apps/details?id=${found.pkg}`;
+  return { play_url, package_name: found.pkg };
 }
 
 /** Browser-side: GET /v1/reports/{id}. */

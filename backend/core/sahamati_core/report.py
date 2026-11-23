@@ -14,6 +14,7 @@ from sahamati_core.engine import (
     render_summary,
 )
 from sahamati_core.engine.templates import benign_explanations
+from sahamati_core.flows import build_data_flows
 from sahamati_core.ontology import Ontology, load_ontology
 from sahamati_core.policy.extractor import text_fragment
 from sahamati_core.report_card import (
@@ -51,6 +52,7 @@ from sahamati_core.schema import (
     ReportSummary,
     RuleRun,
     SourceKind,
+    SourceNotes,
     StatusCounts,
     Tier,
     Versions,
@@ -83,6 +85,7 @@ class ReportInputs:
     extractor_version: str = EXTRACTOR_VERSION
     sdk_scan: bool = True  # the APK class list was read, so "no SDK found" means something (AI09)
     facts: ReportFacts | None = None  # plain facts for the five answers; derived by the pipeline
+    sources: SourceNotes | None = None  # where each source came from, and why one could not be read
 
 
 def evidence_view(c: ClaimTuple) -> Evidence:
@@ -353,6 +356,8 @@ def build_report_full(inp: ReportInputs, *, ontology: Ontology | None = None, la
         status_counts=_count_statuses(rule_runs),
         card=card,
         versions=Versions(engine=ENGINE_VERSION, ontology=onto.version, extractor=inp.extractor_version),
+        sources=inp.sources,
+        data_flows=build_data_flows(onto, inp.claims, public),
     )
     return BuiltReport(report=report, facts=facts, evaluation=evaluation)
 
@@ -429,8 +434,10 @@ def hide_findings(report: Report, hidden: set[str], *, facts: ReportFacts | None
     card = build_card(onto=onto, reg=reg, findings=keep, indicators=report.indicators, rule_runs=runs,
                       coverage=report.coverage, facts=facts or facts_from_report(report, onto),
                       checked_at=report.card.checked_at)
+    flows = ([fl.model_copy(update={"finding_ids": [x for x in fl.finding_ids if x not in hidden]})
+              for fl in report.data_flows] if report.data_flows is not None else None)
     return report.model_copy(update={"findings": keep, "rule_runs": runs, "summary": summary,
-                                     "status_counts": _count_statuses(runs), "card": card})
+                                     "status_counts": _count_statuses(runs), "card": card, "data_flows": flows})
 
 
 def relocalise(report: Report, lang: str, ontology: Ontology | None = None, *,

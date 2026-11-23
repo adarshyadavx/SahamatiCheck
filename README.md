@@ -18,7 +18,7 @@ Design: `PLAN.md`. Rules for contributors and agents: `CLAUDE.md`.
 
 ```bash
 # backend (port 8000); the fabricated demo apps work offline
-cd backend && python3 -m venv .venv && .venv/bin/pip install -e "./core[dev]" -e ./api -e ./worker
+cd backend && python3 -m venv .venv && .venv/bin/pip install -e "./core[dev,render,apk]" -e ./api -e ./worker && .venv/bin/python -m playwright install chromium
 .venv/bin/uvicorn sahamati_api.main:app --port 8000
 
 # website (port 3000) and extension

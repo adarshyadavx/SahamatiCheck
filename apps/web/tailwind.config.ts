@@ -26,7 +26,7 @@ const config: Config = {
       },
       borderRadius: { mudra: "var(--radius)" },
       boxShadow: { 1: "var(--shadow-1)", 2: "var(--shadow-2)" },
-      maxWidth: { page: "72rem" },
+      maxWidth: { page: "90rem" },
     },
   },
   plugins: [],

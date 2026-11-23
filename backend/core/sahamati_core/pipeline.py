@@ -27,11 +27,14 @@ from sahamati_core.ingest import (
     demo_dir,
     demo_listing,
     demo_policy,
+    fetch_play_data_safety,
     fetch_play_listing,
+    normalise_policy_url,
 )
 from sahamati_core.ingest import (
     fetch_policy as _fetch_policy,
 )
+from sahamati_core.ingest.androzoo import AndroZooError, fetch_apk_facts
 from sahamati_core.nlp.llm_fallback import LLMFallback
 from sahamati_core.ontology import load_ontology
 from sahamati_core.policy import (
@@ -45,7 +48,7 @@ from sahamati_core.policy.extractor import SentenceResult
 from sahamati_core.policy.html import find_last_updated, looks_like_html
 from sahamati_core.report import ReportInputs, build_report_full, suppressed_finding_views
 from sahamati_core.report_card import derive_facts
-from sahamati_core.schema import ClaimTuple, Coverage, CoverageMap, Finding, Report
+from sahamati_core.schema import ClaimTuple, Coverage, CoverageMap, Finding, Report, SourceNote, SourceNotes
 
 STAGES = [
     "ingest_listing",
@@ -94,15 +97,24 @@ def _load(claims: list[dict[str, Any]]) -> list[ClaimTuple]:
 
 def stage_ingest_listing(state: dict[str, Any]) -> dict[str, Any]:
     pkg = state["package"]
+    ds_note: dict[str, Any] = {}
     if demo_dir(pkg):
         lst = demo_listing(pkg)
+        ds_note = {"method": "fixture"} if lst.data_safety else {"reason": "not_provided"}
     else:
         lst = fetch_play_listing(pkg)  # raises IngestError when unavailable
+        # The data-safety section is a separate Play page; a failure only reduces coverage.
+        fetched = fetch_play_data_safety(pkg, country=str(lst.extra.get("country") or "in"),
+                                         captured_at=lst.captured_at or today())
+        lst.data_safety = fetched.data_safety
+        ds_note = {"url": fetched.url, "method": "play"} if fetched.data_safety else {
+            "url": fetched.url, "reason": fetched.reason, "status": fetched.status}
     state["listing"] = {
         "package": lst.package, "title": lst.title, "developer": lst.developer, "category": lst.category,
         "policy_url": lst.policy_url, "version_code": lst.version_code, "is_demo": lst.is_demo,
         "captured_at": lst.captured_at or today(), "data_safety": lst.data_safety,
     }
+    state["ds_note"] = ds_note
     return state
 
 
@@ -122,16 +134,29 @@ def stage_fetch_policy(state: dict[str, Any]) -> dict[str, Any]:
     captured = lst["captured_at"]
     if lst.get("is_demo") and demo_dir(pkg):
         fp = demo_policy(pkg)
+        fp.method = "fixture"
     elif lst.get("policy_url"):
         fp = _fetch_policy(lst["policy_url"])
     else:
-        state["policy"] = {"url": None, "text": "", "status": "unavailable", "content_sha256": "", "captured_at": captured}
+        state["policy"] = {"url": None, "text": "", "status": "unavailable", "content_sha256": "",
+                           "captured_at": captured, "reason": "no_url"}
         return state
-    if fp.status != "ok":
-        state["policy"] = {"url": fp.url, "text": "", "status": fp.status, "content_sha256": "", "captured_at": captured}
-        return state
-    state["policy"] = policy_from_content(fp.content, fp.url, captured)
+    state["policy"] = policy_state(fp.content if fp.status == "ok" else "", fp.url, captured, status=fp.status,
+                                   reason=fp.reason, method=fp.method)
     return state
+
+
+def policy_state(content: str, url: str | None, captured_at: str, *, status: str = "ok", reason: str | None = None,
+                 method: str | None = None) -> dict[str, Any]:
+    """Policy stage state from fetched content; a fetch that failed keeps its status and reason."""
+    if status != "ok":
+        return {"url": url, "text": "", "status": status, "content_sha256": "", "captured_at": captured_at,
+                "reason": reason, "method": method}
+    out = policy_from_content(content, url, captured_at)
+    out["method"] = method
+    if out["status"] != "ok":
+        out["reason"] = "needs_javascript" if looks_like_html(content) else "empty"
+    return out
 
 
 def stage_map_declaration(state: dict[str, Any]) -> dict[str, Any]:
@@ -156,14 +181,37 @@ def apk_state_from_facts(facts: Any, captured_at: str) -> dict[str, Any]:
 def stage_analyse_apk(state: dict[str, Any]) -> dict[str, Any]:
     pkg = state["package"]
     captured = state["listing"]["captured_at"]
-    files = demo_apk_files(pkg) if demo_dir(pkg) else None
-    if files is None:
-        # AndroZoo download is not wired in the MVP; the report degrades to two sources.
-        state["apk"] = {"coverage": "unavailable", "claims": [], "version_code": None, "sdks": [],
-                        "notes": ["APK not in corpus; 2-source report"]}
+    if demo_dir(pkg):
+        files = demo_apk_files(pkg)
+        if files is None:
+            state["apk"] = _apk_missing("not_in_corpus", "the demo fixture has no manifest")
+            return state
+        state["apk"] = apk_state_from_facts(facts_from_fallback(*files), captured)
         return state
-    state["apk"] = apk_state_from_facts(facts_from_fallback(*files), captured)
+    # Real apps: the newest Google Play APK in AndroZoo (never from Play itself, CLAUDE.md rule 8).
+    # Any failure only removes the APK column; the policy and data-safety checks still run.
+    try:
+        entry, facts = fetch_apk_facts(pkg)
+    except AndroZooError as exc:
+        state["apk"] = _apk_missing(exc.reason, str(exc))
+        return state
+    except Exception as exc:  # noqa: BLE001 - never fail a check over the APK
+        state["apk"] = _apk_missing("download_failed", f"APK step failed: {type(exc).__name__}")
+        return state
+    state["apk"] = apk_state_from_facts(facts, captured)
+    state["apk"]["method"] = "androzoo"
+    listing_vc = state["listing"].get("version_code")
+    if listing_vc and facts.version_code and facts.version_code != listing_vc:
+        state["apk"]["notes"] = [*state["apk"].get("notes", []),
+                                 f"AndroZoo has version {facts.version_code}; Play lists {listing_vc}"]
+    state["apk"]["androzoo_sha256"] = entry.sha256
     return state
+
+
+def _apk_missing(reason: str, note: str) -> dict[str, Any]:
+    coverage = "unparseable" if reason in ("apk_unparseable", "apk_reader_missing") else "unavailable"
+    return {"coverage": coverage, "claims": [], "version_code": None, "sdks": [], "notes": [note],
+            "reason": reason}
 
 
 def extract_policy_claims(
@@ -201,8 +249,27 @@ def _coverage(state: dict[str, Any]) -> CoverageMap:
     ps = state["policy"].get("status", "unavailable")
     pol = {"ok": Coverage.OK, "unavailable": Coverage.UNAVAILABLE, "unparseable": Coverage.UNPARSEABLE}.get(
         ps, Coverage.UNREACHABLE)
-    ds = Coverage.OK if state["ds"]["status"] == "ok" else Coverage.UNAVAILABLE
+    ds_status = state["ds"]["status"]
+    if ds_status != "ok":
+        ds_status = str(state.get("ds_note", {}).get("status") or "unavailable")
+    ds = {"ok": Coverage.OK, "unreachable": Coverage.UNREACHABLE, "unparseable": Coverage.UNPARSEABLE}.get(
+        ds_status, Coverage.UNAVAILABLE)
     return CoverageMap(policy=pol, data_safety=ds, apk=Coverage(state["apk"]["coverage"]))
+
+
+def _note(url: Any = None, reason: Any = None, method: Any = None) -> SourceNote:
+    return SourceNote(url=str(url) if url else None, reason=str(reason) if reason else None,
+                      method=str(method) if method else None)
+
+
+def source_notes(state: dict[str, Any], coverage: CoverageMap) -> SourceNotes:
+    pol, ds_note, apk = state["policy"], state.get("ds_note", {}), state["apk"]
+    return SourceNotes(
+        policy=_note(pol.get("url"), None if coverage.policy == Coverage.OK else pol.get("reason"), pol.get("method")),
+        data_safety=_note(ds_note.get("url"), None if coverage.data_safety == Coverage.OK else
+                          (ds_note.get("reason") or "not_provided"), ds_note.get("method")),
+        apk=_note(None, None if coverage.apk == Coverage.OK else apk.get("reason"), apk.get("method")),
+    )
 
 
 def stage_detect_conflicts(state: dict[str, Any]) -> dict[str, Any]:
@@ -224,6 +291,7 @@ def stage_detect_conflicts(state: dict[str, Any]) -> dict[str, Any]:
         developer=lst.get("developer"), is_demo=bool(lst.get("is_demo")), generated_at=now_iso(),
         coverage=coverage, claims=claims, engine_result=result, vague_claim_ratio=state["vague_ratio"],
         extractor_version=state.get("extractor_version", EXTRACTOR_VERSION), sdk_scan=sdk_scan, facts=facts,
+        sources=source_notes(state, coverage),
     ))
     state["cache_key"] = key
     state["report"] = built.report.model_dump(mode="json")
@@ -298,21 +366,25 @@ def analyse_inputs(
     state["listing"] = {"package": package, "title": title or package, "developer": None, "category": None,
                         "policy_url": policy_url, "version_code": None, "is_demo": False,
                         "captured_at": captured, "data_safety": data_safety}
+    policy_url = normalise_policy_url(policy_url)
     if policy_content:
-        state["policy"] = policy_from_content(policy_content, policy_url, captured)
+        state["policy"] = policy_state(policy_content, policy_url, captured, method="upload")
     elif policy_url:
         fp = _fetch_policy(policy_url)
-        state["policy"] = (policy_from_content(fp.content, policy_url, captured) if fp.status == "ok" else
-                           {"url": policy_url, "text": "", "status": fp.status, "content_sha256": "", "captured_at": captured})
+        state["policy"] = policy_state(fp.content, policy_url, captured, status=fp.status, reason=fp.reason,
+                                       method=fp.method)
     else:
-        state["policy"] = {"url": None, "text": "", "status": "unavailable", "content_sha256": "", "captured_at": captured}
+        state["policy"] = {"url": None, "text": "", "status": "unavailable", "content_sha256": "",
+                           "captured_at": captured, "reason": "not_uploaded"}
+    state["ds_note"] = {"method": "upload"} if data_safety else {"reason": "not_uploaded"}
     state = stage_map_declaration(state)
     if apk_path:
         state["apk"] = apk_state_from_facts(facts_from_apk(apk_path), captured)
     elif manifest_xml:
         state["apk"] = apk_state_from_facts(facts_from_fallback(manifest_xml, classes_txt), captured)
     else:
-        state["apk"] = {"coverage": "unavailable", "claims": [], "version_code": None, "sdks": []}
+        state["apk"] = {"coverage": "unavailable", "claims": [], "version_code": None, "sdks": [],
+                        "reason": "not_uploaded"}
     if state["apk"].get("version_code"):
         state["listing"]["version_code"] = state["apk"]["version_code"]
     state = stage_extract_claims(state, llm=llm)
@@ -326,7 +398,7 @@ def analyse_inputs(
 
 __all__ = [
     "STAGES", "IngestError", "SelfCheckResult", "analyse_inputs", "cache_key", "demo_report_id",
-    "extract_policy_claims", "now_iso", "policy_from_content", "report_from_state", "run_pipeline", "sha256",
+    "extract_policy_claims", "now_iso", "policy_from_content", "policy_state", "source_notes", "report_from_state", "run_pipeline", "sha256",
     "stage_analyse_apk", "stage_detect_conflicts", "stage_extract_claims", "stage_fetch_policy",
     "stage_ingest_listing", "stage_map_declaration", "today",
 ]

@@ -9,13 +9,21 @@ export async function generateMetadata({ params }: { params: LocaleParams }): Pr
   return { title: createT(isLocale(locale) ? locale : "en")("selfCheck.title"), robots: { index: false } };
 }
 
-export default async function SelfCheckPage({ params }: { params: LocaleParams }) {
+export default async function SelfCheckPage({
+  params,
+  searchParams,
+}: {
+  params: LocaleParams;
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
+}) {
   const { locale, t } = await resolveLocale(params);
+  const pkg = (await searchParams)?.package;
+  const defaultPackage = typeof pkg === "string" && /^[A-Za-z]\w*(\.\w+)+$/.test(pkg) ? pkg : undefined;
   return (
     <>
       <PageHeader eyebrow={t("nav.selfCheck")} title={t("selfCheck.title")} lede={t("selfCheck.lede")} />
       <div className="page py-10">
-        <SelfCheckForm locale={locale} />
+        <SelfCheckForm locale={locale} defaultPackage={defaultPackage} />
         <div className="mt-8 max-w-3xl">
           <p className="text-sm text-ink-muted">{t("selfCheck.cli")}</p>
           <pre className="mt-2 overflow-x-auto rounded-mudra bg-ink p-4 text-[0.8rem] text-surface">

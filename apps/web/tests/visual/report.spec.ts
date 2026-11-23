@@ -5,6 +5,10 @@ const REPORT = "/en/r/r_demo_shopkart";
 // Baselines cover the report-card section only; the whole page is ~10,000px tall.
 const cardSection = (page: import("@playwright/test").Page) =>
   page.locator("section", { hasText: /What we found, by area|क्षेत्र के अनुसार/ }).first();
+// The detailed report (area card, rules, matrix) sits in a collapsed "full technical report" section.
+const openTechnical = async (page: import("@playwright/test").Page) => {
+  await page.locator("details#technical > summary").click();
+};
 
 for (const scheme of ["light", "dark"] as const) {
   test.describe(`report page, ${scheme} theme`, () => {
@@ -12,6 +16,10 @@ for (const scheme of ["light", "dark"] as const) {
 
     test("renders the report card with a label for every status", async ({ page }) => {
       await page.goto(REPORT);
+      // the plain view comes first: where data goes, and what does not add up
+      await expect(page.getByRole("heading", { name: "Where your data goes" })).toBeVisible();
+      await expect(page.getByRole("heading", { name: "Things that don't add up" })).toBeVisible();
+      await openTechnical(page);
       const card = page.getByText("Difference found").first();
       await expect(card).toBeVisible();
       // red only for a confirmed conflict; the other states carry their own words (never colour alone)
@@ -48,6 +56,7 @@ test.describe("narrow screen", () => {
     await page.waitForLoadState("networkidle");
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
     expect(overflow).toBeLessThanOrEqual(0);
+    await openTechnical(page);
     await expect(cardSection(page)).toHaveScreenshot("report-mobile.png");
   });
 });
@@ -69,5 +78,6 @@ test("Hindi report keeps the card and shows no raw i18n keys", async ({ page }) 
   await page.waitForLoadState("networkidle");
   const text = await page.locator("body").innerText();
   expect(text).not.toMatch(/\b(report|card|status|finding)\.[a-zA-Z]+\b/);
+  await openTechnical(page);
   await expect(cardSection(page)).toHaveScreenshot("report-hi.png");
 });

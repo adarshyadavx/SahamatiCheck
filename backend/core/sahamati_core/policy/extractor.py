@@ -78,6 +78,11 @@ _NOUN_MARKERS = {
 }
 # words that make a "we/our" subject explicit; third-party subjects come from actor aliases
 _FIRST_PARTY_IDS = {"first_party", "any_party"}
+# "we / us / our" marks the app itself as the subject. Without it (and without a named actor),
+# defaulting to first_party is a guess: real policies say "the bot can see…", "payment providers
+# store…", "engineers cannot access…". Such reads are kept but with lower confidence.
+_FIRST_PERSON = re.compile(r"(?<![\w-])(?:we|us|our|ours|ourselves)(?![\w-])", re.I)
+UNATTRIBUTED_PENALTY = 0.25
 
 
 @dataclass(frozen=True)
@@ -351,10 +356,13 @@ class RuleExtractor:
             # actor: third-party subject before the verb, or recipient after a share/sell verb
             before_actors = [a.node_id for a in actors if a.end <= vstart]
             after_actors = [a.node_id for a in actors if a.start >= vstart]
+            penalty = 0.0
             if action in (Action.SHARE, Action.SELL):
                 actor_ids = after_actors or before_actors or ["third_party"]
             else:
                 actor_ids = before_actors[-1:] if before_actors else ["first_party"]
+                if not before_actors and not _FIRST_PERSON.search(raw):
+                    penalty = UNATTRIBUTED_PENALTY
             for d in targets:
                 dmatch = next((m for m in dts if m.node_id == d), None)
                 det_neg = dmatch is not None and det_negated(dmatch)
@@ -389,7 +397,7 @@ class RuleExtractor:
                                 url=ctx.url,
                                 captured_at=ctx.captured_at,
                             ),
-                            confidence=round(max(0.05, min(1.0, base_conf)), 3),
+                            confidence=round(max(0.05, min(1.0, base_conf - penalty)), 3),
                             extractor="rule",
                             extractor_version=self.version,
                             ontology_version=self.onto.version,

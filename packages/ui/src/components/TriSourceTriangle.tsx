@@ -229,7 +229,7 @@ export function TriSourceTriangle({
       </svg>
 
       <figcaption className="mu-tri__caption">
-        <p id={`${uid}-desc`} className="mu-tri__summary">
+        <p id={`${uid}-desc`} className="mu-tri__summary mu-sr-only">
           {summaryText}
         </p>
         {showLegend ? (

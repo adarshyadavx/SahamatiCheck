@@ -11,6 +11,9 @@ dependencies = [
   "httpx>=0.27",
   "tenacity>=8.2",
   "sqlalchemy>=2.0",
+  # Checking a real app needs its Play listing and often a PDF policy: not optional.
+  "google-play-scraper>=1.2",
+  "pypdf>=4.0",
 ]
 
 [project.optional-dependencies]
@@ -19,7 +22,9 @@ html = ["trafilatura>=1.8"]
 nlp = ["spacy>=3.7"]
 ml = ["torch>=2.2", "transformers>=4.40"]
 apk = ["androguard>=4.1"]
-play = ["google-play-scraper>=1.2"]
+play = ["google-play-scraper>=1.2"]  # now a core dependency; kept so old install commands still work
+# Many policies are JavaScript-only pages (React/Next.js shells). Needs `python -m playwright install chromium`.
+render = ["playwright>=1.45"]
 llm = ["anthropic>=0.40"]
 pdf = ["pypdf>=4.0"]
 redis = ["redis>=5.0"]

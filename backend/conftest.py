@@ -19,6 +19,7 @@ os.environ["SAHAMATI_RATE_LIMIT_DISABLED"] = "1"
 os.environ["CELERY_EAGER"] = "1"
 os.environ.pop("ANTHROPIC_API_KEY", None)
 os.environ.pop("REDIS_URL", None)
+os.environ["SAHAMATI_BROWSER_RENDER"] = "0"  # never launch Chromium in tests
 
 _real_connect = socket.socket.connect
 

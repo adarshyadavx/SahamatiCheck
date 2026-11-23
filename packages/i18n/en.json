@@ -182,7 +182,35 @@
     "obfuscated": "Obfuscated, partly read",
     "unparseable": "Could not be read",
     "partial": "Partial coverage: some checks were skipped for missing sources.",
-    "full": "All three sources were analysed."
+    "full": "All three sources were analysed.",
+    "openPolicy": "Open the policy",
+    "openPlay": "Open on Google Play",
+    "viaBrowser": "Read with a browser because the page needs JavaScript.",
+    "reason": {
+      "no_url": "The Play listing does not link to a privacy policy.",
+      "bad_url": "The policy link on the Play listing is not a valid web address.",
+      "robots_blocked": "The policy's website asks automated tools not to read this page (robots.txt), so we did not.",
+      "http": "The policy's website answered with an error (HTTP {code}).",
+      "network_error": "The policy's website did not respond to automated requests.",
+      "needs_javascript": "The policy page only shows its text with JavaScript, and it could not be rendered.",
+      "pdf_unreadable": "The policy is a PDF we could not read text from.",
+      "empty": "The policy page had no readable text.",
+      "not_provided": "The developer has not provided a data-safety section on Google Play.",
+      "not_listed": "Google Play has no data-safety page for this app.",
+      "throttled": "Too many checks at once; Google Play was not asked. Try again in a minute.",
+      "layout_changed": "Google Play's page layout was not recognised.",
+      "not_in_corpus": "No APK for this version is in the research corpus. APKs are never downloaded from Play.",
+      "not_uploaded": "Not provided in this self-check.",
+      "unknown": "The source could not be used.",
+      "androzoo_not_configured": "APK checks are off on this server: no AndroZoo API key is set.",
+      "androzoo_index_missing": "APK checks are off on this server: the AndroZoo index has not been built yet.",
+      "androzoo_key_rejected": "AndroZoo refused this server’s API key; it may have expired.",
+      "download_failed": "The APK could not be downloaded from AndroZoo.",
+      "apk_too_large": "The APK is too large to analyse here.",
+      "apk_unparseable": "The APK was downloaded but could not be read.",
+      "apk_reader_missing": "This server cannot read APK files yet (the APK reader is not installed)."
+    },
+    "viaAndroZoo": "Taken from the AndroZoo research archive. It may be an older version than the one on Google Play."
   },
   "summary": {
     "title": "At a glance",
@@ -258,12 +286,26 @@
     "indicativeIntro": "One side is what the app contains, such as a permission or a library. Capability is not proof of use.",
     "noStrong": "No strong findings for this app.",
     "noIndicative": "No indicative findings for this app.",
-    "coverageTitle": "Coverage and rule outcomes",
+    "coverageTitle": "Rule outcomes",
     "unreachableTitle": "We could not load this report",
     "unreachableBody": "The SahamatiCheck API could not be reached just now, and this is not one of the built-in demo reports. Please try again shortly.",
     "tryDemo": "Open the demo report",
     "fallbackNote": "The built-in demo report is shown because the requested demo ({id}) could not be loaded.",
-    "staleBackend": "This page was built for a newer version of the SahamatiCheck API than the one it is talking to, so some parts of the report may be missing. Update or restart the backend."
+    "staleBackend": "This page was built for a newer version of the SahamatiCheck API than the one it is talking to, so some parts of the report may be missing. Update or restart the backend.",
+    "nav": {
+      "label": "On this page",
+      "card": "By area",
+      "overview": "Overview",
+      "findings": "Findings",
+      "matrix": "Claim matrix",
+      "coverage": "Rule outcomes"
+    },
+    "policyMissing": {
+      "title": "We could not read this app's privacy policy",
+      "body": "Every check that needs the policy is marked “Couldn't check”. The data-safety section was still read. If you have the policy text, a self-check can compare it.",
+      "selfCheck": "Paste the policy into a self-check"
+    },
+    "apkMissingNote": "No APK was available, so areas that also depend on the app’s code stay “Couldn’t check”. The privacy policy and the data-safety section were still compared with each other: see the overview and the claim matrix below."
   },
   "home": {
     "eyebrow": "Mudra · the seal of verification",
@@ -333,7 +375,7 @@
     "submit": "Run check",
     "running": "Checking…",
     "invalid": "Enter a Play Store link or a package name such as in.example.chaiwallet.",
-    "progressTitle": "Pipeline progress",
+    "progressTitle": "Checking the app",
     "stage": {
       "queued": "Queued",
       "ingest_listing": "Reading the Play listing",
@@ -356,7 +398,11 @@
     "apiDownDemo": "You can still open the demo report for the fabricated app Chai Wallet.",
     "openDemo": "Open the demo report",
     "jobError": "The check stopped with an error: {error}",
-    "etiquette": "Play listings are fetched slowly and politely. APKs are never downloaded from Play."
+    "etiquette": "Play listings are fetched slowly and politely. APKs are never downloaded from Play.",
+    "detected": "App found: {pkg}",
+    "shareTip": "Tip: in the Play Store app, tap ⋮ → Share → Copy, and paste the whole message here.",
+    "slow": "A first check usually takes 10 to 40 seconds. We read the Play listing, the data-safety section and the privacy policy.",
+    "elapsed": "{s} s"
   },
   "selfCheck": {
     "title": "Developer self-check",
@@ -681,7 +727,9 @@
       "ads": "Is my data used for ads?",
       "deletion": "Can I ask for my data to be deleted?",
       "grievance": "Who do I contact with a complaint?"
-    }
+    },
+    "notCheckedTitle": "Areas we couldn't check",
+    "seeDetails": "See {n} details"
   },
   "limitation": {
     "title": "What this evidence cannot show",
@@ -718,7 +766,8 @@
     "none": "Every enabled rule ran with usable sources.",
     "rule": "Rule {id}",
     "meta": "Family {family} · Phase {phase}",
-    "why": "Why it did not run"
+    "why": "Why it did not run",
+    "show": "Show the {n} checks that could not run"
   },
   "statusCounts": {
     "title": "Rule outcomes",
@@ -817,5 +866,79 @@
     "notFound": "This API version does not list its rules yet.",
     "unreachable": "The SahamatiCheck API could not be reached at {base}.",
     "count": "{n} rules"
+  },
+  "simple": {
+    "read": {
+      "title": "What we read",
+      "ok": "Read",
+      "notOk": "Not read"
+    },
+    "src": {
+      "policy": "Privacy policy",
+      "data_safety": "Play Store data-safety section",
+      "apk": "App code (APK)"
+    },
+    "srcShort": {
+      "policy": "Privacy policy",
+      "data_safety": "Play Store",
+      "apk": "App code"
+    },
+    "summary": {
+      "title": "In short",
+      "collected": "kinds of your data are collected",
+      "collectedNote": "What the app says it collects, or what its code can reach",
+      "shared": "are shared with other companies",
+      "sharedNote": "This data leaves the app and goes to someone else",
+      "mismatch": "things don't add up",
+      "mismatchNote": "The app's own statements disagree",
+      "gaps": "things nobody mentions",
+      "gapsNote": "The app's code can use them, but no document says so",
+      "noIssues": "Nothing contradicts itself in what we could read"
+    },
+    "flow": {
+      "title": "Where your data goes",
+      "lede": "Each line is one kind of your data: whether the app collects it, whether it is passed on, to whom, and why.",
+      "recipientsTitle": "Who receives your data",
+      "recipientsNone": "None of the sources we read says your data is passed to other companies.",
+      "kinds": "{n} kinds of data",
+      "sharedTitle": "Shared with other companies",
+      "keptTitle": "Collected by the app",
+      "keptNote": "No source says these are passed on to other companies.",
+      "collected": "Collected",
+      "shared": "Shared",
+      "sold": "Sold",
+      "why": "Why",
+      "goesTo": "Goes to",
+      "whyNotStated": "Reason not stated",
+      "saidBy": "Who says so",
+      "deniedBy": "{source} says it does not",
+      "mismatch": "Doesn't match: see why",
+      "none": "None of the sources we could read says this app collects or shares any of your data.",
+      "notAvailable": "This report was made by an older version and has no data-flow list. Open the full technical report below.",
+      "showQuotes": "Show what the sources say",
+      "kinds_one": "1 kind of data"
+    },
+    "issues": {
+      "title": "Things that don't add up",
+      "lede": "Places where the app's documents disagree with each other or with what its code can do. Each one quotes both sides, word for word.",
+      "none": "We found nothing that contradicts itself in the sources we could read.",
+      "says": "{source} says",
+      "fine": "Why this might be fine",
+      "gap": "The app's code can use {data}, but neither the privacy policy nor the Play Store page mentions it.",
+      "gapTitle": "Not mentioned anywhere",
+      "report": "Report a mistake"
+    },
+    "notChecked": {
+      "title": "What we couldn't check"
+    },
+    "full": {
+      "show": "Show the full technical report",
+      "lede": "Every rule, the claim matrix, confidence levels and the raw evidence."
+    },
+    "footer": "Automated check of public documents. It may be wrong, it describes one app version on one date, and it is not legal advice.",
+    "ev": {
+      "permission": "Asks for the Android permission {p}",
+      "sdk": "Includes the code library {s}"
+    }
   }
 }

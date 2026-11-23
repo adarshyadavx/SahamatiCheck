@@ -154,6 +154,51 @@ export interface Report {
   status_counts: Record<Status, number>; // over rule_runs
   card: ReportCard;
   versions: { engine: string; ontology: string; extractor: string };
+  sources?: Record<SourceName, SourceNote>;
+  data_flows?: DataFlow[];
+}
+
+export type WrittenSource = "policy" | "data_safety";
+
+// An ontology id with its labels, so clients never need the ontology to show it.
+export interface Labelled {
+  id: string;
+  label_en: string;
+  label_hi: string;
+}
+
+export interface FlowEvidence {
+  source: SourceName;
+  quote: string;
+  url?: string;
+}
+
+// One data type: is it collected, is it shared or sold, why, with whom, and who says so.
+// Shared rows come first. `denied_by` lists sources that say it is NOT collected or shared.
+export interface DataFlow {
+  data_type: string;
+  label_en: string;
+  label_hi: string;
+  category?: UserCategory;
+  collected: boolean;
+  shared: boolean;
+  sold: boolean;
+  collect_purposes: Labelled[];
+  share_purposes: Labelled[];
+  recipients: Labelled[];
+  sources: SourceName[];
+  denied_by: WrittenSource[];
+  finding_ids: string[];
+  evidence: FlowEvidence[];
+}
+
+// Where one source came from and, when its coverage is not "ok", why. `reason` is a short code:
+// no_url, bad_url, robots_blocked, http_NNN, network_error, needs_javascript, pdf_unreadable, empty,
+// not_provided, not_listed, throttled, layout_changed, not_in_corpus, not_uploaded.
+export interface SourceNote {
+  url?: string;
+  reason?: string;
+  method?: string;
 }
 
 export type JobStatus = "queued" | "running" | "done" | "error";

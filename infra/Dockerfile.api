@@ -7,7 +7,11 @@ RUN useradd --create-home --uid 10001 sahamati
 COPY backend/core /app/backend/core
 COPY backend/worker /app/backend/worker
 COPY backend/api /app/backend/api
-RUN pip install "/app/backend/core[postgres,redis,html,pdf]" "/app/backend/worker[redis]" /app/backend/api
+RUN pip install "/app/backend/core[postgres,redis,html,render,apk]" "/app/backend/worker[redis]" /app/backend/api
+
+# Headless Chromium renders JavaScript-only privacy policies (shared path so the app user can use it).
+ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
+RUN python -m playwright install --with-deps chromium && chmod -R a+rX /ms-playwright
 
 USER sahamati
 ENV SAHAMATI_DATA_DIR=/tmp/sahamati

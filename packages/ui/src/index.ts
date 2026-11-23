@@ -11,7 +11,7 @@ export { ReportCard, type ReportCardProps } from "./components/ReportCard";
 export { IndicatorList, type IndicatorListProps } from "./components/IndicatorList";
 export { RulesNotEvaluated, StatusCounts, type RulesNotEvaluatedProps, type StatusCountsProps } from "./components/RulesNotEvaluated";
 export { WhatCanIDo, type WhatCanIDoProps } from "./components/WhatCanIDo";
-export { CoverageStrip, type CoverageStripProps } from "./components/CoverageStrip";
+export { CoverageStrip, safeHref, sourceReasonText, type CoverageStripProps } from "./components/CoverageStrip";
 export { Disclaimer, DemoBanner, type DisclaimerProps, type DemoReason } from "./components/Disclaimer";
 export { SummaryCounts, type SummaryCountsProps } from "./components/SummaryCounts";
 export { OntologyPath, TupleChips, type OntologyPathProps } from "./components/OntologyPath";

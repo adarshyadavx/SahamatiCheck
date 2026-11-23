@@ -3,6 +3,7 @@ import { ClassIcon, TierBadge, TriSourceTriangle, type ClassId } from "@sahamati
 import { DEMO_REPORT, DEMO_REPORT_ID } from "@/lib/demo";
 import { href, resolveLocale, type LocaleParams } from "@/lib/i18n";
 import { SealRings } from "@/components/PageHeader";
+import { CheckForm } from "@/components/CheckForm";
 
 const CLASSES: Array<{ cls: ClassId; tier: "strong" | "indicative" | "not_mentioned" }> = [
   { cls: "internal_contradiction", tier: "strong" },
@@ -29,21 +30,20 @@ export default async function HomePage({ params }: { params: LocaleParams }) {
         >
           सहमति
         </span>
-        <div className="page relative grid items-center gap-12 py-14 sm:py-20 lg:grid-cols-[1.05fr_1fr]">
+        <div className="page relative grid items-start gap-12 py-14 sm:py-20 lg:grid-cols-[1.05fr_1fr]">
           <div>
             <p className="eyebrow">{t("home.eyebrow")}</p>
             <h1 className="display mt-4 text-[2.6rem] sm:text-6xl lg:text-[4.1rem]">{t("home.title")}</h1>
             <p className="lede mt-6">{t("home.lede")}</p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Link href={href(locale, "/check")} className="btn btn-primary">
-                {t("home.ctaCheck")}
-                <span aria-hidden="true">→</span>
+            <div className="mt-8 max-w-xl">
+              <CheckForm locale={locale} compact />
+            </div>
+            <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm">
+              <Link href={href(locale, `/r/${DEMO_REPORT_ID}`)} className="font-semibold">
+                {t("home.ctaDemo")} <span aria-hidden="true">→</span>
               </Link>
-              <Link href={href(locale, `/r/${DEMO_REPORT_ID}`)} className="btn btn-secondary">
-                {t("home.ctaDemo")}
-              </Link>
-              <Link href={href(locale, "/self-check")} className="btn btn-ghost">
-                {t("home.ctaSelf")}
+              <Link href={href(locale, "/self-check")} className="font-semibold">
+                {t("home.ctaSelf")} <span aria-hidden="true">→</span>
               </Link>
             </div>
           </div>

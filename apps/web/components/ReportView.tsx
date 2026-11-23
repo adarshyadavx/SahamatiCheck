@@ -20,10 +20,13 @@ import {
   TriSourceTriangle,
   edgeOfFinding,
   groupFindings,
+  safeHref,
+  sourceReasonText,
   type EdgeId,
   type FindingGroup,
 } from "@sahamati/ui";
 import { postFeedback } from "@/lib/api";
+import { SimpleReport } from "./SimpleReport";
 import { href } from "@/lib/i18n";
 
 export interface ReportViewProps {
@@ -37,7 +40,19 @@ export interface ReportViewProps {
   fallbackFor?: string;
 }
 
-function Section({ n, id, title, children, aside }: { n: number; id: string; title: string; children: ReactNode; aside?: ReactNode }) {
+function Section({
+  n,
+  id,
+  title,
+  children,
+  aside,
+}: {
+  n: number;
+  id: string;
+  title: string;
+  children: ReactNode;
+  aside?: ReactNode;
+}) {
   return (
     <section id={id} aria-labelledby={`${id}-h`} className="scroll-mt-24">
       <div className="mb-4 flex flex-wrap items-center gap-3">
@@ -56,6 +71,34 @@ function Section({ n, id, title, children, aside }: { n: number; id: string; tit
 
 const ORDER: Record<Finding["class"], number> = { declaration_mismatch: 0, internal_contradiction: 1, behavioural_mismatch: 2 };
 
+/** Shown when the privacy policy could not be read: says why, and offers the way forward. */
+function PolicyMissing({ report, locale, privateMode }: { report: Report; locale: Locale; privateMode: boolean }) {
+  const t = createT(locale);
+  const note = report.sources?.policy;
+  const reason = sourceReasonText(t, note?.reason);
+  const link = safeHref(note?.url);
+  const selfCheck = `${href(locale, "/self-check")}?package=${encodeURIComponent(report.app.package)}`;
+  return (
+    <div className="panel grid gap-3 border-l-4 border-l-behaviour p-4 sm:p-5" role="note" data-testid="policy-missing">
+      <p className="text-lg font-semibold">{t("report.policyMissing.title")}</p>
+      {reason ? <p className="text-ink">{reason}</p> : null}
+      <p className="max-w-[75ch] text-sm text-ink-muted">{t("report.policyMissing.body")}</p>
+      <div className="flex flex-wrap gap-3">
+        {link ? (
+          <a href={link} target="_blank" rel="noopener noreferrer nofollow" className="btn btn-secondary !px-4 !py-2 text-sm">
+            {t("coverage.openPolicy")} <span aria-hidden="true">↗</span>
+          </a>
+        ) : null}
+        {!privateMode ? (
+          <Link href={selfCheck} className="btn btn-ghost !px-4 !py-2 text-sm">
+            {t("report.policyMissing.selfCheck")} <span aria-hidden="true">→</span>
+          </Link>
+        ) : null}
+      </div>
+    </div>
+  );
+}
+
 export function ReportView({ report, locale, offline = false, privateMode = false, fallbackFor }: ReportViewProps) {
   const t = createT(locale);
   const [edge, setEdge] = useState<EdgeId | null>(null);
@@ -63,7 +106,10 @@ export function ReportView({ report, locale, offline = false, privateMode = fals
   const findings = useMemo(
     () =>
       [...report.findings].sort(
-        (a, b) => (a.tier === b.tier ? 0 : a.tier === "strong" ? -1 : 1) || ORDER[a.class] - ORDER[b.class] || b.confidence - a.confidence,
+        (a, b) =>
+          (a.tier === b.tier ? 0 : a.tier === "strong" ? -1 : 1) ||
+          ORDER[a.class] - ORDER[b.class] ||
+          b.confidence - a.confidence,
       ),
     [report.findings],
   );
@@ -129,16 +175,26 @@ export function ReportView({ report, locale, offline = false, privateMode = fals
   const exportButton = (
     <button type="button" onClick={exportJson} className="btn btn-secondary !px-4 !py-2 text-sm">
       <svg width="15" height="15" viewBox="0 0 16 16" aria-hidden="true">
-        <path d="M8 2v8M4.5 6.8L8 10.3l3.5-3.5M2.5 13.5h11" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+        <path
+          d="M8 2v8M4.5 6.8L8 10.3l3.5-3.5M2.5 13.5h11"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.6"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
       </svg>
       {t("report.export")}
     </button>
   );
 
+  const disputeHref = (f?: Finding) =>
+    `${href(locale, "/about")}?report=${encodeURIComponent(report.report_id)}${f ? `&finding=${encodeURIComponent(f.id)}` : ""}#dispute`;
+
   return (
-    <div className="grid gap-14 [&>*]:min-w-0">
-      {/* 1. Header, coverage, disclaimer */}
-      <header className="grid gap-5 [&>*]:min-w-0">
+    <div className="grid gap-10 [&>*]:min-w-0">
+      {/* Header: what app, when */}
+      <header className="grid gap-4 [&>*]:min-w-0">
         {offline ? <DemoBanner locale={locale} reason="offline" /> : null}
         {fallbackFor ? (
           <p className="mu-demo" role="status">
@@ -147,11 +203,11 @@ export function ReportView({ report, locale, offline = false, privateMode = fals
           </p>
         ) : null}
         {report.app.is_demo ? <DemoBanner locale={locale} reason="fabricated" /> : null}
-        <div className="flex flex-wrap items-end justify-between gap-6">
-          <div>
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <div className="min-w-0">
             <p className="eyebrow">{t("report.eyebrow")}</p>
-            <h1 className="display mt-3 text-4xl sm:text-5xl">{report.app.title}</h1>
-            <dl className="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-sm">
+            <h1 className="display mt-2 break-words text-3xl sm:text-5xl">{report.app.title}</h1>
+            <dl className="mt-3 flex flex-wrap gap-x-6 gap-y-1 text-sm">
               <div className="flex gap-2">
                 <dt className="text-ink-muted">{t("report.package")}</dt>
                 <dd className="font-mono text-ink">{report.app.package}</dd>
@@ -172,115 +228,157 @@ export function ReportView({ report, locale, offline = false, privateMode = fals
           </div>
           {exportButton}
         </div>
-        <CoverageStrip coverage={report.coverage} locale={locale} />
-        <Disclaimer locale={locale} generatedAt={report.generated_at} versionCode={report.app.version_code} />
+        {report.coverage.policy !== "ok" ? <PolicyMissing report={report} locale={locale} privateMode={privateMode} /> : null}
       </header>
 
-      {/* 2. Report card: five answers + ten areas. No overall grade. */}
-      {report.card ? <ReportCard card={report.card} findings={report.findings} locale={locale} leading={stamp()} /> : null}
+      {/* The plain view: what was read, the numbers, where data goes, what does not add up */}
+      <SimpleReport report={report} locale={locale} disputeHref={privateMode ? undefined : disputeHref} />
 
-      {/* 3. Triangle and counts: agreement first */}
-      <Section n={++n} id="overview" title={t("triangle.title")}>
-        <div className="grid gap-6 [&>*]:min-w-0">
-          <SummaryCounts summary={report.summary} locale={locale} />
-          <div className="panel p-4 sm:p-6">
-            <TriSourceTriangle
-              summary={report.summary}
-              findings={report.findings}
-              gaps={report.disclosure_gaps}
-              locale={locale}
-              selected={edge}
-              onSelect={select}
-            />
+      {/* Everything technical, folded away */}
+      <details className="technical group rounded-mudra border border-line bg-surface-raised" id="technical">
+        <summary className="flex cursor-pointer list-none items-center justify-between gap-4 p-4 sm:p-5">
+          <span>
+            <span className="block text-lg font-semibold">{t("simple.full.show")}</span>
+            <span className="block text-sm text-ink-muted">{t("simple.full.lede")}</span>
+          </span>
+          <span aria-hidden="true" className="text-2xl text-neel transition-transform group-open:rotate-90">
+            ›
+          </span>
+        </summary>
+        <div className="grid gap-14 border-t border-line p-4 sm:p-6 [&>*]:min-w-0">
+          <div className="grid gap-5 [&>*]:min-w-0">
+            <CoverageStrip coverage={report.coverage} sources={report.sources} locale={locale} />
+            <Disclaimer locale={locale} generatedAt={report.generated_at} versionCode={report.app.version_code} />
+            <nav aria-label={t("report.nav.label")} className="report-nav">
+              <span className="report-nav__label">{t("report.nav.label")}</span>
+              {[
+                ["card", t("report.nav.card")],
+                ["overview", t("report.nav.overview")],
+                ["findings", `${t("report.nav.findings")} (${report.findings.length})`],
+                ["matrix", t("report.nav.matrix")],
+                ["coverage", t("report.nav.coverage")],
+              ].map(([id, label]) => (
+                <a key={id} href={`#${id}`} className="report-nav__link">
+                  {label}
+                </a>
+              ))}
+            </nav>
           </div>
-        </div>
-      </Section>
 
-      {/* 4. Evidence tiers: strong and indicative stay separate; groups shown once with related nested */}
-      <Section
-        n={++n}
-        id="findings"
-        title={t("report.findingsTitle")}
-        aside={<span className="mu-count">{report.findings.length}</span>}
-      >
-        <p className="mb-4 max-w-[70ch] text-ink-muted">{t("report.findingsIntro")}</p>
-        {filtered ? (
-          <div className="mb-4 flex flex-wrap items-center gap-3 rounded-mudra border border-neel bg-neel-soft px-4 py-2.5 text-sm" role="status">
-            <span className="font-semibold text-neel">{t("triangle.showing", { label: t(`triangle.edge.${edge}`) })}</span>
-            <button type="button" className="mu-btn mu-btn--quiet ml-auto" onClick={() => setEdge(null)}>
-              {t("triangle.clear")}
-            </button>
-          </div>
-        ) : null}
-        <div className="grid gap-10">
-          <section id="findings-strong" aria-labelledby="findings-strong-h" className="grid gap-4">
-            <div>
-              <h3 id="findings-strong-h" className="mu-tier-heading">
-                <TierBadge tier="strong" locale={locale} describe={false} />
-                <span>{t("report.strongTitle")}</span>
-              </h3>
-              <p className="mt-1 max-w-[70ch] text-sm text-ink-muted">{t("report.strongIntro")}</p>
+          {/* 2. Report card: five answers + ten areas. No overall grade. */}
+          {report.card ? (
+            <div className="grid gap-4 [&>*]:min-w-0">
+              <ReportCard card={report.card} findings={report.findings} locale={locale} leading={stamp()} />
+              {report.coverage.apk !== "ok" && report.coverage.policy === "ok" && report.coverage.data_safety === "ok" ? (
+                <p className="-mt-2 max-w-[75ch] text-sm text-ink-muted" data-testid="apk-missing-note">
+                  {t("report.apkMissingNote")}
+                </p>
+              ) : null}
             </div>
-            {strongGroups.length ? (
-              <div className="grid gap-5">{strongGroups.map(renderGroup)}</div>
-            ) : (
-              <p className="mu-empty">{filtered ? t("report.noneForFilter") : t("report.noStrong")}</p>
-            )}
-          </section>
-          <section id="findings-indicative" aria-labelledby="findings-indicative-h" className="grid gap-4">
-            <div>
-              <h3 id="findings-indicative-h" className="mu-tier-heading">
-                <TierBadge tier="indicative" locale={locale} describe={false} />
-                <span>{t("report.indicativeTitle")}</span>
-              </h3>
-              <p className="mt-1 max-w-[70ch] text-sm text-ink-muted">{t("report.indicativeIntro")}</p>
+          ) : null}
+
+          {/* 3. Triangle and counts: agreement first */}
+          <Section n={++n} id="overview" title={t("triangle.title")}>
+            <div className="grid gap-6 [&>*]:min-w-0">
+              <SummaryCounts summary={report.summary} locale={locale} />
+              <div className="panel p-4 sm:p-6">
+                <TriSourceTriangle
+                  summary={report.summary}
+                  findings={report.findings}
+                  gaps={report.disclosure_gaps}
+                  locale={locale}
+                  selected={edge}
+                  onSelect={select}
+                />
+              </div>
             </div>
-            {indicativeGroups.length ? (
-              <div className="grid gap-5">{indicativeGroups.map(renderGroup)}</div>
-            ) : (
-              <p className="mu-empty">{filtered ? t("report.noneForFilter") : t("report.noIndicative")}</p>
-            )}
-          </section>
+          </Section>
+
+          {/* 4. Evidence tiers: strong and indicative stay separate; groups shown once with related nested */}
+          <Section
+            n={++n}
+            id="findings"
+            title={t("report.findingsTitle")}
+            aside={<span className="mu-count">{report.findings.length}</span>}
+          >
+            <p className="mb-4 max-w-[70ch] text-ink-muted">{t("report.findingsIntro")}</p>
+            {filtered ? (
+              <div
+                className="mb-4 flex flex-wrap items-center gap-3 rounded-mudra border border-neel bg-neel-soft px-4 py-2.5 text-sm"
+                role="status"
+              >
+                <span className="font-semibold text-neel">{t("triangle.showing", { label: t(`triangle.edge.${edge}`) })}</span>
+                <button type="button" className="mu-btn mu-btn--quiet ml-auto" onClick={() => setEdge(null)}>
+                  {t("triangle.clear")}
+                </button>
+              </div>
+            ) : null}
+            <div className="grid gap-10">
+              <section id="findings-strong" aria-labelledby="findings-strong-h" className="grid gap-4">
+                <div>
+                  <h3 id="findings-strong-h" className="mu-tier-heading">
+                    <TierBadge tier="strong" locale={locale} describe={false} />
+                    <span>{t("report.strongTitle")}</span>
+                  </h3>
+                  <p className="mt-1 max-w-[70ch] text-sm text-ink-muted">{t("report.strongIntro")}</p>
+                </div>
+                {strongGroups.length ? (
+                  <div className="grid gap-5">{strongGroups.map(renderGroup)}</div>
+                ) : (
+                  <p className="mu-empty">{filtered ? t("report.noneForFilter") : t("report.noStrong")}</p>
+                )}
+              </section>
+              <section id="findings-indicative" aria-labelledby="findings-indicative-h" className="grid gap-4">
+                <div>
+                  <h3 id="findings-indicative-h" className="mu-tier-heading">
+                    <TierBadge tier="indicative" locale={locale} describe={false} />
+                    <span>{t("report.indicativeTitle")}</span>
+                  </h3>
+                  <p className="mt-1 max-w-[70ch] text-sm text-ink-muted">{t("report.indicativeIntro")}</p>
+                </div>
+                {indicativeGroups.length ? (
+                  <div className="grid gap-5">{indicativeGroups.map(renderGroup)}</div>
+                ) : (
+                  <p className="mu-empty">{filtered ? t("report.noneForFilter") : t("report.noIndicative")}</p>
+                )}
+              </section>
+            </div>
+          </Section>
+
+          {/* 5. Not mentioned anywhere: its own section, never counted as conflicts */}
+          <GapList
+            gaps={report.disclosure_gaps}
+            locale={locale}
+            highlighted={edge === "gap"}
+            className="scroll-mt-24"
+            leading={stamp()}
+          />
+
+          {/* 6. Worth a closer look: investigation rules, never counted as differences */}
+          <IndicatorList indicators={indicators} findings={report.findings} locale={locale} leading={stamp()} />
+
+          {/* 7. Claim matrix */}
+          <Section n={++n} id="matrix" title={t("matrix.title")}>
+            <ClaimMatrix rows={report.matrix} locale={locale} />
+          </Section>
+
+          {/* 8. Coverage and rule outcomes */}
+          <Section n={++n} id="coverage" title={t("report.coverageTitle")}>
+            {report.status_counts ? <StatusCounts counts={report.status_counts} locale={locale} /> : null}
+          </Section>
+
+          {/* 9. Appendix: rules that could not run */}
+          <RulesNotEvaluated ruleRuns={ruleRuns} locale={locale} leading={stamp()} />
         </div>
-      </Section>
-
-      {/* 5. Not mentioned anywhere: its own section, never counted as conflicts */}
-      <GapList
-        gaps={report.disclosure_gaps}
-        locale={locale}
-        highlighted={edge === "gap"}
-        className="scroll-mt-24"
-        leading={stamp()}
-      />
-
-      {/* 6. Worth a closer look: investigation rules, never counted as differences */}
-      <IndicatorList indicators={indicators} findings={report.findings} locale={locale} leading={stamp()} />
-
-      {/* 7. Claim matrix */}
-      <Section n={++n} id="matrix" title={t("matrix.title")}>
-        <ClaimMatrix rows={report.matrix} locale={locale} />
-      </Section>
-
-      {/* 8. Coverage and rule outcomes */}
-      <Section n={++n} id="coverage" title={t("report.coverageTitle")}>
-        <div className="grid gap-5 [&>*]:min-w-0">
-          <CoverageStrip coverage={report.coverage} locale={locale} />
-          {report.status_counts ? <StatusCounts counts={report.status_counts} locale={locale} /> : null}
-        </div>
-      </Section>
-
-      {/* 9. Appendix: rules that could not run */}
-      <RulesNotEvaluated ruleRuns={ruleRuns} locale={locale} leading={stamp()} />
+      </details>
 
       {/* Footer: dispute, versions, export */}
-      <footer className="grid gap-4 border-t border-dashed border-line-strong pt-6">
+      <footer className="grid gap-3 border-t border-dashed border-line-strong pt-5">
+        <p className="max-w-[90ch] text-sm text-ink-muted">{t("simple.footer")}</p>
         <div className="flex flex-wrap items-center justify-between gap-4">
           <span className="flex flex-wrap items-center gap-x-6 gap-y-2">
             {!privateMode ? (
-              <Link
-                href={`${href(locale, "/about")}?report=${encodeURIComponent(report.report_id)}#dispute`}
-                className="font-semibold"
-              >
+              <Link href={disputeHref()} className="font-semibold">
                 {t("report.dispute")} →
               </Link>
             ) : null}

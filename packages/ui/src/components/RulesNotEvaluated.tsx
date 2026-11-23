@@ -25,22 +25,25 @@ export function RulesNotEvaluated({ ruleRuns, locale, id = "rules-not-evaluated"
       </h2>
       <p className="mu-rne__intro">{t("rulesNotEvaluated.intro")}</p>
       {open.length ? (
-        <ul className="mu-rne__list">
-          {open.map((r) => (
-            <li key={r.rule_id} className="mu-card mu-rne__item" data-rule={r.rule_id} data-reason={r.reason ?? ""}>
-              <div className="mu-rne__head">
-                <code className="mu-rne__id">{r.rule_id}</code>
-                <h3 className="mu-rne__name">{r.name}</h3>
-                <StatusBadge status="inconclusive" locale={locale} describe={false} />
-              </div>
-              <p className="mu-rne__why">
-                <span className="mu-rne__why-label">{t("rulesNotEvaluated.why")}: </span>
-                {t(reasonI18nKey(t, r.reason))}
-              </p>
-              <p className="mu-rne__meta">{t("rulesNotEvaluated.meta", { family: r.family, phase: r.phase })}</p>
-            </li>
-          ))}
-        </ul>
+        <details className="mu-rne__more">
+          <summary>{t("rulesNotEvaluated.show", { n: open.length })}</summary>
+          <ul className="mu-rne__list">
+            {open.map((r) => (
+              <li key={r.rule_id} className="mu-card mu-rne__item" data-rule={r.rule_id} data-reason={r.reason ?? ""}>
+                <div className="mu-rne__head">
+                  <code className="mu-rne__id">{r.rule_id}</code>
+                  <h3 className="mu-rne__name">{r.name}</h3>
+                  <StatusBadge status="inconclusive" locale={locale} describe={false} />
+                </div>
+                <p className="mu-rne__why">
+                  <span className="mu-rne__why-label">{t("rulesNotEvaluated.why")}: </span>
+                  {t(reasonI18nKey(t, r.reason))}
+                </p>
+                <p className="mu-rne__meta">{t("rulesNotEvaluated.meta", { family: r.family, phase: r.phase })}</p>
+              </li>
+            ))}
+          </ul>
+        </details>
       ) : (
         <p className="mu-empty">{t("rulesNotEvaluated.none")}</p>
       )}

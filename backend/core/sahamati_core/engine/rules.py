@@ -18,11 +18,20 @@ A DENY conflicts with an AFFIRM only when the denial *covers* the affirmation:
 Cross-source findings whose policy DENY is already contradicted inside the
 policy by a statement that agrees with the other source are folded into the
 internal contradiction (reported once, as C1).
+
+Precision guards for policy text (CLAUDE.md rule 1), learned from real policies:
+  * a policy AFFIRM whose own sentence carries a negation cue ("No contents of
+    chats are mined…") is an unreliable read and never evidences a conflict;
+  * a policy DENY whose sentence is scoped by a purpose or carve-out the extractor
+    did not capture ("we don't use contacts *for ad targeting*", "*unless*…") is
+    treated like a purpose-limited denial: it cannot be shown to conflict;
+  * C1 keeps at most one finding (the most confident) per denial sentence.
 """
 
 from __future__ import annotations
 
 import itertools
+import re
 from dataclasses import dataclass, field
 from functools import lru_cache
 from pathlib import Path
@@ -55,6 +64,7 @@ class EngineConfig:
     s_neg_adjacent: float
     gap_ignore_root_claims: bool
     action_implies: dict[str, frozenset[str]]
+    ic_min_claim_confidence: float = 0.0
 
     def w(self, c: ConflictClass) -> float:
         return float(self.weights[c.value])
@@ -76,6 +86,7 @@ def load_config(path: str | None = None) -> EngineConfig:
         s_neg_adjacent=float(raw.get("s_neg_adjacent", 1.0)),
         gap_ignore_root_claims=bool(raw.get("gap_ignore_root_claims", True)),
         action_implies={k: frozenset(v) for k, v in (raw.get("action_implies") or {}).items()},
+        ic_min_claim_confidence=float(raw.get("ic_min_claim_confidence", 0.0)),
     )
 
 
@@ -126,6 +137,24 @@ class Engine:
         self.purposes = self.onto.purposes
 
     # ------------------------------------------------------------ predicates
+    @staticmethod
+    def unreliable_affirm(c: ClaimTuple) -> bool:
+        """A policy AFFIRM read from a sentence that itself negates something."""
+        return (c.source_kind == SourceKind.POLICY and c.polarity == Polarity.AFFIRM
+                and bool(_NEGATION_CUE.search(c.evidence.text or "")))
+
+    @staticmethod
+    def scoped_denial(c: ClaimTuple) -> bool:
+        """A policy DENY limited by a purpose or carve-out the extractor did not capture."""
+        if c.source_kind != SourceKind.POLICY or c.polarity != Polarity.DENY:
+            return False
+        if c.purposes or c.condition or c.exceptions:
+            return False  # captured: reconciled() handles it precisely
+        text = c.evidence.text or ""
+        if _THIRD_PERSON_SUBJECT.search(text) and not _SECOND_PERSON.search(text):
+            return True  # about someone else's data ("we do not collect their name")
+        return bool(_SCOPE_CUE.search(text))
+
     def action_conflicts(self, denied: Action, affirmed: Action) -> bool:
         """An AFFIRM of `affirmed` contradicts a DENY of `denied`."""
         return affirmed == denied or denied.value in self.cfg.action_implies.get(affirmed.value, frozenset())
@@ -155,7 +184,10 @@ class Engine:
         return False
 
     def reconciled(self, deny: ClaimTuple, affirm: ClaimTuple) -> bool:
-        """True when an exception carve-out or the purpose makes the pair consistent."""
+        """True when an exception carve-out or the purpose makes the pair consistent, or when
+        either side is too uncertain a read of policy text to evidence a conflict."""
+        if self.scoped_denial(deny) or self.unreliable_affirm(affirm):
+            return True
         if self._exception_hits(deny.exceptions, affirm) or self._exception_hits(affirm.exceptions, deny):
             return True
         deny_p = deny.purposes or ([deny.condition] if deny.condition else [])
@@ -204,7 +236,9 @@ class Engine:
 
     def internal_contradictions(self, policy: list[ClaimTuple]) -> list[EngineFinding]:
         out: list[EngineFinding] = []
-        claims = [c for c in policy if c.polarity != Polarity.VAGUE]
+        # Both sides are automated reads of free text: only reliable reads may contradict each other.
+        claims = [c for c in policy if c.polarity != Polarity.VAGUE
+                  and c.confidence >= self.cfg.ic_min_claim_confidence]
         for x, y in itertools.combinations(claims, 2):
             if x.evidence.char_start is not None and x.evidence.char_start == y.evidence.char_start:
                 continue  # same sentence
@@ -286,6 +320,27 @@ class Engine:
         return res
 
 
+_NEGATION_CUE = re.compile(r"\b(?:no|not|never|neither|nor|none|nothing|without)\b|n['’]t\b", re.I)
+_SCOPE_CUE = re.compile(
+    r"\b(?:for|to|in order to)\s+(?:\w+\s+){0,3}?"
+    r"(?:ads?|advertis\w*|marketing|commercial|target\w*|profil\w*|sponsored|monetis\w*|monetiz\w*|sell\w*)\b"
+    r"|\b(?:unless|except|other than|apart from|beyond what|only (?:when|if|to|for|with|as))\b"
+    r"|\b(?:in|for) (?:secret|private|end-to-end|encrypted)\b"
+    # a denial about one situation or recipient named elsewhere: "in this case…", "with such data centers"
+    r"|\bin (?:this|that|such|these|those|which) (?:case|cases|event|situation)s?\b"
+    r"|\bwith (?:such|these|those)\b"
+    # a user's choice, not the app's practice: "you may choose not to share…", "you can opt out"
+    r"|\b(?:choose|chose|elect|decide|opt) (?:not|out)\b|\bopt-out\b"
+    # a restriction placed on someone else: "vendors are not permitted / prohibited from…"
+    r"|\b(?:not (?:permitted|allowed|authori[sz]ed)|prohibited|forbidden|restricted from)\b"
+    # a different data subject: children, minors, or "their" data without any "your"
+    r"|\b(?:child(?:ren)?(?:'s)?|minors?|kids?|students?|under (?:the age of )?1[3-8])\b",
+    re.I,
+)
+_THIRD_PERSON_SUBJECT = re.compile(r"\b(?:their|them|they)\b", re.I)
+_SECOND_PERSON = re.compile(r"\b(?:you|your|yours)\b", re.I)
+
+
 def _side_key(c: ClaimTuple) -> tuple[str, int | None, str]:
     return (c.source_kind.value, c.evidence.char_start, c.evidence.text)
 
@@ -300,6 +355,8 @@ def _dedupe(findings: list[EngineFinding]) -> list[EngineFinding]:
     for f in findings:
         if f.cls == ConflictClass.BEHAVIOURAL_MISMATCH:
             key: tuple[Any, ...] = (f.cls, _side_key(f.a), f.overlap, f.b.source_kind.value)
+        elif f.cls == ConflictClass.INTERNAL_CONTRADICTION:
+            key = (f.cls, _side_key(f.a))  # `a` is the DENY: one finding per denial sentence
         else:
             pair = tuple(sorted([_side_key(f.a), _side_key(f.b)], key=str))
             key = (f.cls, pair, f.overlap)

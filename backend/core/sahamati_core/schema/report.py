@@ -175,6 +175,53 @@ class CoverageMap(ContractModel):
     apk: Coverage
 
 
+class Labelled(ContractModel):
+    """An ontology id with its labels, so clients never need the ontology to show it."""
+
+    id: str
+    label_en: str
+    label_hi: str
+
+
+class FlowEvidence(ContractModel):
+    source: Literal["policy", "data_safety", "apk"]
+    quote: str
+    url: str | None = opt()
+
+
+class DataFlow(ContractModel):
+    """One data type: is it collected, is it shared or sold, why, with whom, and who says so."""
+
+    data_type: str
+    label_en: str
+    label_hi: str
+    category: UserCategoryLit | None = opt()
+    collected: bool
+    shared: bool
+    sold: bool
+    collect_purposes: list[Labelled]
+    share_purposes: list[Labelled]
+    recipients: list[Labelled]
+    sources: list[Literal["policy", "data_safety", "apk"]]
+    denied_by: list[Literal["policy", "data_safety"]]
+    finding_ids: list[str]
+    evidence: list[FlowEvidence]
+
+
+class SourceNote(ContractModel):
+    """Where one source came from and, when its coverage is not ok, why (a reason code the clients translate)."""
+
+    url: str | None = opt()
+    reason: str | None = opt()
+    method: str | None = opt()  # http | browser | play | upload | fixture
+
+
+class SourceNotes(ContractModel):
+    policy: SourceNote
+    data_safety: SourceNote
+    apk: SourceNote
+
+
 class Versions(ContractModel):
     engine: str
     ontology: str
@@ -195,3 +242,5 @@ class Report(ContractModel):
     status_counts: StatusCounts
     card: ReportCard
     versions: Versions
+    sources: SourceNotes | None = opt()
+    data_flows: list[DataFlow] | None = opt()

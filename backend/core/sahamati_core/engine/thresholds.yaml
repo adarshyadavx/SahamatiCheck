@@ -20,6 +20,9 @@ s_neg_heuristic: 0.8
 # A claim on a hierarchy root ("personal information") is too broad to count as
 # mentioning a specific type when deciding disclosure gaps.
 gap_ignore_root_claims: true
+# An internal contradiction compares two automated reads of the same free text, so both reads
+# must be at least this confident (hedged, very long, or unattributed sentences fall below).
+ic_min_claim_confidence: 0.7
 # PLAN.md: sell implies share and collect; share implies collect.
 action_implies:
   sell: [share, collect]
